@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo cáo chấm công - Đi Lạc Coffee</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Montserrat','sans-serif'] }, colors: { brand: { text: '#5c4133' } } } }
+        }
+    </script>
+    <style>
+        body { background-color: #fcfcfc; font-size: 23px; }
+        .nav-item { position: relative; white-space: nowrap; }
+        .nav-item.active { font-weight: 700; color: #d6b5a3; }
+        .nav-item.active::after { content:''; position:absolute; bottom:0; left:0; right:0; height:4px; background:#d6b5a3; border-radius:2px 2px 0 0; }
+        .nav-dropdown { position: relative; }
+        .nav-dropdown-menu { display:none; position:absolute; top:100%; right:0; background:white; border:1px solid #e5e7eb; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.12); min-width:210px; z-index:999; overflow:hidden; }
+        .nav-dropdown.open .nav-dropdown-menu { display:block; }
+        .nav-dropdown-menu a { display:block; padding:12px 20px; font-size:15px; font-weight:600; color:#4B2E1F; text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; text-decoration:none; transition:background .15s; }
+        .nav-dropdown-menu a:hover { background:#f5ede8; }
+        .nav-dropdown-menu a.active-report { background:#f5ede8; }
+        .nav-dropdown-menu a + a { border-top:1px solid #f3f4f6; }
+
+        /* Print modal */
+        #printModal { display:none; }
+        #printModal.open { display:flex; }
+
+        /* Toast */
+        #toastBackdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:9998; }
+        #toast {
+            display:none; position:fixed; top:50%; left:50%;
+            transform:translate(-50%,-50%) scale(.85);
+            background:white; border-radius:20px;
+            box-shadow:0 8px 40px rgba(0,0,0,.18);
+            padding:36px 56px; z-index:9999;
+            text-align:center; min-width:320px;
+            opacity:0; transition:opacity .25s ease, transform .25s ease;
+        }
+        #toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
+    </style>
+</head>
+<body class="text-gray-800 font-sans min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white px-8 py-3 flex justify-between items-center border-b border-gray-100">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-[#2d221c]">
+                <img src="../../assets/images/logo.png" alt="Logo" class="w-full h-full object-cover">
+            </div>
+            <h1 class="font-bold text-[26px] uppercase tracking-wider text-brand-text">ĐI LẠC COFFEE</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-[23px]"><span class="italic font-medium">Xin chào, </span><span class="italic font-bold">Đi Lạc coffee</span></span>
+            <i class="fa-regular fa-circle-user text-[40px]"></i>
+        </div>
+    </header>
+
+    <!-- Nav -->
+    <nav class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold">
+        <a href="../dashboard.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Tổng quan</a>
+        <a href="#" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Nhân viên</a>
+        <a href="#" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Hợp đồng</a>
+        <a href="#" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Lịch làm việc</a>
+        <a href="#" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Yêu cầu</a>
+        <a href="#" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Bảng lương</a>
+        <div class="nav-dropdown nav-item active py-[16px]" id="baoCaoDropdown">
+            <span class="cursor-pointer select-none" onclick="toggleDropdown()">Báo cáo</span>
+            <div class="nav-dropdown-menu">
+                <a href="report_salary.html">Báo cáo lương</a>
+                <a href="report_attendance.html" class="active-report">Báo cáo chấm công</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="p-8 max-w-[1400px] mx-auto">
+        <h2 class="text-[22px] font-bold mb-1">Báo cáo chấm công</h2>
+        <div class="border-b-2 border-[#4B2E1F] w-52 mb-6"></div>
+
+        <div class="flex flex-wrap gap-5 items-end mb-6">
+            <div>
+                <label class="block mb-1 text-[14px] font-medium text-gray-600">Nhân viên</label>
+                <div class="flex items-center border border-gray-300 rounded px-3 py-2 bg-white w-40">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400 mr-2 text-sm"></i>
+                    <input type="text" placeholder="Tìm kiếm" class="outline-none text-sm w-full font-sans">
+                </div>
+            </div>
+            <div>
+                <label class="block mb-1 text-[14px] font-medium text-gray-600">Chu kỳ lương</label>
+                <select class="border border-gray-300 rounded px-3 py-2 bg-white text-sm w-40 outline-none font-sans">
+                    <option>Chu kỳ làm việc</option><option>Tháng 1/2025</option><option>Tháng 2/2025</option><option>Tháng 3/2025</option><option>Tháng 4/2025</option>
+                </select>
+            </div>
+            <div>
+                <label class="block mb-1 text-[14px] font-medium text-gray-600">Vị trí làm việc</label>
+                <select class="border border-gray-300 rounded px-3 py-2 bg-white text-sm w-32 outline-none font-sans">
+                    <option>Tất cả</option><option>Pha chế</option><option>Phục vụ</option><option>Giữ xe</option>
+                </select>
+            </div>
+            <div class="flex flex-col gap-2 ml-auto">
+                <button id="btnXem" class="bg-[#4B2E1F] hover:bg-[#3a2317] text-white font-semibold px-8 py-2 rounded transition text-sm">Xem</button>
+                <button id="btnXuat" class="bg-[#4B2E1F] hover:bg-[#3a2317] text-white font-semibold px-4 py-2 rounded transition text-sm">In/Xuất báo cáo</button>
+            </div>
+        </div>
+        <div class="mb-6">
+            <label class="block mb-1 text-[14px] font-medium text-gray-600">Trạng thái làm việc</label>
+            <select class="border border-gray-300 rounded px-3 py-2 bg-white text-sm w-32 outline-none font-sans">
+                <option>Tất cả</option><option>Đang làm</option><option>Đã nghỉ</option>
+            </select>
+        </div>
+
+        <div class="overflow-x-auto rounded-lg shadow-sm">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-[#4B2E1F] text-white">
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Mã bảng lương</th>
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Mã nhân viên</th>
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Tên nhân viên</th>
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Chức vụ</th>
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Tháng năm</th>
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Lương cơ bản</th>
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Hệ số lương</th>
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Lương theo giờ</th>
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Số giờ làm</th>
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Phụ cấp</th>
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Thưởng phạt</th>
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Tổng lương</th>
+                        <th class="px-3 py-3 text-left text-[12px] font-semibold whitespace-nowrap">Lương thực nhận</th>
+                    </tr>
+                </thead>
+                <tbody id="reportBody">
+                    <tr><td colspan="13" class="text-center py-10 text-gray-400 text-sm"></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Print Modal -->
+    <div id="printModal" class="fixed inset-0 bg-black/40 z-50 items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl mx-4 overflow-hidden">
+            <div class="bg-[#4B2E1F] h-10"></div>
+            <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+                <h3 class="text-[18px] font-bold">Xuất / In báo cáo</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div class="overflow-x-auto px-4 pt-4">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-[#4B2E1F] text-white">
+                            <th class="px-3 py-2 text-left text-[12px]">Mã bảng lương</th>
+                            <th class="px-3 py-2 text-left text-[12px]">Mã nhân viên</th>
+                            <th class="px-3 py-2 text-left text-[12px]">Tên nhân viên</th>
+                            <th class="px-3 py-2 text-left text-[12px]">Chức vụ</th>
+                            <th class="px-3 py-2 text-left text-[12px]">Tháng năm</th>
+                            <th class="px-3 py-2 text-left text-[12px]">Lương cơ bản</th>
+                            <th class="px-3 py-2 text-left text-[12px]">Hệ số lương</th>
+                            <th class="px-3 py-2 text-left text-[12px]">Lương theo giờ</th>
+                            <th class="px-3 py-2 text-left text-[12px]">Số giờ làm</th>
+                            <th class="px-3 py-2 text-left text-[12px]">Phụ cấp</th>
+                            <th class="px-3 py-2 text-left text-[12px]">Thưởng phạt</th>
+                            <th class="px-3 py-2 text-left text-[12px]">Tổng lương</th>
+                            <th class="px-3 py-2 text-left text-[12px]">Lương thực nhận</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalBody"></tbody>
+                </table>
+            </div>
+            <div class="flex items-center justify-between px-6 py-5">
+                <div class="flex items-center gap-3">
+                    <label class="text-[13px] font-medium text-gray-600">Chọn định dạng xuất:</label>
+                    <select class="border border-gray-300 rounded px-3 py-1.5 text-sm outline-none font-sans w-36">
+                        <option>Excel</option><option>PDF</option><option>CSV</option>
+                    </select>
+                </div>
+                <div class="flex gap-4">
+                    <button id="btnXuatModal" class="bg-[#d6b5a3] hover:bg-[#c9a08c] text-[#4B2E1F] font-semibold px-6 py-2 rounded text-sm transition">Xuất báo cáo</button>
+                    <button id="btnInModal" class="bg-[#4B2E1F] hover:bg-[#3a2317] text-white font-semibold px-6 py-2 rounded text-sm transition">In báo cáo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toastBackdrop"></div>
+    <div id="toast">
+        <div style="width:56px;height:56px;background:#3cc16e;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <path d="M5 13l4 4L19 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <p id="toastMsg" style="font-size:17px;font-weight:700;color:#1a1a1a;margin:0;">Xuất báo cáo thành công</p>
+    </div>
+
+    <script>
+        // Nav dropdown
+        function toggleDropdown() { document.getElementById('baoCaoDropdown').classList.toggle('open'); }
+        document.addEventListener('click', e => {
+            const dd = document.getElementById('baoCaoDropdown');
+            if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+        });
+
+        // Mock data
+        const mockData = [
+            { maBL:'ML00000001', maNV:'NV00000001', ten:'Nguyễn Văn An',  chucvu:'Pha chế', thang:'4/2025', lcb:6,   heso:2,   lgio:20000, sgio:100, phuCap:0,      thuong:0,       tong:1700000, thucNhan:1700000 },
+            { maBL:'ML00000002', maNV:'NV00000002', ten:'Trần Thị Bình',  chucvu:'Phục vụ', thang:'4/2025', lcb:5,   heso:1.5, lgio:18000, sgio:92,  phuCap:200000, thuong:0,       tong:1856000, thucNhan:1856000 },
+            { maBL:'ML00000003', maNV:'NV00000003', ten:'Lê Văn Cường',   chucvu:'Giữ xe',  thang:'4/2025', lcb:5,   heso:1.5, lgio:18000, sgio:108, phuCap:0,      thuong:500000,  tong:2444000, thucNhan:2444000 },
+            { maBL:'ML00000004', maNV:'NV00000004', ten:'Phạm Thị Dung',  chucvu:'Pha chế', thang:'4/2025', lcb:6,   heso:2,   lgio:20000, sgio:95,  phuCap:100000, thuong:-200000, tong:1800000, thucNhan:1800000 },
+        ];
+
+        function renderRows() {
+            return mockData.map((r,i) => `
+                <tr class="${i%2===0?'bg-white':'bg-[#fdf6f2]'} border-b border-gray-100 hover:bg-amber-50 transition">
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.maBL}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.maNV}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.ten}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.chucvu}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.thang}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.lcb}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.heso}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.lgio.toLocaleString()}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.sgio}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.phuCap.toLocaleString()}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.thuong.toLocaleString()}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.tong.toLocaleString()}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap">${r.thucNhan.toLocaleString()}</td>
+                </tr>`).join('');
+        }
+
+        document.getElementById('btnXem').onclick  = () => { document.getElementById('reportBody').innerHTML = renderRows(); };
+        document.getElementById('btnXuat').onclick = () => {
+            document.getElementById('modalBody').innerHTML = renderRows();
+            document.getElementById('printModal').classList.add('open');
+        };
+
+        function closeModal() { document.getElementById('printModal').classList.remove('open'); }
+        document.getElementById('printModal').addEventListener('click', e => { if(e.target===document.getElementById('printModal')) closeModal(); });
+
+        // Toast
+        function showToast(msg) {
+            document.getElementById('toastMsg').textContent = msg;
+            const backdrop = document.getElementById('toastBackdrop');
+            const toast    = document.getElementById('toast');
+            backdrop.style.display = 'block';
+            toast.style.display    = 'block';
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => { toast.style.display='none'; backdrop.style.display='none'; closeModal(); }, 280);
+            }, 2500);
+        }
+
+        document.getElementById('btnXuatModal').onclick = () => showToast('Xuất báo cáo thành công');
+        document.getElementById('btnInModal').onclick   = () => showToast('In báo cáo thành công');
+    </script>
+</body>
+</html>
