@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đi Lạc Coffee - Gửi thông báo lịch làm việc</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            text: '#5c4133',
+                            active: '#d9b39e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #edebea;
+            font-size: 23px;
+        }
+
+        .nav-item {
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-item.active {
+            font-weight: 700;
+            color: #d6b5a3;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: #d6b5a3;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Table styles to match mockup */
+        .table-custom th {
+            font-weight: 600;
+            padding: 12px 8px;
+        }
+        .table-custom td {
+            padding: 14px 8px;
+            color: #4b5563; /* text-gray-600 */
+        }
+        .table-row-odd {
+            background-color: #f6efe9;
+        }
+        .table-row-even {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+
+<body class="text-gray-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-white px-8 py-3 flex justify-between items-center sm:flex-row flex-col gap-4 border-b border-gray-100 flex-shrink-0">
+        <div class="flex items-center gap-4">
+            <!-- Logo -->
+            <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center bg-[#2d221c]">
+                <img src="../../assets/images/logo.png" alt="Logo Đi Lạc" class="w-full h-full object-cover">
+            </div>
+            <h1 class="font-bold text-[26px] uppercase tracking-wider text-brand-text">ĐI LẠC COFFEE</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-gray-800 text-[23px]"><span class="italic font-medium">Xin chào, </span><span class="italic font-bold">Đi Lạc coffee</span></span>
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition">
+                <i class="fa-regular fa-circle-user text-[40px]"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold flex-shrink-0">
+        <a href="../dashboard.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Tổng quan</a>
+        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Nhân viên</a>
+        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Hợp đồng</a>
+        <!-- Lịch làm việc Dropdown -->
+        <div class="relative group cursor-pointer">
+            <div class="nav-item active py-[16px] transition-colors hover:text-[#d6b5a3] flex items-center gap-2">
+                Lịch làm việc
+                <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
+            </div>
+            <!-- Dropdown menu -->
+            <div class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
+                <a href="schedule_list.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium border-b border-gray-50">Tạo lịch làm việc</a>
+                <a href="schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium bg-[#f9f5f3]">Gửi thông báo lịch làm việc</a>
+            </div>
+        </div>
+        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
+        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Bảng lương</a>
+        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Báo cáo</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="w-full max-w-[1300px] mx-auto p-4 md:p-8 flex-grow flex flex-col">
+        
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 flex-grow flex flex-col relative">
+            
+            <!-- Header Group -->
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <h2 class="text-[28px] font-bold text-[#8c5a35]">Gửi thông báo lịch làm việc</h2>
+                
+                <div class="flex items-stretch gap-2">
+                    <div class="relative w-[300px] flex items-center">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 text-gray-400"></i>
+                        <input type="text" placeholder="Nhập tên nhân viên" class="w-full bg-[#f9f9f9] border border-gray-200 rounded-lg pl-10 pr-4 py-2 text-[15px] outline-none focus:border-[#8c5a35] transition">
+                    </div>
+                    <button class="bg-[#8c5a35] hover:bg-[#6c4426] text-white px-6 py-2 rounded-lg font-bold flex items-center gap-2 transition whitespace-nowrap text-[15px]">
+                        <i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="overflow-x-auto flex-grow rounded-lg border border-gray-100">
+                <table class="w-full text-center table-custom text-[15px]">
+                    <thead class="bg-[#785438] text-white">
+                        <tr>
+                            <th class="w-12"><input type="checkbox" class="w-4 h-4 rounded text-[#8c5a35] cursor-pointer" id="selectAll" onclick="toggleAllChecks()"></th>
+                            <th>Mã ca</th>
+                            <th>Ngày</th>
+                            <th>Mã NV</th>
+                            <th>Họ và tên NV</th>
+                            <th>Giờ bắt đầu</th>
+                            <th>Giờ kết thúc</th>
+                            <th>Ghi chú</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody id="notification-table-body">
+                        <!-- Data will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bottom Action Buttons -->
+            <div class="flex items-center justify-end gap-4 mt-8 pt-4">
+                <button class="px-8 py-3 rounded-lg bg-[#e5e7eb] text-gray-700 font-bold hover:bg-gray-300 transition text-[16px]">Hủy</button>
+                <button onclick="sendNotification()" class="px-8 py-3 rounded-lg bg-[#8c5a35] text-white font-bold hover:bg-[#5c4133] transition shadow-md text-[16px]">Gửi thông báo</button>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- Success/Error Popups (Auto close) -->
+    <div id="popup-notification" class="fixed inset-0 bg-black/10 z-[200] hidden items-center justify-center p-4 transition-opacity opacity-0 cursor-pointer" onclick="closePopup()">
+        <div class="bg-white rounded-[40px] shadow-[0_10px_40px_rgba(0,0,0,0.15)] px-12 py-10 flex items-center flex-col transform transition max-w-[500px] w-11/12 text-center border-none" onclick="event.stopPropagation()">
+            
+            <!-- Success Icon -->
+            <div id="popup-icon-success" class="w-20 h-20 rounded-full bg-[#00d775] flex items-center justify-center text-white text-[45px] mb-6 shadow-sm hidden">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            
+            <!-- Error Icon bg orange-red based on mockup -->
+            <div id="popup-icon-error" class="w-16 h-16 rounded-full bg-[#ff4a11] flex items-center justify-center text-white text-[32px] mb-6 shadow-sm hidden">
+                <i class="fa-solid fa-exclamation"></i>
+            </div>
+
+            <h3 id="popup-msg" class="text-gray-900 text-[28px] font-bold px-4 tracking-tight leading-tight mt-0">Gửi thông báo thành công</h3>
+            
+            <!-- Error Sub Message -->
+            <p id="popup-sub-msg" class="text-gray-800 text-[24px] font-bold mt-2 hidden leading-tight"></p>
+        </div>
+    </div>
+
+    <!-- Script Area -->
+    <script>
+        // --- 1. Dữ liệu bảng giả lập theo Mockup ---
+        const tableData = [
+            { id: "C001", date: "2025-07-16", empId: "NV001", empName: "Nguyễn Văn An", start: "07:00", end: "11:00", note: "-", status: "Chưa gửi" },
+            { id: "C002", date: "2025-07-16", empId: "NV002", empName: "Trần Thị Bình", start: "07:00", end: "11:00", note: "Xin đi trễ 10p", status: "Đã gửi" },
+            { id: "C003", date: "2025-07-16", empId: "NV003", empName: "Lê Văn Cảng", start: "13:00", end: "17:00", note: "-", status: "Chưa gửi" },
+            { id: "C004", date: "2025-07-16", empId: "NV004", empName: "Phạm Thị Dung", start: "13:00", end: "17:00", note: "Ca chiều", status: "Đã gửi" },
+            { id: "C005", date: "2025-07-17", empId: "NV005", empName: "Hoàng Văn Em", start: "18:00", end: "22:00", note: "-", status: "Đã gửi" },
+            { id: "C006", date: "2025-07-17", empId: "NV006", empName: "Ngô Thị Hoa", start: "07:00", end: "11:00", note: "-", status: "Chưa gửi" },
+            { id: "C007", date: "2025-07-17", empId: "NV007", empName: "Đặng Văn Hùng", start: "13:00", end: "17:00", note: "-", status: "Đã gửi" },
+            { id: "C008", date: "2025-07-18", empId: "NV008", empName: "Võ Thị Lan", start: "18:00", end: "22:00", note: "Ca tối", status: "Chưa gửi" },
+            { id: "C009", date: "2025-07-18", empId: "NV009", empName: "Bùi Văn Minh", start: "07:00", end: "11:00", note: "-", status: "Đã gửi" },
+            { id: "C010", date: "2025-07-18", empId: "NV010", empName: "Phan Thị Ngọc", start: "13:00", end: "17:00", note: "-", status: "Chưa gửi" },
+            { id: "C011", date: "2025-07-19", empId: "NV011", empName: "Đỗ Văn Phúc", start: "18:00", end: "22:00", note: "-", status: "Đã gửi" },
+            { id: "C012", date: "2025-07-19", empId: "NV012", empName: "Ngô Thế Quân", start: "07:00", end: "11:00", note: "-", status: "Chưa gửi" },
+        ];
+
+        const tbody = document.getElementById('notification-table-body');
+        
+        // Render Function
+        function renderTable() {
+            let html = "";
+            tableData.forEach((row, index) => {
+                const rowClass = index % 2 === 0 ? "table-row-odd" : "table-row-even";
+                
+                // Badges
+                let statusHtml = "";
+                if(row.status === "Chưa gửi") {
+                    statusHtml = `<span class="bg-[#ffeaca] text-[#ce8b2c] px-4 py-1.5 rounded-full font-bold text-[12px] inline-block min-w-[90px] text-center">${row.status}</span>`;
+                } else {
+                    statusHtml = `<span class="bg-[#dff5e8] text-[#36b27e] px-4 py-1.5 rounded-full font-bold text-[12px] inline-block min-w-[90px] text-center">${row.status}</span>`;
+                }
+
+                html += `
+                    <tr class="${rowClass} border-b border-white hover:opacity-90 transition">
+                        <td><input type="checkbox" class="row-checkbox w-4 h-4 rounded text-[#8c5a35] cursor-pointer" data-index="${index}"></td>
+                        <td class="font-medium">${row.id}</td>
+                        <td>${row.date}</td>
+                        <td class="font-medium">${row.empId}</td>
+                        <td class="font-medium">${row.empName}</td>
+                        <td>${row.start}</td>
+                        <td>${row.end}</td>
+                        <td>${row.note}</td>
+                        <td>${statusHtml}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        renderTable();
+
+        // Checkbox Toggle All
+        function toggleAllChecks() {
+            const master = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(cb => cb.checked = master.checked);
+        }
+
+        // --- 2. Popup System ---
+        let popupTimer;
+        window.showPopup = function(msg, type, subMsg = "") {
+            const popup = document.getElementById('popup-notification');
+            const iconSuccess = document.getElementById('popup-icon-success');
+            const iconError = document.getElementById('popup-icon-error');
+            const textEl = document.getElementById('popup-msg');
+            const subTextEl = document.getElementById('popup-sub-msg');
+
+            // Reset
+            iconSuccess.classList.add('hidden');
+            iconError.classList.add('hidden');
+            subTextEl.classList.add('hidden');
+            clearTimeout(popupTimer);
+
+            // Populate
+            textEl.innerHTML = msg;
+            if (type === 'success') {
+                iconSuccess.classList.remove('hidden');
+                textEl.className = "text-[#2a2a2a] text-[32px] font-bold px-4 tracking-tight mt-2";
+            } else {
+                iconError.classList.remove('hidden');
+                textEl.className = "text-[#2a2a2a] text-[28px] font-bold px-4 tracking-tight mt-2 mb-1";
+                if(subMsg) {
+                    subTextEl.innerHTML = subMsg;
+                    subTextEl.classList.remove('hidden');
+                }
+            }
+
+            popup.classList.remove('hidden');
+            popup.classList.add('flex');
+            // Timeout to allow display:flex to apply before transition
+            setTimeout(() => popup.classList.remove('opacity-0'), 10);
+
+            // Auto close sau 2.5s
+            popupTimer = setTimeout(() => {
+                closePopup();
+            }, 3000);
+        };
+
+        window.closePopup = function() {
+            const popup = document.getElementById('popup-notification');
+            popup.classList.add('opacity-0');
+            setTimeout(() => {
+                popup.classList.add('hidden');
+                popup.classList.remove('flex');
+            }, 300);
+        }
+
+        // Action Handlers
+        window.sendNotification = function() {
+            // Lọc ra các checkbox đã được đánh dấu
+            const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+            if (checkboxes.length === 0) {
+                // Không chọn hàng nào thì không làm gì cả
+                return;
+            }
+            
+            // Xử lý logic chuyển đổi trạng thái "Chưa gửi" -> "Đã gửi"
+            checkboxes.forEach(cb => {
+                const idx = cb.getAttribute('data-index');
+                if(tableData[idx].status === 'Chưa gửi') {
+                    tableData[idx].status = 'Đã gửi';
+                }
+            });
+            
+            // Sau khi thay đổi trạng thái, render lại bảng & bỏ tick tất cả
+            renderTable();
+            document.getElementById('selectAll').checked = false;
+
+            // Hiển thị thông báo thành công
+            showPopup('Gửi thông báo thành công', 'success');
+        };
+
+    </script>
+</body>
+
+</html>
