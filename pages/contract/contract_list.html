@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đi Lạc Coffee - Quản lý hợp đồng</title>
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        heading: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            text: '#5c4133',
+                            dark: 'rgba(75, 46, 31, 0.87)',
+                            primary: '#8C5A41',
+                            light: '#f4ede7',
+                            active: '#d6b5a3',
+                            border: '#d2c5bc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .nav-item {
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-item.active {
+            font-weight: 700;
+            color: #d6b5a3;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: #d6b5a3;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body class="bg-[#fcfcfc] min-h-screen text-[23px] text-[#4B2E1F] flex flex-col font-sans">
+
+    <!-- Header Section -->
+    <header class="bg-white px-8 py-3 flex justify-between items-center sm:flex-row flex-col gap-4 border-b border-[#e5ddd4]">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center bg-[#4B2E1F]">
+                <img src="../../assets/images/logo.png" alt="Logo Đi Lạc" class="w-full h-full object-cover">
+            </div>
+            <h1 class="font-bold text-[27px] uppercase tracking-wider text-[#4B2E1F] m-0">ĐI LẠC COFFEE</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-[23px] text-[#4B2E1F]"><span class="italic font-medium">Xin chào, </span><span class="italic font-bold">Đi Lạc coffee</span></span>
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-[#4B2E1F] cursor-pointer transition">
+                <i class="fa-regular fa-circle-user text-[40px]"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold">
+        <a href="../dashboard.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Tổng quan</a>
+        <a href="../employee/employee_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Nhân viên</a>
+        <a href="contract_list.html" class="nav-item active py-[16px] transition-colors hover:text-[#d6b5a3]">Hợp đồng</a>
+        <a href="../schedule/schedule_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Lịch làm việc</a>
+        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
+        <a href="../salary/salary_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Bảng lương</a>
+        <a href="../report/report_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Báo cáo</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow p-8 max-w-[1600px] w-full mx-auto">
+        <div class="flex flex-col md:flex-row items-center justify-center md:justify-between gap-4 mb-6">
+            <div class="relative w-full md:w-[58%]">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                    <i class="fa-solid fa-magnifying-glass text-[18px]"></i>
+                </div>
+                <input type="text" id="searchInput" placeholder="Nhập tên nhân viên" class="w-full rounded-full border border-[#d2c5bc] bg-white py-3 pl-12 pr-4 text-[20px] text-[#4B2E1F] outline-none shadow-sm focus:border-[#78594A]">
+            </div>
+            <div class="flex gap-3 w-full md:w-auto justify-center md:justify-end">
+                <button class="bg-[#78594A] text-white px-6 py-3 rounded-full font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="searchBtn">Tìm kiếm</button>
+                <button class="bg-[#78594A] text-white px-6 py-3 rounded-full font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="addContractBtn">+ Thêm</button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[24px] shadow-sm border border-[#e5ddd4] overflow-hidden">
+            <div class="overflow-x-auto table-container">
+                <table class="w-full min-w-[1100px] text-center text-[#4B2E1F]">
+                    <thead>
+                        <tr class="bg-[#78594A] text-white text-[22px]">
+                            <th class="py-4 px-3">STT</th>
+                            <th class="py-4 px-4">Mã hợp đồng</th>
+                            <th class="py-4 px-4">Mã nhân viên</th>
+                            <th class="py-4 px-4">Tên nhân viên</th>
+                            <th class="py-4 px-4">Chức vụ</th>
+                            <th class="py-4 px-4">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-[20px]" id="contractTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Contract Detail Popup -->
+        <div id="contractDetailModal" class="fixed inset-0 bg-black/40 z-[80] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center px-4 py-6">
+            <div id="contractDetailContent" class="bg-white rounded-[20px] shadow-2xl w-full max-w-[600px] overflow-hidden transform scale-95 opacity-0 transition-all duration-300">
+                <div class="bg-[#78594A] px-6 py-4 flex items-center justify-between">
+                    <h3 class="text-white font-semibold text-[22px] m-0">Chi tiết hợp đồng</h3>
+                    <button id="closeDetailModal" class="text-white hover:text-[#e5e5e0] text-[20px]">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="px-6 pb-6 pt-5">
+                    <div class="flex items-center gap-4 rounded-[20px] bg-[#f4ede7] p-5 mb-5">
+                        <div class="w-14 h-14 rounded-full bg-white border border-[#d2c5bc] flex items-center justify-center text-[#78594A] text-[24px]">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div>
+                            <p id="detailEmployeeName" class="text-[20px] font-semibold text-[#4B2E1F]">-</p>
+                            <p id="detailEmployeeId" class="text-[#4B2E1F]/[0.75] text-[15px] mt-1">-</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-[1fr_auto] items-center rounded-[12px] bg-[#f3f0ed] px-4 py-4">
+                            <span class="text-[16px] font-semibold text-[#4B2E1F]">Mã hợp đồng</span>
+                            <span id="detailContractId" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
+                        </div>
+                        <div class="grid grid-cols-[1fr_auto] items-center rounded-[12px] bg-white px-4 py-4">
+                            <span class="text-[16px] font-semibold text-[#4B2E1F]">Loại hợp đồng</span>
+                            <span id="detailContractType" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
+                        </div>
+                        <div class="grid grid-cols-[1fr_auto] items-center rounded-[12px] bg-[#f3f0ed] px-4 py-4">
+                            <span class="text-[16px] font-semibold text-[#4B2E1F]">Ngày bắt đầu</span>
+                            <span id="detailStartDate" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
+                        </div>
+                        <div class="grid grid-cols-[1fr_auto] items-center rounded-[12px] bg-white px-4 py-4">
+                            <span class="text-[16px] font-semibold text-[#4B2E1F]">Ngày kết thúc</span>
+                            <span id="detailEndDate" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
+                        </div>
+                        <div class="grid grid-cols-[1fr_auto] items-center rounded-[12px] bg-[#f3f0ed] px-4 py-4">
+                            <span class="text-[16px] font-semibold text-[#4B2E1F]">Mức lương</span>
+                            <span id="detailSalary" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
+                        </div>
+                        <div class="grid grid-cols-[1fr_auto] items-center rounded-[12px] bg-white px-4 py-4">
+                            <span class="text-[16px] font-semibold text-[#4B2E1F]">Chức vụ</span>
+                            <span id="detailRole" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteConfirmModal" class="fixed inset-0 bg-black/40 z-[80] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center">
+            <div id="deleteConfirmContent" class="bg-white rounded-[20px] shadow-2xl w-full max-w-[440px] p-8 mx-4 flex flex-col items-center transform scale-95 opacity-0 transition-all duration-300">
+                <div class="w-16 h-16 bg-[#F05243] rounded-full flex items-center justify-center mb-4">
+                    <i class="fa-solid fa-triangle-exclamation text-white text-[28px]"></i>
+                </div>
+                <h3 class="text-[#4B2E1F] font-bold text-[22px] uppercase mb-2 tracking-wide">XÁC NHẬN XÓA</h3>
+                <p class="text-[#4B2E1F]/[0.85] text-[18px] text-center mb-8">Bạn có chắc chắn muốn xóa hợp đồng này?</p>
+                <div class="flex items-center gap-4 w-full justify-center">
+                    <button id="cancelDeleteBtn" class="bg-[#E5E5E5] text-[#4B2E1F] font-bold px-8 py-3 rounded-md hover:bg-[#d9d5d1] transition text-[18px] min-w-[120px]">Không</button>
+                    <button id="confirmDeleteBtn" class="bg-[#4B2E1F] text-white font-bold px-8 py-3 rounded-md hover:bg-[#3a271f] transition text-[18px] min-w-[120px]">Đồng ý</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../../assets/js/contract.js"></script>
+</body>
+
+</html>
