@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đi Lạc Coffee - Thêm Nhân viên</title>
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        heading: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            text: '#5c4133',
+                            dark: 'rgba(75, 46, 31, 0.87)', 
+                            primary: '#78594A', 
+                            light: '#f4ede7', 
+                            active: '#d6b5a3', 
+                            border: '#d2c5bc' 
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .nav-item {
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-item.active {
+            font-weight: 700;
+            color: #d6b5a3;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: #d6b5a3;
+            border-radius: 2px 2px 0 0;
+        }
+    </style>
+</head>
+
+<body class="bg-[#fcfcfc] min-h-screen text-[23px] text-gray-800 flex flex-col font-sans">
+
+    <!-- Header Section -->
+    <header class="bg-white px-8 py-3 flex justify-between items-center sm:flex-row flex-col gap-4 border-b border-gray-100">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center bg-[#2d221c]">
+                <img src="../../assets/images/logo.png" alt="Logo Đi Lạc" class="w-full h-full object-cover">
+            </div>
+            <h1 class="font-bold text-[26px] uppercase tracking-wider text-brand-text m-0">ĐI LẠC COFFEE</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-gray-800 text-[23px]"><span class="italic font-medium">Xin chào, </span><span class="italic font-bold">Đi Lạc coffee</span></span>
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition">
+                <i class="fa-regular fa-circle-user text-[40px]"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold">
+        <a href="../dashboard.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Tổng quan</a>
+        <a href="employee_list.html" class="nav-item active py-[16px] transition-colors hover:text-[#d6b5a3]">Nhân viên</a>
+        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Hợp đồng</a>
+        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Lịch làm việc</a>
+        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
+        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Bảng lương</a>
+        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Báo cáo</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow p-8 max-w-[1400px] w-full mx-auto">
+        <!-- Breadcrumbs -->
+        <div class="mb-4 text-gray-500 font-medium text-[20px]">
+            <a href="employee_list.html" class="hover:text-gray-800 transition"><i class="fa-solid fa-arrow-left text-[18px]"></i> Danh sách nhân viên</a>
+        </div>
+        
+        <!-- Page Title -->
+        <div class="mb-8 flex items-center uppercase font-bold text-[24px] text-brand-text">
+            <div class="w-1 h-6 bg-[#78594A] mr-3"></div>
+            Vui lòng nhập thông tin nhân viên
+        </div>
+
+        <!-- Layout Grid -->
+        <form id="employeeAddForm" class="flex flex-col md:flex-row gap-12">
+            <!-- Left Column: Avatar Placeholder -->
+            <div class="w-full md:w-1/3 flex flex-col items-center border-[2px] border-dashed border-gray-300 rounded-md p-10 bg-gray-50/50 justify-center h-[350px]">
+                <i class="fa-solid fa-user text-gray-400 text-[60px] mb-4"></i>
+            </div>
+
+            <!-- Right Column: Form Fields -->
+            <div class="w-full md:w-2/3 flex flex-col">
+                <div class="grid grid-cols-2 gap-x-10 gap-y-6 mb-6 text-[18px]">
+                    
+                    <!-- Họ và tên -->
+                    <div class="flex flex-col">
+                        <label class="font-bold text-gray-800 mb-2">Họ và tên <span class="text-red-500">*</span></label>
+                        <input type="text" id="empName" class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary placeholder:text-gray-400" placeholder="Nhập họ tên">
+                    </div>
+                    
+                    <!-- Chức vụ -->
+                    <div class="flex flex-col">
+                        <label class="font-bold text-gray-800 mb-2">Chức vụ <span class="text-red-500">*</span></label>
+                        <select id="empRole" class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary bg-white appearance-none">
+                            <option value="" disabled selected hidden></option>
+                            <option value="Pha chế">Pha chế</option>
+                            <option value="Phục vụ">Phục vụ</option>
+                            <option value="Giữ xe">Giữ xe</option>
+                            <option value="Quản lý">Quản lý</option>
+                        </select>
+                    </div>
+
+                    <!-- Giới tính -->
+                    <div class="flex flex-col">
+                        <label class="font-bold text-gray-800 mb-2">Giới tính <span class="text-red-500">*</span></label>
+                        <select id="empGender" class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary bg-white appearance-none">
+                            <option value="" disabled selected hidden></option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+
+                    <!-- Ngày sinh -->
+                    <div class="flex flex-col">
+                        <label class="font-bold text-gray-800 mb-2">Ngày sinh <span class="text-red-500">*</span></label>
+                        <!-- Thêm class text-gray-400 để ẩn text nếu chưa chọn (UX) nếu cần -->
+                        <input type="date" id="empDob" class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary text-gray-700">
+                    </div>
+
+                    <!-- Số CCCD -->
+                    <div class="flex flex-col">
+                        <label class="font-bold text-gray-800 mb-2">Số CCCD <span class="text-red-500">*</span></label>
+                        <input type="text" id="empCccd" class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary placeholder:text-gray-400" placeholder="Nhập CCCD">
+                    </div>
+
+                    <!-- Số điện thoại -->
+                    <div class="flex flex-col">
+                        <label class="font-bold text-gray-800 mb-2">Số điện thoại <span class="text-red-500">*</span></label>
+                        <input type="text" id="empPhone" class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary placeholder:text-gray-400" placeholder="">
+                    </div>
+                </div>
+
+                <!-- Địa chỉ thường trú -->
+                <div class="flex flex-col mb-6 text-[18px]">
+                    <label class="font-bold text-gray-800 mb-2">Địa chỉ thường trú <span class="text-red-500">*</span></label>
+                    <textarea id="empAddress" rows="2" class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary placeholder:text-gray-400 resize-none" placeholder="Nhập địa chỉ"></textarea>
+                </div>
+
+                <!-- Địa chỉ tạm trú -->
+                <div class="flex flex-col mb-8 text-[18px]">
+                    <label class="font-bold text-gray-800 mb-2">Địa chỉ tạm trú <span class="text-red-500">*</span></label>
+                    <textarea id="empTempAddress" rows="2" class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary placeholder:text-gray-400 resize-none" placeholder="Nhập địa chỉ"></textarea>
+                </div>
+
+
+
+                <!-- Submit Button -->
+                <div class="flex justify-end">
+                    <button type="submit" id="saveBtn" class="bg-[#78594A] text-white px-10 py-2 rounded-md font-bold text-[20px] shadow-sm hover:bg-[#5c4133] transition">
+                        Lưu
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </main>
+
+    <!-- Error Modal Popup -->
+    <div id="errorModal" class="fixed inset-0 bg-black/40 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div id="errorModalContent" class="bg-white rounded-[20px] shadow-2xl p-8 max-w-[420px] w-[90%] flex flex-col items-center transform scale-95 opacity-0 transition-all duration-300">
+            <!-- Red Error Icon -->
+            <div class="w-16 h-16 bg-[#F05243] rounded-full flex items-center justify-center mb-4">
+                <i class="fa-solid fa-xmark text-white text-[32px]"></i>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="text-[#8B6E60] font-bold text-[22px] uppercase mb-2 tracking-wide">THÔNG BÁO LỖI</h3>
+            
+            <!-- Message -->
+            <p id="errorText" class="text-gray-500 text-[18px] text-center mb-8 w-full">Xin vui lòng nhập đầy đủ thông tin !</p>
+            
+            <!-- Buttons -->
+            <div class="flex gap-4 w-full justify-center">
+                <button type="button" id="btnThoat" class="bg-[#E5E5E5] text-gray-700 font-bold px-8 py-2 rounded-md hover:bg-gray-300 transition text-[18px] min-w-[120px]">
+                    Thoát
+                </button>
+                <button type="button" id="btnQuayLai" class="bg-[#6B4B3E] text-white font-bold px-8 py-2 rounded-md hover:bg-[#5c4133] transition text-[18px] min-w-[120px]">
+                    Quay lại
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../assets/js/employee_add.js"></script>
+</body>
+</html>
