@@ -21,20 +21,20 @@ const payrolls = [
     { id: "ML0020", employeeId: "NV0020", employeeName: "Nguyễn Văn Vinh", month: "11/2025", totalSalary: 5000000, bonus: 450000, penalty: 0, status: "approved" }
 ];
 
-/* ===== DỮ LIỆU TÍNH LƯƠNG ===== */
 const attendanceData = [
-    { employeeId: "NV0001", employeeName: "Nguyễn Văn An", month: "01/2026", workedHours: 100, coefficient: 2.0, baseSalary: 8000000, hourlyRate: 20000 },
-    { employeeId: "NV0002", employeeName: "Trần Thị Bình", month: "01/2026", workedHours: 115, coefficient: 2.5, baseSalary: 8500000, hourlyRate: 22000 },
-    { employeeId: "NV0003", employeeName: "Lê Văn Cang", month: "01/2026", workedHours: 95.5, coefficient: 2.0, baseSalary: 7800000, hourlyRate: 18000 },
-
-    { employeeId: "NV0001", employeeName: "Nguyễn Văn An", month: "02/2026", workedHours: 110, coefficient: 2.0, baseSalary: 8000000, hourlyRate: 20000 },
-    { employeeId: "NV0002", employeeName: "Trần Thị Bình", month: "02/2026", workedHours: 108, coefficient: 2.5, baseSalary: 8500000, hourlyRate: 22000 },
-    { employeeId: "NV0003", employeeName: "Lê Văn Cang", month: "02/2026", workedHours: 90, coefficient: 2.0, baseSalary: 7800000, hourlyRate: 18000 }
+    { employeeId: "NV0001", employeeName: "Nguyễn Văn An", month: "01/2026", workedHours: 12, coefficient: 2.0, baseSalary: 8000000, hourlyRate: 20000 },
+    { employeeId: "NV0002", employeeName: "Trần Thị Bình", month: "01/2026", workedHours: 11, coefficient: 2.5, baseSalary: 8500000, hourlyRate: 22000 },
+    { employeeId: "NV0003", employeeName: "Lê Văn Cang", month: "01/2026", workedHours: 16, coefficient: 2.0, baseSalary: 7800000, hourlyRate: 18000 },
+    { employeeId: "NV0001", employeeName: "Nguyễn Văn An", month: "02/2026", workedHours: 20, coefficient: 2.0, baseSalary: 8000000, hourlyRate: 20000 },
+    { employeeId: "NV0002", employeeName: "Trần Thị Bình", month: "02/2026", workedHours: 20, coefficient: 2.5, baseSalary: 8500000, hourlyRate: 22000 },
+    { employeeId: "NV0003", employeeName: "Lê Văn Cang", month: "02/2026", workedHours: 30, coefficient: 2.0, baseSalary: 7800000, hourlyRate: 18000 }
 ];
 
 let selectedCalcEmployeeId = null;
 let currentSalaryDraft = null;
 let editingPayrollId = null;
+let currentFilter = "pending";
+let pendingDeleteId = null;
 
 const btnCalculateSalary = document.getElementById("btnCalculateSalary");
 const salaryCalcModal = document.getElementById("salaryCalcModal");
@@ -61,9 +61,6 @@ const detailBonus = document.getElementById("detailBonus");
 const detailPenalty = document.getElementById("detailPenalty");
 const detailNetSalary = document.getElementById("detailNetSalary");
 
-let currentFilter = "pending";
-let pendingDeleteId = null;
-
 const tableBody = document.getElementById("payrollTableBody");
 const monthFilter = document.getElementById("monthFilter");
 const searchInput = document.getElementById("searchInput");
@@ -78,14 +75,27 @@ const messagePopupBox = document.getElementById("messagePopupBox");
 const messagePopupText = document.getElementById("messagePopupText");
 const messagePopupIcon = document.getElementById("messagePopupIcon");
 
-const tableHeadRow = document.querySelector(".salary-table thead tr");
+const tableHeadRow = document.getElementById("salaryTableHeadRow");
+
+const salaryPage = document.getElementById("salaryPage");
+const exportPage = document.getElementById("exportPage");
+const btnExportSalary = document.getElementById("btnExportSalary");
+const btnBack = document.getElementById("btnBack");
+const exportTableBody = document.getElementById("exportTableBody");
+const exportMonth = document.getElementById("exportMonth");
+const btnPrintSalary = document.getElementById("btnPrintSalary");
+
+const calcErrorMode = {
+    fetchFailed: false,
+    saveFailed: false
+};
 
 function formatCurrency(value) {
-    return value.toLocaleString("vi-VN");
+    return Number(value || 0).toLocaleString("vi-VN");
 }
 
 function getNetSalary(item) {
-    return item.totalSalary + item.bonus - item.penalty;
+    return Number(item.totalSalary || 0) + Number(item.bonus || 0) - Number(item.penalty || 0);
 }
 
 function getSelectedMonthText() {
@@ -118,6 +128,8 @@ function shouldShowActionColumn() {
 }
 
 function renderTableHeader() {
+    if (!tableHeadRow) return;
+
     if (shouldShowActionColumn()) {
         tableHeadRow.innerHTML = `
             <th>STT</th>
@@ -149,14 +161,8 @@ function renderTableHeader() {
 }
 
 function renderStatus(status) {
-    if (status === "approved") {
-        return `<span class="status-approved-text">Đã duyệt</span>`;
-    }
-
-    if (status === "rejected") {
-        return `<span class="status-rejected-text">Đã từ chối</span>`;
-    }
-
+    if (status === "approved") return `<span class="status-approved-text">Đã duyệt</span>`;
+    if (status === "rejected") return `<span class="status-rejected-text">Đã từ chối</span>`;
     return `
         <div class="status-symbols">
             <span class="status-check">✓</span>
@@ -301,46 +307,20 @@ function handleDeleteClick(payrollId) {
 
 function softDeletePayroll(payrollId) {
     const payroll = payrolls.find((item) => item.id === payrollId);
-
-    if (!payroll) {
-        throw new Error("NOT_FOUND");
-    }
-
+    if (!payroll) throw new Error("NOT_FOUND");
     payroll.status = "deleted";
 }
 
 function approvePayroll(payrollId) {
     const payroll = payrolls.find((item) => item.id === payrollId);
-
-    if (!payroll) {
-        throw new Error("NOT_FOUND");
-    }
-
+    if (!payroll) throw new Error("NOT_FOUND");
     payroll.status = "approved";
 }
 
 function rejectPayroll(payrollId) {
     const payroll = payrolls.find((item) => item.id === payrollId);
-
-    if (!payroll) {
-        throw new Error("NOT_FOUND");
-    }
-
+    if (!payroll) throw new Error("NOT_FOUND");
     payroll.status = "rejected";
-}
-
-/*chỉnh sửa luong*/
-
-function parseMonthToInputValue(monthText) {
-    if (!monthText) return "";
-    const [month, year] = monthText.split("/");
-    return `${year}-${month}`;
-}
-
-function getAttendanceRecord(employeeId, monthText) {
-    return attendanceData.find(
-        item => item.employeeId === employeeId && item.month === monthText
-    );
 }
 
 function validateSalaryInputs(bonusValue, penaltyValue) {
@@ -349,20 +329,12 @@ function validateSalaryInputs(bonusValue, penaltyValue) {
 
     if (bonusValue === "" || Number.isNaN(bonus) || bonus < 0) {
         detailBonus.classList.add("input-error");
-        return {
-            valid: false,
-            field: "bonus",
-            message: "Tiền thưởng không hợp lệ, vui lòng nhập lại."
-        };
+        return { valid: false, message: "Tiền thưởng không hợp lệ, vui lòng nhập lại." };
     }
 
     if (penaltyValue === "" || Number.isNaN(penalty) || penalty < 0) {
         detailPenalty.classList.add("input-error");
-        return {
-            valid: false,
-            field: "penalty",
-            message: "Tiền phạt không hợp lệ, vui lòng nhập lại."
-        };
+        return { valid: false, message: "Tiền phạt không hợp lệ, vui lòng nhập lại." };
     }
 
     detailBonus.classList.remove("input-error");
@@ -375,16 +347,16 @@ function fillEditSalaryDetail(payroll) {
     editingPayrollId = payroll.id;
 
     currentSalaryDraft = {
-        id: payroll.id || "",
-        employeeId: payroll.employeeId || "",
-        employeeName: payroll.employeeName || "",
-        month: payroll.month || "",
-        baseSalary: payroll.baseSalary ?? payroll.totalSalary ?? 0,
-        coefficient: payroll.coefficient ?? 1,
-        hourlyRate: payroll.hourlyRate ?? 0,
-        workedHours: payroll.workedHours ?? 0,
-        bonus: payroll.bonus ?? 0,
-        penalty: payroll.penalty ?? 0,
+        id: payroll.id,
+        employeeId: payroll.employeeId,
+        employeeName: payroll.employeeName,
+        month: payroll.month,
+        baseSalary: payroll.totalSalary,
+        coefficient: 1,
+        hourlyRate: 0,
+        workedHours: 0,
+        bonus: payroll.bonus,
+        penalty: payroll.penalty,
         isEditMode: true
     };
 
@@ -394,47 +366,23 @@ function fillEditSalaryDetail(payroll) {
 
     detailBaseSalary.value = `${formatCurrency(currentSalaryDraft.baseSalary)} VNĐ`;
     detailCoefficient.value = currentSalaryDraft.coefficient;
-    detailHourlyRate.value = currentSalaryDraft.hourlyRate > 0
-        ? `${formatCurrency(currentSalaryDraft.hourlyRate)} VNĐ`
-        : "0 VNĐ";
+    detailHourlyRate.value = `${formatCurrency(currentSalaryDraft.hourlyRate)} VNĐ`;
     detailWorkedHours.value = currentSalaryDraft.workedHours;
-
     detailBonus.value = currentSalaryDraft.bonus;
     detailPenalty.value = currentSalaryDraft.penalty;
-
-    detailBaseSalary.readOnly = true;
-    detailCoefficient.readOnly = true;
-    detailHourlyRate.readOnly = true;
-    detailWorkedHours.readOnly = true;
-
-    detailBaseSalary.style.background = "#f8f8f8";
-    detailCoefficient.style.background = "#f8f8f8";
-    detailHourlyRate.style.background = "#f8f8f8";
-    detailWorkedHours.style.background = "#f8f8f8";
-
-    detailBonus.readOnly = false;
-    detailPenalty.readOnly = false;
-    detailBonus.style.background = "#ffffff";
-    detailPenalty.style.background = "#ffffff";
-
-    detailBonus.classList.remove("input-error");
-    detailPenalty.classList.remove("input-error");
 
     updateSalaryTotalPreview();
 }
 
 function updatePayroll(payrollId, payload) {
     const payroll = payrolls.find(item => item.id === payrollId);
-
-    if (!payroll) {
-        throw new Error("NOT_FOUND");
-    }
+    if (!payroll) throw new Error("NOT_FOUND");
 
     payroll.totalSalary = payload.totalSalary;
     payroll.bonus = payload.bonus;
     payroll.penalty = payload.penalty;
+    payroll.status = "pending";
 }
-
 function handleEditClick(payrollId) {
     const payroll = payrolls.find(item => item.id === payrollId);
 
@@ -452,13 +400,12 @@ function handleEditClick(payrollId) {
     openSalaryDetailPopup();
 }
 
-/* */
 function handleApproveClick(payrollId) {
     try {
         approvePayroll(payrollId);
         renderTable();
         showMessagePopup(`Đã duyệt bảng lương ${payrollId}`, "success");
-    } catch (error) {
+    } catch {
         showMessagePopup("Kết nối dữ liệu.<br>Vui lòng thử lại !!!", "error");
     }
 }
@@ -468,118 +415,11 @@ function handleRejectClick(payrollId) {
         rejectPayroll(payrollId);
         renderTable();
         showMessagePopup(`Đã từ chối bảng lương ${payrollId}`, "success");
-    } catch (error) {
+    } catch {
         showMessagePopup("Kết nối dữ liệu.<br>Vui lòng thử lại !!!", "error");
     }
 }
 
-
-btnConfirmDelete.addEventListener("click", () => {
-    if (!pendingDeleteId) return;
-
-    try {
-        const deletedId = pendingDeleteId;
-        softDeletePayroll(deletedId);
-        closeDeletePopup();
-        renderTable();
-        showMessagePopup(`Xóa bảng lương ${deletedId} thành công`, "success");
-    } catch (error) {
-        closeDeletePopup();
-        showMessagePopup("Kết nối dữ liệu.<br>Vui lòng thử lại !!!", "error");
-    }
-});
-
-btnCancelDelete.addEventListener("click", closeDeletePopup);
-
-deletePopup.addEventListener("click", (event) => {
-    if (event.target === deletePopup) {
-        closeDeletePopup();
-    }
-});
-
-filterTabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-        filterTabs.forEach((item) => item.classList.remove("active"));
-        tab.classList.add("active");
-        currentFilter = tab.dataset.status;
-        renderTable();
-    });
-});
-
-btnSearch.addEventListener("click", renderTable);
-
-searchInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-        renderTable();
-    }
-});
-
-monthFilter.addEventListener("change", renderTable);
-
-window.handleDeleteClick = handleDeleteClick;
-window.handleApproveClick = handleApproveClick;
-window.handleRejectClick = handleRejectClick;
-window.handleEditClick = handleEditClick;
-
-renderTable();
-
-
-/*In xuất lương */
-const btnExportSalary = document.getElementById("btnExportSalary");
-const exportPage = document.getElementById("exportPage");
-const exportTableBody = document.getElementById("exportTableBody");
-
-// mở màn export
-btnExportSalary.addEventListener("click", () => {
-    salaryPage.style.display = "none";
-    exportPage.style.display = "block";
-    renderExportTable();
-});
-
-// quay lại
-document.getElementById("btnBack").addEventListener("click", () => {
-    exportPage.style.display = "none";
-    salaryPage.style.display = "block";
-});
-
-
-function renderExportTable() {
-    const approvedList = payrolls.filter(p => p.status === "approved");
-
-    if (approvedList.length === 0) {
-        exportTableBody.innerHTML = `
-            <tr>
-                <td colspan="5">Không có dữ liệu đã duyệt</td>
-            </tr>
-        `;
-        return;
-    }
-
-    exportTableBody.innerHTML = approvedList.map(item => `
-        <tr>
-            <td><input type="checkbox"></td>
-            <td>${item.employeeId}</td>
-            <td>${item.employeeName}</td>
-            <td>${formatCurrency(getNetSalary(item))}</td>
-            <td style="color:green; font-weight:600;">Đã duyệt</td>
-        </tr>
-    `).join("");
-}
-
-
-/*Tính lương */
-/*TÍNH LƯƠNG */
-const salaryPage = document.getElementById("salaryPage"); // sửa cho rõ ràng
-const calcErrorMode = {
-    fetchFailed: false,
-    saveFailed: false
-};
-
-function monthInputToText(value) {
-    if (!value) return "";
-    const [year, month] = value.split("-");
-    return `${month}/${year}`;
-}
 
 function monthTextToCode(value) {
     if (!value) return "";
@@ -604,11 +444,10 @@ function getPayrollByEmployeeAndMonth(employeeId, monthText) {
 }
 
 function generatePayrollId(monthValue) {
-    const monthCode = monthTextToCode(monthValue); // ví dụ: 012026
-    const sameMonthCount = payrolls.filter(item => item.id.includes(`ML${monthCode}`)).length + 1;
-    return `ML${monthCode}${String(sameMonthCount).padStart(3, "0")}`;
+    const monthCode = monthTextToCode(monthValue); // 112025
+    const count = payrolls.length + 1;
+    return `ML${monthCode}${String(count).padStart(3, "0")}`;
 }
-
 function calculateNetSalaryFromDraft(draft) {
     return (draft.baseSalary * draft.coefficient) + (draft.workedHours * draft.hourlyRate) + draft.bonus - draft.penalty;
 }
@@ -642,6 +481,7 @@ function closeSalaryDetailPopup() {
     detailBonus.classList.remove("input-error");
     detailPenalty.classList.remove("input-error");
 }
+
 function openSalaryDetailPopup() {
     salaryDetailModal.classList.add("show");
 }
@@ -660,8 +500,6 @@ function renderCalcEmptyMessage(type = "empty") {
             </tr>
         `;
         btnStartCalc.disabled = true;
-        btnStartCalc.style.opacity = "0.6";
-        btnStartCalc.style.cursor = "not-allowed";
         return;
     }
 
@@ -677,8 +515,6 @@ function renderCalcEmptyMessage(type = "empty") {
         </tr>
     `;
     btnStartCalc.disabled = true;
-    btnStartCalc.style.opacity = "0.6";
-    btnStartCalc.style.cursor = "not-allowed";
 }
 
 function renderCalcTable() {
@@ -687,8 +523,6 @@ function renderCalcTable() {
     if (calcErrorMode.fetchFailed) {
         calcTableBody.innerHTML = "";
         btnStartCalc.disabled = true;
-        btnStartCalc.style.opacity = "0.6";
-        btnStartCalc.style.cursor = "not-allowed";
         showMessagePopup("Truy xuất dữ liệu không thành công,<br>vui lòng thử lại sau", "error");
         return;
     }
@@ -706,8 +540,6 @@ function renderCalcTable() {
     }
 
     btnStartCalc.disabled = false;
-    btnStartCalc.style.opacity = "1";
-    btnStartCalc.style.cursor = "pointer";
 
     calcTableBody.innerHTML = data.map((item, index) => `
         <tr class="calc-row ${selectedCalcEmployeeId === item.employeeId ? "selected" : ""}">
@@ -754,7 +586,8 @@ function fillSalaryDetail(data) {
         workedHours: data.workedHours,
         bonus: 0,
         penalty: 0,
-        totalSalary: (data.baseSalary * data.coefficient) + (data.workedHours * data.hourlyRate)
+        totalSalary: (data.baseSalary * data.coefficient) + (data.workedHours * data.hourlyRate),
+        isEditMode: false
     };
 
     salaryCodePreview.textContent = `Mã lương: ${salaryCode}`;
@@ -762,44 +595,19 @@ function fillSalaryDetail(data) {
     salaryMonthPreview.textContent = `Tháng: ${data.month}`;
 
     detailBaseSalary.value = `${formatCurrency(data.baseSalary)} VNĐ`;
-detailCoefficient.value = data.coefficient;
-detailHourlyRate.value = `${formatCurrency(data.hourlyRate)} VNĐ`;
-detailWorkedHours.value = data.workedHours;
-detailBonus.value = 0;
-detailPenalty.value = 0;
+    detailCoefficient.value = data.coefficient;
+    detailHourlyRate.value = `${formatCurrency(data.hourlyRate)} VNĐ`;
+    detailWorkedHours.value = data.workedHours;
+    detailBonus.value = 0;
+    detailPenalty.value = 0;
 
-editingPayrollId = null;
-currentSalaryDraft.isEditMode = false;
-
-detailBaseSalary.readOnly = true;
-detailCoefficient.readOnly = true;
-detailHourlyRate.readOnly = true;
-detailWorkedHours.readOnly = true;
-
-detailBaseSalary.style.background = "#f8f8f8";
-detailCoefficient.style.background = "#f8f8f8";
-detailHourlyRate.style.background = "#f8f8f8";
-detailWorkedHours.style.background = "#f8f8f8";
-
-detailBonus.readOnly = false;
-detailPenalty.readOnly = false;
-detailBonus.style.background = "#ffffff";
-detailPenalty.style.background = "#ffffff";
-
-detailBonus.classList.remove("input-error");
-detailPenalty.classList.remove("input-error");
-
-updateSalaryTotalPreview();
+    editingPayrollId = null;
+    updateSalaryTotalPreview();
 }
 
 function createPayrollFromDraft() {
-    if (!currentSalaryDraft) {
-        throw new Error("EMPTY_DRAFT");
-    }
-
-    if (calcErrorMode.saveFailed) {
-        throw new Error("SAVE_FAILED");
-    }
+    if (!currentSalaryDraft) throw new Error("EMPTY_DRAFT");
+    if (calcErrorMode.saveFailed) throw new Error("SAVE_FAILED");
 
     if (getPayrollByEmployeeAndMonth(currentSalaryDraft.employeeId, currentSalaryDraft.month)) {
         throw new Error("DUPLICATED_EMPLOYEE_MONTH");
@@ -817,28 +625,134 @@ function createPayrollFromDraft() {
     });
 }
 
-/* mở popup tính lương */
+function monthInputToText(value) {
+    if (!value) return "";
+    const [year, month] = value.split("-");
+    return `${month}/${year}`;
+}
+
+function renderExportTable() {
+    if (!exportTableBody) return;
+
+    const selectedMonth = getExportMonthText();
+
+    console.log("exportMonth.value =", exportMonth.value);
+    console.log("selectedMonth =", selectedMonth);
+    console.log("approved payrolls =", payrolls.filter(item => item.status === "approved"));
+
+    const approvedList = payrolls.filter(item => {
+        const matchStatus = item.status === "approved";
+        const matchMonth = !selectedMonth || item.month === selectedMonth;
+        return matchStatus && matchMonth;
+    });
+
+    console.log("approvedList =", approvedList);
+
+    if (approvedList.length === 0) {
+        exportTableBody.innerHTML = `
+            <tr>
+                <td colspan="5" class="export-empty-cell">
+                    <div class="export-empty-box">
+                        <div class="export-empty-icon">✕</div>
+                        <div class="export-empty-title">Không có bảng lương đã duyệt trong tháng này</div>
+                        <div class="export-empty-subtitle">Hiện tại không có dữ liệu phù hợp để xuất</div>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    exportTableBody.innerHTML = approvedList.map(item => `
+        <tr>
+            <td><input type="checkbox" class="export-check"></td>
+            <td>${item.employeeId}</td>
+            <td>${item.employeeName}</td>
+            <td>${formatCurrency(getNetSalary(item))}</td>
+            <td class="status-approved">Đã duyệt</td>
+        </tr>
+    `).join("");
+}
+
+btnConfirmDelete.addEventListener("click", () => {
+    if (!pendingDeleteId) return;
+
+    try {
+        const deletedId = pendingDeleteId;
+        softDeletePayroll(deletedId);
+        closeDeletePopup();
+        renderTable();
+        showMessagePopup(`Xóa bảng lương ${deletedId} thành công`, "success");
+    } catch {
+        closeDeletePopup();
+        showMessagePopup("Kết nối dữ liệu.<br>Vui lòng thử lại !!!", "error");
+    }
+});
+
+btnCancelDelete.addEventListener("click", closeDeletePopup);
+
+deletePopup.addEventListener("click", (event) => {
+    if (event.target === deletePopup) closeDeletePopup();
+});
+
+filterTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+        filterTabs.forEach((item) => item.classList.remove("active"));
+        tab.classList.add("active");
+        currentFilter = tab.dataset.status;
+        renderTable();
+    });
+});
+
+btnSearch.addEventListener("click", renderTable);
+
+searchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") renderTable();
+});
+
+monthFilter.addEventListener("change", renderTable);
+
+if (btnExportSalary && salaryPage && exportPage && exportTableBody) {
+    btnExportSalary.addEventListener("click", () => {
+        salaryPage.style.display = "none";
+        exportPage.style.display = "block";
+        renderExportTable();
+    });
+}
+
+if (btnBack && salaryPage && exportPage) {
+    btnBack.addEventListener("click", () => {
+        exportPage.style.display = "none";
+        salaryPage.style.display = "block";
+    });
+}
+
+if (exportMonth) {
+    exportMonth.addEventListener("change", renderExportTable);
+}
+
+if (btnPrintSalary) {
+    btnPrintSalary.addEventListener("click", () => {
+        window.print();
+    });
+}
+
 btnCalculateSalary.addEventListener("click", () => {
     openCalcSalaryModal();
 });
 
-/* đóng popup bước 1 */
 closeCalcModal.addEventListener("click", closeCalcSalaryModal);
 btnCancelCalc.addEventListener("click", closeCalcSalaryModal);
 
 salaryCalcModal.addEventListener("click", (event) => {
-    if (event.target === salaryCalcModal) {
-        closeCalcSalaryModal();
-    }
+    if (event.target === salaryCalcModal) closeCalcSalaryModal();
 });
 
-/* đổi tháng ở bước 1 */
 calcMonth.addEventListener("change", () => {
     selectedCalcEmployeeId = null;
     renderCalcTable();
 });
 
-/* nhấn nút Tính lương ở bước 1 */
 btnStartCalc.addEventListener("click", () => {
     const selectedMonthText = monthInputToText(calcMonth.value);
 
@@ -866,25 +780,19 @@ btnStartCalc.addEventListener("click", () => {
     }
 
     fillSalaryDetail(employeeAttendance);
-openSalaryDetailPopup();
+    openSalaryDetailPopup();
 });
 
-/* đóng popup bước 2 */
 closeSalaryDetailModal.addEventListener("click", closeSalaryDetailPopup);
 btnCancelSalaryDetail.addEventListener("click", closeSalaryDetailPopup);
 
 salaryDetailModal.addEventListener("click", (event) => {
-    if (event.target === salaryDetailModal) {
-        closeSalaryDetailPopup();
-    }
+    if (event.target === salaryDetailModal) closeSalaryDetailPopup();
 });
-
-/* thay đổi thưởng / phạt */
 
 detailBonus.addEventListener("input", updateSalaryTotalPreview);
 detailPenalty.addEventListener("input", updateSalaryTotalPreview);
 
-/* lưu bảng lương */
 btnSaveSalary.addEventListener("click", () => {
     try {
         const validation = validateSalaryInputs(detailBonus.value, detailPenalty.value);
@@ -894,9 +802,8 @@ btnSaveSalary.addEventListener("click", () => {
             return;
         }
 
-       currentSalaryDraft.bonus = validation.bonus;
-currentSalaryDraft.penalty = validation.penalty;
-
+        currentSalaryDraft.bonus = validation.bonus;
+        currentSalaryDraft.penalty = validation.penalty;
         updateSalaryTotalPreview();
 
         if (currentSalaryDraft.isEditMode && editingPayrollId) {
@@ -920,7 +827,6 @@ currentSalaryDraft.penalty = validation.penalty;
         closeSalaryDetailPopup();
         closeCalcSalaryModal();
         renderTable();
-
         showMessagePopup(`Tính lương tháng ${successMonth} thành công`, "success");
     } catch (error) {
         if (error.message === "DUPLICATED_EMPLOYEE_MONTH") {
@@ -933,46 +839,68 @@ currentSalaryDraft.penalty = validation.penalty;
 });
 
 
-/*drp lịch làm việc*/
-function toggleScheduleDropdown(event) {
-    event.stopPropagation();
+const btnChooseFormat = document.getElementById("btnChooseFormat");
+const formatDropdownMenu = document.getElementById("formatDropdownMenu");
+const btnExportPdf = document.getElementById("btnExportPdf");
+const btnExportExcel = document.getElementById("btnExportExcel");
+const btnDoExport = document.getElementById("btnDoExport");
 
-    const scheduleMenu = document.getElementById("scheduleDropdownMenu");
-    const reportMenu = document.getElementById("reportDropdownMenu");
+let selectedExportFormat = "";
 
-    if (reportMenu) {
-        reportMenu.classList.remove("show");
-    }
-
-    if (scheduleMenu) {
-        scheduleMenu.classList.toggle("show");
-    }
+if (btnChooseFormat && formatDropdownMenu) {
+    btnChooseFormat.addEventListener("click", (event) => {
+        event.stopPropagation();
+        formatDropdownMenu.classList.toggle("show");
+    });
 }
 
-function toggleReportDropdown(event) {
-    event.stopPropagation();
-
-    const scheduleMenu = document.getElementById("scheduleDropdownMenu");
-    const reportMenu = document.getElementById("reportDropdownMenu");
-
-    if (scheduleMenu) {
-        scheduleMenu.classList.remove("show");
-    }
-
-    if (reportMenu) {
-        reportMenu.classList.toggle("show");
-    }
+if (btnExportPdf) {
+    btnExportPdf.addEventListener("click", () => {
+        selectedExportFormat = "PDF";
+        btnChooseFormat.innerHTML = `PDF`;
+        formatDropdownMenu.classList.remove("show");
+    });
 }
 
-document.addEventListener("click", () => {
-    const scheduleMenu = document.getElementById("scheduleDropdownMenu");
-    const reportMenu = document.getElementById("reportDropdownMenu");
+if (btnExportExcel) {
+    btnExportExcel.addEventListener("click", () => {
+        selectedExportFormat = "Excel";
+        btnChooseFormat.innerHTML = `Excel`;
+        formatDropdownMenu.classList.remove("show");
+    });
+}
 
-    if (scheduleMenu) {
-        scheduleMenu.classList.remove("show");
-    }
+if (btnDoExport) {
+    btnDoExport.addEventListener("click", () => {
+        if (!selectedExportFormat) {
+            showMessagePopup("Vui lòng chọn định dạng trước khi xuất", "error");
+            return;
+        }
 
-    if (reportMenu) {
-        reportMenu.classList.remove("show");
+        showMessagePopup(`Đã chọn xuất file ${selectedExportFormat}`, "success");
+    });
+}
+
+document.addEventListener("click", (event) => {
+    if (
+        formatDropdownMenu &&
+        btnChooseFormat &&
+        !formatDropdownMenu.contains(event.target) &&
+        !btnChooseFormat.contains(event.target)
+    ) {
+        formatDropdownMenu.classList.remove("show");
     }
 });
+
+
+function getExportMonthText() {
+    if (!exportMonth.value) return "";
+    const [year, month] = exportMonth.value.split("-");
+    return `${month}/${year}`;
+}
+window.handleDeleteClick = handleDeleteClick;
+window.handleApproveClick = handleApproveClick;
+window.handleRejectClick = handleRejectClick;
+window.handleEditClick = handleEditClick;
+
+renderTable();

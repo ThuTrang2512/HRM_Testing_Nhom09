@@ -6,7 +6,6 @@
     <title>Đi Lạc Coffee - Bảng lương</title>
     <link rel="stylesheet" href="../assets/css/salary.css">
 
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -22,7 +21,6 @@
                 <div class="brand-name">ĐI LẠC COFFEE</div>
             </div>
 
-
             <div class="user-wrap">
                 <div class="hello-text">Xin chào, <strong>Đi Lạc coffee</strong></div>
                 <div class="user-avatar">
@@ -31,42 +29,38 @@
             </div>
         </header>
 
+        <nav class="main-nav">
+            <a href="../pages/dashboard.html" class="nav-link">Tổng quan</a>
+            <a href="../pages/employee.html" class="nav-link">Nhân viên</a>
+            <a href="../pages/contract.html" class="nav-link">Hợp đồng</a>
 
-       <nav class="main-nav">
-    <a href="../pages/dashboard.html" class="nav-link">Tổng quan</a>
-    <a href="#" class="nav-link">Nhân viên</a>
-    <a href="#" class="nav-link">Hợp đồng</a>
+            <div class="nav-dropdown-hover">
+                <div class="nav-link nav-link-dropdown">
+                    <span>Lịch làm việc</span>
+                    <i class="fa-solid fa-chevron-down nav-dropdown-icon"></i>
+                </div>
 
-    <!-- Lịch làm việc dropdown -->
-    <div class="nav-dropdown-hover">
-        <div class="nav-link nav-link-dropdown">
-            <span>Lịch làm việc</span>
-            <i class="fa-solid fa-chevron-down nav-dropdown-icon"></i>
-        </div>
+                <div class="nav-dropdown-hover-menu">
+                    <a href="../pages/schedule/schedule_list.html">Tạo lịch làm việc</a>
+                    <a href="../pages/schedule/schedule_notification.html">Gửi thông báo lịch làm việc</a>
+                </div>
+            </div>
 
-        <div class="nav-dropdown-hover-menu">
-            <a href="schedule/schedule_list.html">Tạo lịch làm việc</a>
-            <a href="schedule/schedule_notification.html">Gửi thông báo lịch làm việc</a>
-        </div>
-    </div>
+            <a href="../pages/request.html" class="nav-link">Yêu cầu</a>
+            <a href="../pages/salary.html" class="nav-link active">Bảng lương</a>
 
-    <a href="#" class="nav-link">Yêu cầu</a>
-    <a href="../pages/salary.html" class="nav-link active">Bảng lương</a>
+            <div class="nav-dropdown" id="baoCaoDropdown">
+                <div class="nav-link nav-link-dropdown" onclick="toggleDropdown()">
+                    <span>Báo cáo</span>
+                    <i class="fa-solid fa-chevron-down nav-dropdown-icon"></i>
+                </div>
 
-    <!-- Báo cáo dropdown -->
-    <div class="nav-dropdown" id="baoCaoDropdown">
-        <div class="nav-link nav-link-dropdown" onclick="toggleDropdown()">
-            <span>Báo cáo</span>
-            <i class="fa-solid fa-chevron-down nav-dropdown-icon"></i>
-        </div>
-
-        <div class="nav-dropdown-menu" id="baoCaoMenu">
-            <a href="report/report_salary.html">Báo cáo lương</a>
-            <a href="report/report_attendance.html">Báo cáo chấm công</a>
-        </div>
-    </div>
-</nav>
-
+                <div class="nav-dropdown-menu" id="baoCaoMenu">
+                    <a href="../pages/report/report_salary.html">Báo cáo lương</a>
+                    <a href="../pages/report/report_attendance.html">Báo cáo chấm công</a>
+                </div>
+            </div>
+        </nav>
 
         <!-- PAGE BẢNG LƯƠNG -->
         <main id="salaryPage" class="salary-page">
@@ -74,24 +68,20 @@
                 <div class="toolbar-row">
                     <input id="monthFilter" type="month" class="month-input" value="2025-11">
 
-
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <input id="searchInput" type="text" placeholder="Tìm kiếm">
                     </div>
-
 
                     <button id="btnSearch" class="action-btn" type="button">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <span>Tìm kiếm</span>
                     </button>
 
-
                     <button class="action-btn" id="btnCalculateSalary" type="button">
                         <i class="fa-regular fa-rectangle-list"></i>
                         <span>Tính lương</span>
                     </button>
-
 
                     <button class="action-btn" id="btnExportSalary" type="button">
                         <i class="fa-regular fa-file-lines"></i>
@@ -99,13 +89,11 @@
                     </button>
                 </div>
 
-
                 <div class="filter-tabs">
                     <button class="filter-tab active" data-status="pending">Đang chờ duyệt</button>
                     <button class="filter-tab" data-status="approved">Đã duyệt</button>
                     <button class="filter-tab" data-status="rejected">Đã từ chối</button>
                 </div>
-
 
                 <div class="table-wrap">
                     <table class="salary-table">
@@ -130,23 +118,22 @@
             </section>
         </main>
 
-
         <!-- PAGE XUẤT / IN PHIẾU LƯƠNG -->
         <main id="exportPage" class="salary-page" style="display:none;">
-            <section class="salary-panel">
+            <section class="salary-panel export-layout">
                 <h2 class="export-title">Xuất/In phiếu lương</h2>
-
 
                 <div class="export-toolbar">
                     <input id="exportMonth" type="month" class="month-input" value="2025-11">
                 </div>
 
-
-                <div class="table-wrap">
+                <div class="table-wrap export-table-wrap">
                     <table class="salary-table export-table">
                         <thead>
                             <tr>
-                                <th></th>
+                                <th class="checkbox-col">
+                                    <input type="checkbox" id="checkAllExport">
+                                </th>
                                 <th>Mã nhân viên</th>
                                 <th>Tên nhân viên</th>
                                 <th>Lương thực lĩnh</th>
@@ -157,26 +144,34 @@
                     </table>
                 </div>
 
+                <div class="export-controls">
+                    <button id="btnApproveExport" class="export-btn main-btn" type="button">Duyệt</button>
 
-                <div class="export-actions-row">
-                    <button id="btnApproveExport" class="action-btn export-main-btn" type="button">Duyệt</button>
+                    <div class="format-group">
+                        <div class="format-dropdown">
+                            <button id="btnChooseFormat" class="export-btn main-btn selected-format-btn" type="button">
+                                Chọn định dạng <span class="caret">▼</span>
+                            </button>
 
+                            <div id="formatDropdownMenu" class="format-dropdown-menu">
+                                <button id="btnExportPdf" class="dropdown-item" type="button">PDF</button>
+                                <button id="btnExportExcel" class="dropdown-item" type="button">Excel</button>
+                            </div>
+                        </div>
 
-                    <div class="export-actions-group">
-                        <button id="btnExportPdf" class="export-side-btn" type="button">PDF</button>
-                        <button id="btnExportExcel" class="export-side-btn" type="button">Excel</button>
-                        <button id="btnPrintSalary" class="export-side-btn" type="button">In</button>
+                        <button id="btnDoExport" class="export-btn sub-btn" type="button">Xuất</button>
+                        <button id="btnPrintSalary" class="export-btn main-btn" type="button">In</button>
                     </div>
                 </div>
 
-
-                <div class="export-bottom-row">
-                    <button id="btnBack" class="action-btn back-btn" type="button">Quay lại</button>
+                <div style="margin-top: 16px; text-align: right;">
+                    <button id="btnBack" class="action-btn" type="button" style="width:auto; min-width:100px;">
+                        Quay lại
+                    </button>
                 </div>
             </section>
         </main>
     </div>
-
 
     <!-- POPUP XÁC NHẬN XÓA -->
     <div id="deletePopup" class="popup-overlay">
@@ -185,14 +180,11 @@
                 <i class="fa-solid fa-exclamation"></i>
             </div>
 
-
             <h3 class="delete-popup-title">XÁC NHẬN XÓA</h3>
-
 
             <p class="delete-popup-text">
                 Bạn có chắc chắn muốn xóa bảng lương này?
             </p>
-
 
             <div class="delete-popup-actions">
                 <button id="btnCancelDelete" class="popup-btn popup-btn-cancel" type="button">Không</button>
@@ -200,7 +192,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- POPUP THÔNG BÁO -->
     <div id="messagePopup" class="message-popup-wrap">
@@ -212,7 +203,6 @@
         </div>
     </div>
 
-
     <!-- POPUP TÍNH LƯƠNG - BƯỚC 1 -->
     <div id="salaryCalcModal" class="popup-overlay">
         <div class="calc-modal">
@@ -221,13 +211,11 @@
                 <button id="closeCalcModal" type="button" class="calc-close-btn">&times;</button>
             </div>
 
-
             <div class="calc-modal-body">
                 <div class="calc-month-row">
                     <label for="calcMonth">Chọn tháng</label>
                     <input id="calcMonth" type="month" class="month-input" value="2026-01">
                 </div>
-
 
                 <div class="calc-table-wrap">
                     <table class="calc-table">
@@ -245,14 +233,12 @@
                 </div>
             </div>
 
-
             <div class="calc-modal-actions">
                 <button id="btnCancelCalc" type="button" class="calc-btn calc-btn-cancel">Hủy</button>
                 <button id="btnStartCalc" type="button" class="calc-btn calc-btn-confirm">Tính lương</button>
             </div>
         </div>
     </div>
-
 
     <!-- POPUP TÍNH LƯƠNG - BƯỚC 2 -->
     <div id="salaryDetailModal" class="popup-overlay">
@@ -265,12 +251,10 @@
                 <button id="closeSalaryDetailModal" type="button" class="calc-close-btn">&times;</button>
             </div>
 
-
             <div class="salary-detail-topbar">
                 <div id="salaryEmployeePreview" class="salary-detail-chip"></div>
                 <div id="salaryMonthPreview" class="salary-detail-chip"></div>
             </div>
-
 
             <div class="salary-detail-grid">
                 <div class="salary-field">
@@ -278,30 +262,25 @@
                     <input id="detailBaseSalary" type="text" readonly>
                 </div>
 
-
                 <div class="salary-field">
                     <label>Hệ số</label>
                     <input id="detailCoefficient" type="text" readonly>
                 </div>
-
 
                 <div class="salary-field">
                     <label>Lương / giờ</label>
                     <input id="detailHourlyRate" type="text" readonly>
                 </div>
 
-
                 <div class="salary-field">
                     <label>Giờ làm</label>
                     <input id="detailWorkedHours" type="text" readonly>
                 </div>
 
-
                 <div class="salary-field">
                     <label>Thưởng</label>
                     <input id="detailBonus" type="number" min="0" step="1000" value="0">
                 </div>
-
 
                 <div class="salary-field">
                     <label>Phạt</label>
@@ -309,12 +288,10 @@
                 </div>
             </div>
 
-
             <div class="salary-total-box">
                 <div class="salary-total-label">Tổng lương</div>
                 <div id="detailNetSalary" class="salary-total-value">0 VNĐ</div>
             </div>
-
 
             <div class="salary-detail-actions">
                 <button id="btnSaveSalary" type="button" class="calc-btn calc-btn-confirm">Lưu</button>
@@ -323,21 +300,19 @@
         </div>
     </div>
 
-
     <script>
-    function toggleDropdown() {
-        const dd = document.getElementById("baoCaoDropdown");
-        dd.classList.toggle("open");
-    }
-
-    document.addEventListener("click", function (e) {
-        const dd = document.getElementById("baoCaoDropdown");
-        if (dd && !dd.contains(e.target)) {
-            dd.classList.remove("open");
+        function toggleDropdown() {
+            const dd = document.getElementById("baoCaoDropdown");
+            dd.classList.toggle("open");
         }
-    });
-</script>
-<script src="../assets/js/salary.js"></script>
+
+        document.addEventListener("click", function (e) {
+            const dd = document.getElementById("baoCaoDropdown");
+            if (dd && !dd.contains(e.target)) {
+                dd.classList.remove("open");
+            }
+        });
+    </script>
+    <script src="../assets/js/salary.js"></script>
 </body>
 </html>
-
