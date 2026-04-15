@@ -1,18 +1,27 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
     const defaultContracts = [
-        { id: 'HD00001', employeeId: 'NV00001', employeeName: 'Nguyễn Văn An', employeeRole: 'Pha chế', contractType: 'Part-time', status: 'Hiệu lực', startDate: '25/12/2025', endDate: '25/12/2026', salary: '2.000.000', note: 'Ký hợp đồng 1 năm.' },
-        { id: 'HD00002', employeeId: 'NV00002', employeeName: 'Lê Hoài Bảo An', employeeRole: 'Giữ xe', contractType: 'Full-time', status: 'Hiệu lực', startDate: '01/03/2024', endDate: '01/03/2026', salary: '4.500.000', note: 'Hợp đồng chính thức.' },
-        { id: 'HD00003', employeeId: 'NV00003', employeeName: 'Trần Thị Mai Loan', employeeRole: 'Phục vụ', contractType: 'Part-time', status: 'Hết hạn', startDate: '01/05/2023', endDate: '30/04/2024', salary: '3.200.000', note: 'Đã hết hạn và chờ tái ký.' },
-        { id: 'HD00004', employeeId: 'NV00004', employeeName: 'Phạm Quang Bảo', employeeRole: 'Phục vụ', contractType: 'Full-time', status: 'Hiệu lực', startDate: '01/02/2024', endDate: '31/01/2025', salary: '4.000.000', note: '' },
-        { id: 'HD00005', employeeId: 'NV00005', employeeName: 'Nguyễn Viết Bảo', employeeRole: 'Pha chế', contractType: 'Full-time', status: 'Hiệu lực', startDate: '01/04/2024', endDate: '01/04/2026', salary: '4.800.000', note: '' },
-        { id: 'HD00006', employeeId: 'NV00006', employeeName: 'Lê Văn Nhật Anh', employeeRole: 'Giữ xe', contractType: 'Part-time', status: 'Chờ', startDate: '08/05/2024', endDate: '07/05/2025', salary: '2.500.000', note: 'Đang chờ ký hợp đồng cuối.' },
-        { id: 'HD00007', employeeId: 'NV00007', employeeName: 'Nguyễn Văn Anh', employeeRole: 'Pha chế', contractType: 'Part-time', status: 'Hiệu lực', startDate: '10/03/2024', endDate: '09/03/2025', salary: '2.200.000', note: '' },
-        { id: 'HD00008', employeeId: 'NV00008', employeeName: 'Trần Lê Văn Khoa', employeeRole: 'Giữ xe', contractType: 'Full-time', status: 'Hiệu lực', startDate: '05/04/2024', endDate: '04/04/2025', salary: '3.800.000', note: '' }
+        { id: 'HD00001', employeeId: 'NV00001', employeeName: 'Nguyễn Văn An', employeeRole: 'Pha chế', contractType: 'Part-time', status: 'Còn hạn', startDate: '25/12/2025', endDate: '25/12/2026', salary: '2.000.000', note: 'Ký hợp đồng 1 năm.' },
+        { id: 'HD00002', employeeId: 'NV00002', employeeName: 'Lê Hoài Bảo An', employeeRole: 'Giữ xe', contractType: 'Full-time', status: 'Còn hạn', startDate: '01/03/2024', endDate: '01/03/2026', salary: '4.500.000', note: 'Hợp đồng chính thức.' },
+        { id: 'HD00003', employeeId: 'NV00003', employeeName: 'Trần Thị Mai Loan', employeeRole: 'Phục vụ', contractType: 'Part-time', status: 'Hết hiệu lực', startDate: '01/05/2023', endDate: '30/04/2024', salary: '3.200.000', note: 'Đã hết hạn và chờ tái ký.' },
+        { id: 'HD00004', employeeId: 'NV00004', employeeName: 'Phạm Quang Bảo', employeeRole: 'Phục vụ', contractType: 'Full-time', status: 'Còn hạn', startDate: '01/02/2024', endDate: '31/01/2025', salary: '4.000.000', note: '' },
+        { id: 'HD00005', employeeId: 'NV00005', employeeName: 'Nguyễn Viết Bảo', employeeRole: 'Pha chế', contractType: 'Full-time', status: 'Còn hạn', startDate: '01/04/2024', endDate: '01/04/2026', salary: '4.800.000', note: '' },
+        { id: 'HD00006', employeeId: 'NV00006', employeeName: 'Lê Văn Nhật Anh', employeeRole: 'Giữ xe', contractType: 'Part-time', status: 'Sắp hiệu lực', startDate: '08/05/2024', endDate: '07/05/2025', salary: '2.500.000', note: 'Đang chờ ký hợp đồng cuối.' },
+        { id: 'HD00007', employeeId: 'NV00007', employeeName: 'Nguyễn Văn Anh', employeeRole: 'Pha chế', contractType: 'Part-time', status: 'Còn hạn', startDate: '10/03/2024', endDate: '09/03/2025', salary: '2.200.000', note: '' },
+        { id: 'HD00008', employeeId: 'NV00008', employeeName: 'Trần Lê Văn Khoa', employeeRole: 'Giữ xe', contractType: 'Full-time', status: 'Còn hạn', startDate: '05/04/2024', endDate: '04/04/2025', salary: '3.800.000', note: '' }
     ];
 
     let contracts = JSON.parse(localStorage.getItem('contracts'));
     if (!contracts) {
         contracts = defaultContracts;
+        localStorage.setItem('contracts', JSON.stringify(contracts));
+    } else {
+        // Update old statuses to new ones if they exist
+        contracts = contracts.map(c => {
+            if (c.status === 'Hiệu lực') c.status = 'Còn hạn';
+            if (c.status === 'Hết hạn') c.status = 'Hết hiệu lực';
+            if (c.status === 'Chờ') c.status = 'Sắp hiệu lực';
+            return c;
+        });
         localStorage.setItem('contracts', JSON.stringify(contracts));
     }
 
@@ -41,6 +50,15 @@
         const text = normalizeDetailValue(value, fallback);
         if (!text) return '';
         return text.endsWith('₫') || text.endsWith('VND') ? text : `${text} ₫`;
+    };
+
+    const getStatusStyle = (status) => {
+        if (!status) return 'bg-gray-100 text-gray-800';
+        const lower = status.toLowerCase();
+        if (lower === 'còn hạn') return 'bg-green-100 text-green-800';
+        if (lower === 'hết hiệu lực') return 'bg-red-100 text-red-800';
+        if (lower === 'sắp hiệu lực') return 'bg-yellow-100 text-yellow-800';
+        return 'bg-gray-100 text-gray-800';
     };
 
     const sampleContract = {
@@ -143,15 +161,19 @@
         const filteredContracts = getFilteredContracts();
         tableBody.innerHTML = filteredContracts.map((contract, index) => {
             return `
-                        <tr data-id="${contract.id}" class="${index % 2 === 0 ? 'bg-[#f4ede7]' : 'bg-white'} hover:bg-[#e8ddd4] transition-colors text-center text-gray-800 cursor-pointer">
+                <tr data-id="${contract.id}" class="${index % 2 === 0 ? 'bg-[#f4ede7]' : 'bg-white'} hover:bg-[#e8ddd4] transition-colors text-center text-gray-800 cursor-pointer">
                     <td class="py-4 px-2 border-r border-transparent">${index + 1}</td>
                     <td class="py-4 px-4 border-r border-transparent">${contract.id}</td>
                     <td class="py-4 px-4 border-r border-transparent">${contract.employeeId}</td>
                     <td class="py-4 px-4 border-r border-transparent text-center">${contract.employeeName}</td>
                     <td class="py-4 px-4 border-r border-transparent">${contract.employeeRole}</td>
+                    <td class="py-4 px-4 border-r border-transparent text-center">
+                        <span class="px-4 py-2 text-[16px] font-medium ${getStatusStyle(contract.status)} rounded-full inline-block">${contract.status}</span>
+                    </td>
                     <td class="py-4 px-4 text-[#4B2E1F]/80 flex items-center justify-center gap-4">
-                        <button class="text-[#4B2E1F] hover:text-black edit-btn" data-id="${contract.id}" title="Sửa"><i class="fa-solid fa-pen"></i></button>
-                        <button class="text-[#4B2E1F] hover:text-black delete-btn" data-id="${contract.id}" title="Xóa"><i class="fa-regular fa-trash-can"></i></button>
+                        <button class="action-btn view-btn" data-id="${contract.id}" title="Xem"><i class="fa-solid fa-eye"></i></button>
+                        <button class="action-btn edit-btn" data-id="${contract.id}" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                        <button class="action-btn delete-btn" data-id="${contract.id}" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `;
@@ -160,6 +182,15 @@
     };
 
     const bindTableActions = () => {
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const id = event.currentTarget.dataset.id;
+                const contract = contracts.find(c => c.id === id);
+                if (contract) showDetailModal(contract);
+            });
+        });
+
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', (event) => {
                 event.stopPropagation();
