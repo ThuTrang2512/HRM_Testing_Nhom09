@@ -53,12 +53,12 @@
     };
 
     const getStatusStyle = (status) => {
-        if (!status) return 'bg-gray-100 text-gray-800 border-gray-200';
+        if (!status) return 'bg-gray-100 text-gray-800';
         const lower = status.toLowerCase();
-        if (lower === 'còn hạn') return 'bg-[#EAF6ED] text-[#288647] border-[#CDEBD4] border font-bold';
-        if (lower === 'hết hiệu lực') return 'bg-[#FEECEB] text-[#D92D20] border-[#FCD2CF] border font-bold';
-        if (lower === 'sắp hiệu lực') return 'bg-[#EAF2FF] text-[#1E5EFF] border-[#CDE1FF] border font-bold';
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        if (lower === 'còn hạn') return 'bg-green-100 text-green-800';
+        if (lower === 'hết hiệu lực') return 'bg-red-100 text-red-800';
+        if (lower === 'sắp hiệu lực') return 'bg-yellow-100 text-yellow-800';
+        return 'bg-gray-100 text-gray-800';
     };
 
     const sampleContract = {
@@ -161,19 +161,19 @@
         const filteredContracts = getFilteredContracts();
         tableBody.innerHTML = filteredContracts.map((contract, index) => {
             return `
-                <tr data-id="${contract.id}" class="${index % 2 === 0 ? 'bg-[#fcfcfc]' : 'bg-white'} hover:bg-[#f4f4f4] transition-colors text-center text-[#4B2E1F] cursor-pointer border-b border-gray-100">
-                    <td class="py-5 px-2">${index + 1}</td>
-                    <td class="py-5 px-4">${contract.id}</td>
-                    <td class="py-5 px-4">${contract.employeeId}</td>
-                    <td class="py-5 px-4 text-center font-medium">${contract.employeeName}</td>
-                    <td class="py-5 px-4">${contract.employeeRole}</td>
-                    <td class="py-5 px-4 text-center">
-                        <span class="px-4 py-2 rounded-full text-[15px] ${getStatusStyle(contract.status)} shadow-sm whitespace-nowrap min-w-[120px] inline-block">${contract.status}</span>
+                <tr data-id="${contract.id}" class="${index % 2 === 0 ? 'bg-[#f4ede7]' : 'bg-white'} hover:bg-[#e8ddd4] transition-colors text-center text-gray-800 cursor-pointer">
+                    <td class="py-4 px-2 border-r border-transparent">${index + 1}</td>
+                    <td class="py-4 px-4 border-r border-transparent">${contract.id}</td>
+                    <td class="py-4 px-4 border-r border-transparent">${contract.employeeId}</td>
+                    <td class="py-4 px-4 border-r border-transparent text-center">${contract.employeeName}</td>
+                    <td class="py-4 px-4 border-r border-transparent">${contract.employeeRole}</td>
+                    <td class="py-4 px-4 border-r border-transparent text-center">
+                        <span class="px-3 py-1 text-[16px] font-medium ${getStatusStyle(contract.status)}">${contract.status}</span>
                     </td>
-                    <td class="py-5 px-4 flex items-center justify-center gap-3">
-                        <button class="w-10 h-10 rounded-full border-2 border-[#555] text-[#17a2b8] hover:bg-[#17a2b8] hover:text-white hover:border-[#17a2b8] transition flex items-center justify-center view-btn bg-white shadow-sm" data-id="${contract.id}" title="Xem"><i class="fa-solid fa-eye text-[16px]"></i></button>
-                        <button class="w-10 h-10 rounded-full border-2 border-[#555] text-[#333] hover:bg-[#333] hover:text-white hover:border-[#333] transition flex items-center justify-center edit-btn bg-white shadow-sm" data-id="${contract.id}" title="Sửa"><i class="fa-solid fa-pen text-[16px]"></i></button>
-                        <button class="w-10 h-10 rounded-full border-2 border-[#555] text-[#dc3545] hover:bg-[#dc3545] hover:text-white hover:border-[#dc3545] transition flex items-center justify-center delete-btn bg-white shadow-sm" data-id="${contract.id}" title="Xóa"><i class="fa-regular fa-trash-can text-[16px]"></i></button>
+                    <td class="py-4 px-4 text-[#4B2E1F]/80 flex items-center justify-center gap-4">
+                        <button class="action-btn view-btn" data-id="${contract.id}" title="Xem"><i class="fa-solid fa-eye"></i></button>
+                        <button class="action-btn edit-btn" data-id="${contract.id}" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                        <button class="action-btn delete-btn" data-id="${contract.id}" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `;

@@ -67,43 +67,52 @@
             border-radius: 4px;
         }
 
-        /* Dropdown nav */
-        .nav-dropdown {
-            position: relative;
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #222;
+            border-radius: 50%;
+            background: #fff;
+            margin: 0 4px;
+            font-size: 20px;
+            transition: background 0.2s, border-color 0.2s;
+            outline: none;
+            cursor: pointer;
+            padding: 0;
         }
-        .nav-dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            min-width: 200px;
-            z-index: 999;
-            overflow: hidden;
+
+        .action-btn:active {
+            transform: scale(0.96);
         }
-        .nav-dropdown.open .nav-dropdown-menu {
-            display: block;
+
+        .view-btn i {
+            color: #2196f3;
         }
-        .nav-dropdown-menu a {
-            display: block;
-            padding: 12px 20px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #4B2E1F;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            white-space: nowrap;
-            text-decoration: none;
-            transition: background 0.15s;
+
+        .edit-btn i {
+            color: #222;
         }
-        .nav-dropdown-menu a:hover {
-            background: #f5ede8;
+
+        .delete-btn i {
+            color: #f05243;
         }
-        .nav-dropdown-menu a + a {
-            border-top: 1px solid #f3f4f6;
+
+        .view-btn:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .edit-btn:hover {
+            background: #f3f0ed;
+            border-color: #222;
+        }
+
+        .delete-btn:hover {
+            background: #fdecea;
+            border-color: #f05243;
         }
     </style>
 </head>
@@ -131,28 +140,10 @@
         <a href="../dashboard.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Tổng quan</a>
         <a href="../employee/employee_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Nhân viên</a>
         <a href="contract_list.html" class="nav-item active py-[16px] transition-colors hover:text-[#d6b5a3]">Hợp đồng</a>
-        <!-- Lịch làm việc Dropdown -->
-        <div class="relative group cursor-pointer">
-            <div class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] flex items-center gap-2">
-                Lịch làm việc
-                <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
-            </div>
-            <!-- Dropdown menu -->
-            <div class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
-                <a href="../schedule/schedule_list.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium border-b border-gray-50">Tạo lịch làm việc</a>
-                <a href="../schedule/schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium">Gửi thông báo lịch làm việc</a>
-            </div>
-        </div>
-        <a href="../request.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
-        <a href="../salary.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Bảng lương</a>
-        <!-- Báo cáo dropdown -->
-        <div class="nav-dropdown nav-item py-[16px]" id="baoCaoDropdown">
-            <span class="cursor-pointer hover:text-[#d6b5a3] transition-colors select-none" onclick="toggleDropdown()">Báo cáo</span>
-            <div class="nav-dropdown-menu" id="baoCaoMenu">
-                <a href="../report/report_salary.html">Báo cáo lương</a>
-                <a href="../report/report_attendance.html">Báo cáo chấm công</a>
-            </div>
-        </div>
+        <a href="../schedule/schedule_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Lịch làm việc</a>
+        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
+        <a href="../salary/salary_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Bảng lương</a>
+        <a href="../report/report_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Báo cáo</a>
     </nav>
 
     <!-- Main Content -->
@@ -162,15 +153,15 @@
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
                     <i class="fa-solid fa-magnifying-glass text-[18px]"></i>
                 </div>
-                <input type="text" id="searchInput" placeholder="Nhập tên nhân viên" class="w-full rounded-full border border-[#d2c5bc] bg-white py-3 pl-12 pr-4 text-[20px] text-[#4B2E1F] outline-none shadow-sm focus:border-[#78594A]">
+                <input type="text" id="searchInput" placeholder="Nhập tên nhân viên" class="w-full rounded-md border border-[#d2c5bc] bg-white py-3 pl-12 pr-4 text-[20px] text-[#4B2E1F] outline-none shadow-sm focus:border-[#78594A]">
             </div>
             <div class="flex gap-3 w-full md:w-auto justify-center md:justify-end">
-                <button class="bg-[#78594A] text-white px-6 py-3 rounded-full font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="searchBtn">Tìm kiếm</button>
-                <button class="bg-[#78594A] text-white px-6 py-3 rounded-full font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="addContractBtn">+ Thêm</button>
+                <button class="bg-[#78594A] text-white px-6 py-3 rounded-md font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="searchBtn">Tìm kiếm</button>
+                <button class="bg-[#78594A] text-white px-6 py-3 rounded-md font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="addContractBtn">+ Thêm</button>
             </div>
         </div>
 
-        <div class="bg-white rounded-[24px] shadow-sm border border-[#e5ddd4] overflow-hidden">
+        <div class="bg-white rounded-md shadow-sm border border-[#e5ddd4] overflow-hidden">
             <div class="overflow-x-auto table-container">
                 <table class="w-full min-w-[1100px] text-center text-[#4B2E1F]">
                     <thead>
@@ -184,14 +175,31 @@
                             <th class="py-4 px-4">Hành động</th>
                         </tr>
                     </thead>
-                    <tbody class="text-[20px]" id="contractTableBody"></tbody>
+                    <tbody class="text-[20px]" id="contractTableBody">
+                        <!-- Các dòng hợp đồng sẽ được render bằng JS, ví dụ mẫu: -->
+                        <!--
+                        <tr>
+                            <td>1</td>
+                            <td>HD001</td>
+                            <td>NV001</td>
+                            <td>Nguyễn Văn A</td>
+                            <td>Nhân viên</td>
+                            <td><span class="status-label">Còn hạn</span></td>
+                            <td>
+                                <button class="action-btn view-btn" title="Xem"><i class="fa-solid fa-eye"></i></button>
+                                <button class="action-btn edit-btn" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                                <button class="action-btn delete-btn" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        -->
+                    </tbody>
                 </table>
             </div>
         </div>
 
         <!-- Contract Detail Popup -->
         <div id="contractDetailModal" class="fixed inset-0 bg-black/40 z-[80] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center px-4 py-6">
-            <div id="contractDetailContent" class="bg-white rounded-[20px] shadow-2xl w-full max-w-[600px] overflow-hidden transform scale-95 opacity-0 transition-all duration-300">
+            <div id="contractDetailContent" class="bg-white rounded-lg shadow-2xl w-full max-w-[600px] overflow-hidden transform scale-95 opacity-0 transition-all duration-300">
                 <div class="bg-[#78594A] px-6 py-4 flex items-center justify-between">
                     <h3 class="text-white font-semibold text-[22px] m-0">Chi tiết hợp đồng</h3>
                     <button id="closeDetailModal" class="text-white hover:text-[#e5e5e0] text-[20px]">
@@ -199,7 +207,7 @@
                     </button>
                 </div>
                 <div class="px-6 pb-6 pt-5">
-                    <div class="flex items-center gap-4 rounded-[20px] bg-[#f4ede7] p-5 mb-5">
+                    <div class="flex items-center gap-4 rounded-lg bg-[#f4ede7] p-5 mb-5">
                         <div class="w-14 h-14 rounded-full bg-white border border-[#d2c5bc] flex items-center justify-center text-[#78594A] text-[24px]">
                             <i class="fa-solid fa-user"></i>
                         </div>
@@ -209,27 +217,27 @@
                         </div>
                     </div>
                     <div class="space-y-3">
-                        <div class="grid grid-cols-[1fr_auto] items-center rounded-[12px] bg-[#f3f0ed] px-4 py-4">
+                        <div class="grid grid-cols-[1fr_auto] items-center rounded-lg bg-[#f3f0ed] px-4 py-4">
                             <span class="text-[16px] font-semibold text-[#4B2E1F]">Mã hợp đồng</span>
                             <span id="detailContractId" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
                         </div>
-                        <div class="grid grid-cols-[1fr_auto] items-center rounded-[12px] bg-white px-4 py-4">
+                        <div class="grid grid-cols-[1fr_auto] items-center rounded-lg bg-white px-4 py-4">
                             <span class="text-[16px] font-semibold text-[#4B2E1F]">Loại hợp đồng</span>
                             <span id="detailContractType" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
                         </div>
-                        <div class="grid grid-cols-[1fr_auto] items-center rounded-[12px] bg-[#f3f0ed] px-4 py-4">
+                        <div class="grid grid-cols-[1fr_auto] items-center rounded-lg bg-[#f3f0ed] px-4 py-4">
                             <span class="text-[16px] font-semibold text-[#4B2E1F]">Ngày bắt đầu</span>
                             <span id="detailStartDate" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
                         </div>
-                        <div class="grid grid-cols-[1fr_auto] items-center rounded-[12px] bg-white px-4 py-4">
+                        <div class="grid grid-cols-[1fr_auto] items-center rounded-lg bg-white px-4 py-4">
                             <span class="text-[16px] font-semibold text-[#4B2E1F]">Ngày kết thúc</span>
                             <span id="detailEndDate" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
                         </div>
-                        <div class="grid grid-cols-[1fr_auto] items-center rounded-[12px] bg-[#f3f0ed] px-4 py-4">
+                        <div class="grid grid-cols-[1fr_auto] items-center rounded-lg bg-[#f3f0ed] px-4 py-4">
                             <span class="text-[16px] font-semibold text-[#4B2E1F]">Mức lương</span>
                             <span id="detailSalary" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
                         </div>
-                        <div class="grid grid-cols-[1fr_auto] items-center rounded-[12px] bg-white px-4 py-4">
+                        <div class="grid grid-cols-[1fr_auto] items-center rounded-lg bg-white px-4 py-4">
                             <span class="text-[16px] font-semibold text-[#4B2E1F]">Chức vụ</span>
                             <span id="detailRole" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
                         </div>
@@ -240,7 +248,7 @@
 
         <!-- Delete Confirmation Modal -->
         <div id="deleteConfirmModal" class="fixed inset-0 bg-black/40 z-[80] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center">
-            <div id="deleteConfirmContent" class="bg-white rounded-[20px] shadow-2xl w-full max-w-[440px] p-8 mx-4 flex flex-col items-center transform scale-95 opacity-0 transition-all duration-300">
+            <div id="deleteConfirmContent" class="bg-white rounded-lg shadow-2xl w-full max-w-[440px] p-8 mx-4 flex flex-col items-center transform scale-95 opacity-0 transition-all duration-300">
                 <div class="w-16 h-16 bg-[#F05243] rounded-full flex items-center justify-center mb-4">
                     <i class="fa-solid fa-triangle-exclamation text-white text-[28px]"></i>
                 </div>
@@ -254,19 +262,6 @@
         </div>
     </main>
 
-    <script>
-        function toggleDropdown() {
-            const dd = document.getElementById('baoCaoDropdown');
-            dd.classList.toggle('open');
-        }
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            const dd = document.getElementById('baoCaoDropdown');
-            if (dd && !dd.contains(e.target)) {
-                dd.classList.remove('open');
-            }
-        });
-    </script>
     <script src="../../assets/js/contract.js"></script>
 </body>
 
