@@ -1,6 +1,6 @@
 const requests = [
     {
-        id: "DK000001",
+        id: "YC000001",
         employeeId: "NV001",
         employeeName: "Nguyễn Văn An",
         type: "Nghỉ phép",
@@ -12,7 +12,7 @@ const requests = [
         rejectReason: ""
     },
     {
-        id: "DK000002",
+        id: "YC000002",
         employeeId: "NV002",
         employeeName: "Nguyễn Thanh Anh",
         type: "Nghỉ phép",
@@ -24,7 +24,7 @@ const requests = [
         rejectReason: ""
     },
     {
-        id: "DK000003",
+        id: "YC000003",
         employeeId: "NV003",
         employeeName: "Nguyễn Văn Anh",
         type: "Nghỉ phép",
@@ -36,7 +36,7 @@ const requests = [
         rejectReason: ""
     },
     {
-        id: "DK000004",
+        id: "YC000004",
         employeeId: "NV004",
         employeeName: "Nguyễn Thị Anh",
         type: "Đăng ký ca",
@@ -48,7 +48,7 @@ const requests = [
         rejectReason: ""
     },
     {
-        id: "DK000005",
+        id: "YC000005",
         employeeId: "NV005",
         employeeName: "Nguyễn Văn Ánh",
         type: "Nghỉ phép",
@@ -60,7 +60,7 @@ const requests = [
         rejectReason: ""
     },
     {
-        id: "DK000006",
+        id: "YC000006",
         employeeId: "NV006",
         employeeName: "Trần Minh Quân",
         type: "Đăng ký ca",
@@ -72,7 +72,7 @@ const requests = [
         rejectReason: ""
     },
     {
-        id: "DK000007",
+        id: "YC000007",
         employeeId: "NV007",
         employeeName: "Lê Thị Hồng",
         type: "Nghỉ phép",
