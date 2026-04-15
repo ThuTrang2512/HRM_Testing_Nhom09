@@ -525,6 +525,10 @@ function closeCalcSalaryModal() {
 function openCalcSalaryModal() {
     salaryCalcModal.classList.add("show");
     selectedCalcEmployeeId = null;
+
+    if (calcMonthSelect) calcMonthSelect.value = "";
+    if (calcYearSelect) calcYearSelect.value = "";
+
     calcTableBody.innerHTML = `
         <tr>
             <td colspan="5" style="text-align:center; padding:20px;">
@@ -534,7 +538,6 @@ function openCalcSalaryModal() {
     `;
     btnStartCalc.disabled = true;
 }
-
 function closeSalaryDetailPopup() {
     salaryDetailModal.classList.remove("show");
     currentSalaryDraft = null;
