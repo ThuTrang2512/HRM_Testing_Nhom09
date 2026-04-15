@@ -168,7 +168,7 @@
                     <td class="py-4 px-4 border-r border-transparent text-center">${contract.employeeName}</td>
                     <td class="py-4 px-4 border-r border-transparent">${contract.employeeRole}</td>
                     <td class="py-4 px-4 border-r border-transparent text-center">
-                        <span class="px-3 py-1 text-[16px] font-medium ${getStatusStyle(contract.status)}">${contract.status}</span>
+                        <span class="px-4 py-2 text-[16px] font-medium ${getStatusStyle(contract.status)} rounded-full inline-block">${contract.status}</span>
                     </td>
                     <td class="py-4 px-4 text-[#4B2E1F]/80 flex items-center justify-center gap-4">
                         <button class="action-btn view-btn" data-id="${contract.id}" title="Xem"><i class="fa-solid fa-eye"></i></button>
