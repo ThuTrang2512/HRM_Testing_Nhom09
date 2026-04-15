@@ -58,6 +58,42 @@
             border-radius: 2px 2px 0 0;
         }
 
+        @keyframes slideOut {
+            to {
+                opacity: 0;
+                transform: translateX(400px);
+            }
+        }
+
+        /* Toast styles */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10B981;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            max-width: 400px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #toast .toast-icon {
+            margin-right: 12px;
+        }
+
         .table-container::-webkit-scrollbar {
             height: 8px;
         }
@@ -148,17 +184,15 @@
 
     <!-- Main Content -->
     <main class="flex-grow p-8 max-w-[1600px] w-full mx-auto">
-        <div class="flex flex-col lg:flex-row items-center justify-center gap-4 mb-6 px-4">
-            <div class="relative flex-1 max-w-[500px]">
+        <div class="flex items-center justify-center gap-4 mb-6 px-4">
+            <div class="relative max-w-[750px] flex-1">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
                     <i class="fa-solid fa-magnifying-glass text-[18px]"></i>
                 </div>
                 <input type="text" id="searchInput" placeholder="Nhập tên nhân viên" class="w-full rounded-md border border-[#d2c5bc] bg-white py-3 pl-12 pr-4 text-[20px] text-[#4B2E1F] outline-none shadow-sm focus:border-[#78594A]">
             </div>
-            <div class="flex gap-3">
-                <button class="bg-[#78594A] text-white px-6 py-3 rounded-md font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="searchBtn">Tìm kiếm</button>
-                <button class="bg-[#78594A] text-white px-6 py-3 rounded-md font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="addContractBtn">+ Thêm</button>
-            </div>
+            <button class="bg-[#78594A] text-white px-6 py-3 rounded-md font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="searchBtn">Tìm kiếm</button>
+            <button class="bg-[#78594A] text-white px-6 py-3 rounded-md font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="addContractBtn">+ Thêm</button>
         </div>
 
         <div class="bg-white rounded-md shadow-sm border border-[#e5ddd4] overflow-hidden">
@@ -197,54 +231,6 @@
             </div>
         </div>
 
-        <!-- Contract Detail Popup -->
-        <div id="contractDetailModal" class="fixed inset-0 bg-black/40 z-[80] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center px-4 py-6">
-            <div id="contractDetailContent" class="bg-white rounded-lg shadow-2xl w-full max-w-[600px] overflow-hidden transform scale-95 opacity-0 transition-all duration-300">
-                <div class="bg-[#78594A] px-6 py-4 flex items-center justify-between">
-                    <h3 class="text-white font-semibold text-[22px] m-0">Chi tiết hợp đồng</h3>
-                    <button id="closeDetailModal" class="text-white hover:text-[#e5e5e0] text-[20px]">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="px-6 pb-6 pt-5">
-                    <div class="flex items-center gap-4 rounded-lg bg-[#f4ede7] p-5 mb-5">
-                        <div class="w-14 h-14 rounded-full bg-white border border-[#d2c5bc] flex items-center justify-center text-[#78594A] text-[24px]">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <div>
-                            <p id="detailEmployeeName" class="text-[20px] font-semibold text-[#4B2E1F]">-</p>
-                            <p id="detailEmployeeId" class="text-[#4B2E1F]/[0.75] text-[15px] mt-1">-</p>
-                        </div>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="grid grid-cols-[1fr_auto] items-center rounded-lg bg-[#f3f0ed] px-4 py-4">
-                            <span class="text-[16px] font-semibold text-[#4B2E1F]">Mã hợp đồng</span>
-                            <span id="detailContractId" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
-                        </div>
-                        <div class="grid grid-cols-[1fr_auto] items-center rounded-lg bg-white px-4 py-4">
-                            <span class="text-[16px] font-semibold text-[#4B2E1F]">Loại hợp đồng</span>
-                            <span id="detailContractType" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
-                        </div>
-                        <div class="grid grid-cols-[1fr_auto] items-center rounded-lg bg-[#f3f0ed] px-4 py-4">
-                            <span class="text-[16px] font-semibold text-[#4B2E1F]">Ngày bắt đầu</span>
-                            <span id="detailStartDate" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
-                        </div>
-                        <div class="grid grid-cols-[1fr_auto] items-center rounded-lg bg-white px-4 py-4">
-                            <span class="text-[16px] font-semibold text-[#4B2E1F]">Ngày kết thúc</span>
-                            <span id="detailEndDate" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
-                        </div>
-                        <div class="grid grid-cols-[1fr_auto] items-center rounded-lg bg-[#f3f0ed] px-4 py-4">
-                            <span class="text-[16px] font-semibold text-[#4B2E1F]">Mức lương</span>
-                            <span id="detailSalary" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
-                        </div>
-                        <div class="grid grid-cols-[1fr_auto] items-center rounded-lg bg-white px-4 py-4">
-                            <span class="text-[16px] font-semibold text-[#4B2E1F]">Chức vụ</span>
-                            <span id="detailRole" class="text-[#4B2E1F] text-[16px] font-semibold">-</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Delete Confirmation Modal -->
         <div id="deleteConfirmModal" class="fixed inset-0 bg-black/40 z-[80] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center">
@@ -260,7 +246,118 @@
                 </div>
             </div>
         </div>
+
+        <!-- Contract Detail View Modal (Read-only) -->
+        <div id="contractDetailViewModal" class="fixed inset-0 bg-black/40 z-[100] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center overflow-y-auto">
+            <div class="bg-white rounded-lg shadow-2xl w-full max-w-[1000px] m-4 opacity-0 scale-95 transition-all duration-300" id="contractDetailViewContent">
+                <div class="p-8">
+                    <div class="mb-8">
+                        <button id="closeDetailViewBtn" class="inline-flex items-center text-brand-text bg-brand-light px-4 py-[6px] rounded-full font-bold text-[15px] hover:bg-[#e6ddd5] transition mb-5">
+                            <i class="fa-solid fa-arrow-left text-sm mr-2 mt-[1px]"></i>
+                            Danh sách hợp đồng lao động
+                        </button>
+                        <h2 class="text-[22px] font-bold text-brand-text border-l-[5px] border-brand-primary pl-3 h-[28px] leading-[28px] uppercase">
+                            CHI TIẾT HỢP ĐỒNG LAO ĐỘNG
+                        </h2>
+                    </div>
+
+                    <form class="flex flex-col gap-6 text-[15px]">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
+                            <!-- Row 1 -->
+                            <div class="flex flex-col">
+                                <label class="font-bold text-[#8C6F60] mb-2">Mã hợp đồng</label>
+                                <input type="text" id="viewContractId" disabled class="bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-500 font-medium focus:outline-none">
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold text-[#8C6F60] mb-2">Mã nhân viên</label>
+                                <input type="text" id="viewEmployeeId" disabled class="bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-500 font-medium focus:outline-none">
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold text-[#8C6F60] mb-2">Tên nhân viên <span class="text-red-500">*</span></label>
+                                <input type="text" id="viewEmployeeName" disabled class="bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-500 font-medium focus:outline-none">
+                            </div>
+
+                            <!-- Row 2 -->
+                            <div class="flex flex-col relative">
+                                <label class="font-bold text-[#8C6F60] mb-2">Loại hợp đồng <span class="text-red-500">*</span></label>
+                                <input type="text" id="viewContractType" disabled class="bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-500 font-medium focus:outline-none">
+                            </div>
+                            <div class="flex flex-col relative">
+                                <label class="font-bold text-[#8C6F60] mb-2">Mức lương</label>
+                                <div class="relative">
+                                    <input type="text" id="viewSalary" disabled class="w-full bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] pr-14 text-gray-500 font-medium focus:outline-none">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">VND</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold text-[#8C6F60] mb-2">Ngày bắt đầu <span class="text-red-500">*</span></label>
+                                <input type="date" id="viewStartDate" disabled class="bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-500 font-medium focus:outline-none">
+                            </div>
+
+                            <!-- Row 3 -->
+                            <div class="flex flex-col relative">
+                                <label class="font-bold text-[#8C6F60] mb-2">Lương cơ bản <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <input type="text" id="viewBaseSalary" disabled class="w-full bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] pr-14 text-gray-500 font-medium focus:outline-none">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">VND</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col relative">
+                                <label class="font-bold text-[#8C6F60] mb-2">Lương theo giờ</label>
+                                <div class="relative">
+                                    <input type="text" id="viewHourSalary" disabled class="w-full bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] pr-14 text-gray-500 font-medium focus:outline-none">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">VND</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold text-[#8C6F60] mb-2">Ngày kết thúc <span class="text-red-500">*</span></label>
+                                <input type="date" id="viewEndDate" disabled class="bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-500 font-medium focus:outline-none">
+                            </div>
+
+                            <!-- Row 4 -->
+                            <div class="flex flex-col">
+                                <label class="font-bold text-[#8C6F60] mb-2">Số giờ làm tối thiểu <span class="text-red-500">*</span></label>
+                                <input type="text" id="viewMinHour" disabled class="bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-500 font-medium focus:outline-none">
+                            </div>
+                            <div class="flex flex-col relative">
+                                <label class="font-bold text-[#8C6F60] mb-2">Chế độ thưởng</label>
+                                <div class="relative">
+                                    <input type="text" id="viewBonus" disabled class="w-full bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] pr-14 text-gray-500 font-medium focus:outline-none">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">VND</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col relative">
+                                <label class="font-bold text-[#8C6F60] mb-2">Chức vụ <span class="text-red-500">*</span></label>
+                                <input type="text" id="viewEmployeeRole" disabled class="bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-500 font-medium focus:outline-none">
+                            </div>
+
+                            <!-- Row 5 -->
+                            <div class="flex flex-col relative">
+                                <label class="font-bold text-[#8C6F60] mb-2">Địa điểm làm việc <span class="text-red-500">*</span></label>
+                                <input type="text" id="viewWorkplace" disabled class="bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-500 font-medium focus:outline-none" value="24 Nguyễn Công Trứ">
+                            </div>
+                            <div class="flex flex-col relative">
+                                <label class="font-bold text-[#8C6F60] mb-2">Ghi chú</label>
+                                <textarea id="viewNote" disabled rows="1" class="w-full bg-[#F8F9FA] border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-500 font-medium focus:outline-none min-h-[46px] resize-y"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-5 mt-10 mb-2">
+                            <button type="button" id="closeDetailViewFormBtn" class="bg-[#E4E6E8] text-gray-700 uppercase px-6 py-[10px] rounded-[10px] font-bold text-[15px] hover:bg-[#78594A] hover:text-white transition">
+                                ĐÓNG
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </main>
+
+    <!-- Toast Notification -->
+    <div id="toast">
+        <i class="fa-solid fa-check toast-icon"></i>
+        <span id="toastMessage"></span>
+    </div>
 
     <script src="../../assets/js/contract.js"></script>
 </body>
