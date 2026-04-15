@@ -66,6 +66,45 @@
             background-color: #cbd5e1;
             border-radius: 4px;
         }
+
+        /* Dropdown nav */
+        .nav-dropdown {
+            position: relative;
+        }
+        .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            min-width: 200px;
+            z-index: 999;
+            overflow: hidden;
+        }
+        .nav-dropdown.open .nav-dropdown-menu {
+            display: block;
+        }
+        .nav-dropdown-menu a {
+            display: block;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #4B2E1F;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+        .nav-dropdown-menu a:hover {
+            background: #f5ede8;
+        }
+        .nav-dropdown-menu a + a {
+            border-top: 1px solid #f3f4f6;
+        }
     </style>
 </head>
 
@@ -92,10 +131,28 @@
         <a href="../dashboard.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Tổng quan</a>
         <a href="../employee/employee_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Nhân viên</a>
         <a href="contract_list.html" class="nav-item active py-[16px] transition-colors hover:text-[#d6b5a3]">Hợp đồng</a>
-        <a href="../schedule/schedule_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Lịch làm việc</a>
-        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
-        <a href="../salary/salary_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Bảng lương</a>
-        <a href="../report/report_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Báo cáo</a>
+        <!-- Lịch làm việc Dropdown -->
+        <div class="relative group cursor-pointer">
+            <div class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] flex items-center gap-2">
+                Lịch làm việc
+                <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
+            </div>
+            <!-- Dropdown menu -->
+            <div class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
+                <a href="../schedule/schedule_list.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium border-b border-gray-50">Tạo lịch làm việc</a>
+                <a href="../schedule/schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium">Gửi thông báo lịch làm việc</a>
+            </div>
+        </div>
+        <a href="../request.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
+        <a href="../salary.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Bảng lương</a>
+        <!-- Báo cáo dropdown -->
+        <div class="nav-dropdown nav-item py-[16px]" id="baoCaoDropdown">
+            <span class="cursor-pointer hover:text-[#d6b5a3] transition-colors select-none" onclick="toggleDropdown()">Báo cáo</span>
+            <div class="nav-dropdown-menu" id="baoCaoMenu">
+                <a href="../report/report_salary.html">Báo cáo lương</a>
+                <a href="../report/report_attendance.html">Báo cáo chấm công</a>
+            </div>
+        </div>
     </nav>
 
     <!-- Main Content -->
@@ -196,6 +253,19 @@
         </div>
     </main>
 
+    <script>
+        function toggleDropdown() {
+            const dd = document.getElementById('baoCaoDropdown');
+            dd.classList.toggle('open');
+        }
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dd = document.getElementById('baoCaoDropdown');
+            if (dd && !dd.contains(e.target)) {
+                dd.classList.remove('open');
+            }
+        });
+    </script>
     <script src="../../assets/js/contract.js"></script>
 </body>
 

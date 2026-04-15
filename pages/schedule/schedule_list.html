@@ -74,6 +74,45 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #a3a3a3; 
         }
+
+        /* Dropdown nav */
+        .nav-dropdown {
+            position: relative;
+        }
+        .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            min-width: 200px;
+            z-index: 999;
+            overflow: hidden;
+        }
+        .nav-dropdown.open .nav-dropdown-menu {
+            display: block;
+        }
+        .nav-dropdown-menu a {
+            display: block;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #4B2E1F;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+        .nav-dropdown-menu a:hover {
+            background: #f5ede8;
+        }
+        .nav-dropdown-menu a + a {
+            border-top: 1px solid #f3f4f6;
+        }
     </style>
 </head>
 
@@ -99,8 +138,8 @@
     <!-- Navigation -->
     <nav class="bg-[#8b6348] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold flex-shrink-0">
         <a href="../dashboard.html" class="nav-item py-[16px] transition-colors hover:text-[#d8c3b5]">Tổng quan</a>
-        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d8c3b5]">Nhân viên</a>
-        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d8c3b5]">Hợp đồng</a>
+        <a href="../employee/employee_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d8c3b5]">Nhân viên</a>
+        <a href="../contract/contract_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d8c3b5]">Hợp đồng</a>
         <!-- Lịch làm việc Dropdown -->
         <div class="relative group cursor-pointer">
             <div class="nav-item active py-[16px] transition-colors hover:text-[#d8c3b5] flex items-center gap-2">
@@ -113,24 +152,31 @@
                 <a href="schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-[#8b6348] transition-colors font-medium">Gửi thông báo lịch làm việc</a>
             </div>
         </div>
-        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d8c3b5]">Yêu cầu</a>
-        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d8c3b5]">Bảng lương</a>
-        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d8c3b5]">Báo cáo</a>
+        <a href="../request.html" class="nav-item py-[16px] transition-colors hover:text-[#d8c3b5]">Yêu cầu</a>
+        <a href="../salary.html" class="nav-item py-[16px] transition-colors hover:text-[#d8c3b5]">Bảng lương</a>
+        <!-- Báo cáo dropdown -->
+        <div class="nav-dropdown nav-item py-[16px]" id="baoCaoDropdown">
+            <span class="cursor-pointer hover:text-[#d8c3b5] transition-colors select-none" onclick="toggleDropdown()">Báo cáo</span>
+            <div class="nav-dropdown-menu" id="baoCaoMenu">
+                <a href="../report/report_salary.html">Báo cáo lương</a>
+                <a href="../report/report_attendance.html">Báo cáo chấm công</a>
+            </div>
+        </div>
     </nav>
 
     <!-- Main Content -->
     <main class="w-full max-w-[1400px] mx-auto p-4 md:p-8 flex-grow flex flex-col">
         
-        <!-- Toolbar Container (Nền trắng bo góc như Mockup mới) -->
+        <!-- Toolbar Container -->
         <div class="bg-white rounded-md shadow-sm border border-gray-100 p-2 mb-4 flex items-center justify-between">
             <div class="flex items-center gap-2 text-[14px] font-bold text-[#8a5d3b]">
-                <button onclick="changeWeek(-1)" class="w-8 h-8 rounded shrink-0 border border-gray-200 flex items-center justify-center text-blue-500 bg-white hover:bg-gray-50 transition shadow-sm"><i class="fa-solid fa-chevron-left text-[12px]"></i></button>
+                <button type="button" onclick="window.changeWeek(-1)" class="w-8 h-8 rounded shrink-0 border border-gray-200 flex items-center justify-center text-blue-500 bg-white hover:bg-gray-50 transition shadow-sm"><i class="fa-solid fa-chevron-left text-[12px]"></i></button>
                 <span class="px-3" id="week-title">Tuần --/-- – --/--/----</span>
-                <button onclick="changeWeek(1)" class="w-8 h-8 rounded shrink-0 border border-gray-200 flex items-center justify-center text-blue-500 bg-white hover:bg-gray-50 transition shadow-sm"><i class="fa-solid fa-chevron-right text-[12px]"></i></button>
+                <button type="button" onclick="window.changeWeek(1)" class="w-8 h-8 rounded shrink-0 border border-gray-200 flex items-center justify-center text-blue-500 bg-white hover:bg-gray-50 transition shadow-sm"><i class="fa-solid fa-chevron-right text-[12px]"></i></button>
             </div>
             
             <div class="flex items-center gap-3">
-                <input type="date" class="border border-gray-200 rounded px-3 py-1.5 w-40 text-[14px] text-gray-500 outline-none focus:border-[#d6b5a3] bg-white shadow-sm" onchange="jumpToDate(this.value)">
+                <input type="date" class="border border-gray-200 rounded px-3 py-1.5 w-40 text-[14px] text-gray-500 outline-none focus:border-[#d6b5a3] bg-white shadow-sm" onchange="window.jumpToDate(this.value)">
             </div>
         </div>
 
@@ -148,7 +194,7 @@
                 <div class="py-2.5 font-medium" id="header-day-6">CN_--/--</div>
             </div>
 
-            <!-- Scrollable Body for Hours (06:00 -> 23:00) -->
+            <!-- Scrollable Body for Hours (06:00 -> 24:00) -->
             <div id="calendar-body" class="overflow-y-auto w-full h-[650px] relative text-[12px] text-gray-400 font-medium custom-scrollbar">
                 <!-- Javascript will generate Grid here -->
             </div>
@@ -161,7 +207,7 @@
     </main>
 
     <!-- ============================================== -->
-    <!-- MODALS & POPUPS (Được căn giữa bằng Flex)      -->
+    <!-- MODALS & POPUPS                                -->
     <!-- ============================================== -->
 
     <!-- Modal: Thêm lịch làm việc -->
@@ -169,7 +215,7 @@
         <div class="bg-[#f8f6f5] rounded-xl shadow-2xl w-full max-w-[550px] p-8 relative pointer-events-auto" onclick="event.stopPropagation()">
             <h3 class="text-[#8c5a35] text-[24px] font-bold mb-6">Thêm lịch làm việc</h3>
             
-            <form id="form-add" class="space-y-5 text-[15px]" onsubmit="event.preventDefault(); submitAddSchedule();">
+            <form id="form-add" class="space-y-5 text-[15px]" onsubmit="event.preventDefault(); window.submitAddSchedule();">
                 <input type="hidden" id="add-date">
                 <div>
                     <div class="flex items-center gap-2 mb-3">
@@ -179,7 +225,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[#4b4b4b] mb-1.5 font-semibold text-sm">Tên NV (Chọn hoặc nhập)</label>
-                            <input type="text" id="add-empName" required list="employee-list" oninput="handleEmployeeSelect('add')" class="w-full border border-gray-200 rounded-md px-3 py-2.5 outline-none focus:border-[#d6b5a3] bg-white" placeholder="VD: Nguyễn Văn A">
+                            <input type="text" id="add-empName" required list="employee-list" oninput="window.handleEmployeeSelect('add')" class="w-full border border-gray-200 rounded-md px-3 py-2.5 outline-none focus:border-[#d6b5a3] bg-white" placeholder="VD: Nguyễn Văn A">
                         </div>
                         <div>
                             <label class="block text-[#4b4b4b] mb-1.5 font-semibold text-sm">Mã nhân viên</label>
@@ -214,7 +260,7 @@
                 </div>
 
                 <div class="flex items-center justify-end gap-3 mt-10">
-                    <button type="button" onclick="closeModal('modal-add')" class="px-6 py-2 rounded-md bg-[#e3e1df] text-gray-700 font-bold hover:bg-gray-300 transition">Hủy</button>
+                    <button type="button" onclick="window.closeModal('modal-add')" class="px-6 py-2 rounded-md bg-[#e3e1df] text-gray-700 font-bold hover:bg-gray-300 transition">Hủy</button>
                     <button type="submit" class="px-8 py-2 rounded-md bg-[#895c37] text-white font-bold hover:bg-[#5c4133] transition shadow-md">Lưu</button>
                 </div>
             </form>
@@ -227,7 +273,7 @@
             <h3 class="text-[#8c5a35] text-[24px] font-bold mb-1">Chỉnh sửa lịch làm việc</h3>
             <p class="text-gray-400 text-[14px] mb-6 font-medium">Cập nhật thông tin ca làm việc của nhân viên</p>
             
-            <form id="form-edit" class="space-y-5 text-[15px]" onsubmit="event.preventDefault(); submitEditSchedule();">
+            <form id="form-edit" class="space-y-5 text-[15px]" onsubmit="event.preventDefault(); window.submitEditSchedule();">
                 <input type="hidden" id="edit-id">
                 <input type="hidden" id="edit-date">
                 <div>
@@ -238,7 +284,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[#4b4b4b] mb-1.5 font-semibold text-sm">Tên NV (Chọn hoặc nhập)</label>
-                            <input type="text" id="edit-empName" required list="employee-list" oninput="handleEmployeeSelect('edit')" class="w-full border border-gray-200 rounded-md px-3 py-2.5 outline-none focus:border-[#d6b5a3] bg-white" placeholder="VD: Nguyễn Văn A">
+                            <input type="text" id="edit-empName" required list="employee-list" oninput="window.handleEmployeeSelect('edit')" class="w-full border border-gray-200 rounded-md px-3 py-2.5 outline-none focus:border-[#d6b5a3] bg-white" placeholder="VD: Nguyễn Văn A">
                         </div>
                         <div>
                             <label class="block text-[#4b4b4b] mb-1.5 font-semibold text-sm">Mã nhân viên</label>
@@ -273,7 +319,7 @@
                 </div>
 
                 <div class="flex items-center justify-end gap-3 mt-10">
-                    <button type="button" onclick="closeModal('modal-edit')" class="px-6 py-2 rounded-md bg-[#e3e1df] text-gray-700 font-bold hover:bg-gray-300 transition">Hủy</button>
+                    <button type="button" onclick="window.closeModal('modal-edit')" class="px-6 py-2 rounded-md bg-[#e3e1df] text-gray-700 font-bold hover:bg-gray-300 transition">Hủy</button>
                     <button type="submit" class="px-8 py-2 rounded-md bg-[#895c37] text-white font-bold hover:bg-[#5c4133] transition shadow-md">Lưu thay đổi</button>
                 </div>
             </form>
@@ -289,14 +335,14 @@
             <h3 class="text-[#8c5a35] text-[26px] font-bold uppercase tracking-wider mb-3">XÁC NHẬN XÓA</h3>
             <p class="text-gray-800 text-[16px] mb-8 font-medium">Bạn có chắc chắn muốn xóa "lịch làm việc" này?</p>
             <div class="flex items-center justify-center gap-4">
-                <button onclick="closeModal('modal-delete')" class="px-8 py-3 rounded-lg bg-[#dddad7] text-gray-600 font-bold text-[18px] hover:bg-gray-300 transition w-full">Không</button>
-                <button onclick="submitDeleteSchedule()" class="px-8 py-3 rounded-lg bg-[#8c5a35] text-white font-bold text-[18px] hover:bg-[#5c4133] transition shadow-md w-full">Đồng ý</button>
+                <button onclick="window.closeModal('modal-delete')" class="px-8 py-3 rounded-lg bg-[#dddad7] text-gray-600 font-bold text-[18px] hover:bg-gray-300 transition w-full">Không</button>
+                <button onclick="window.submitDeleteSchedule()" class="px-8 py-3 rounded-lg bg-[#8c5a35] text-white font-bold text-[18px] hover:bg-[#5c4133] transition shadow-md w-full">Đồng ý</button>
             </div>
         </div>
     </div>
 
     <!-- Success/Error Popups -->
-    <div id="popup-notification" class="fixed inset-0 bg-black/10 z-[200] hidden items-center justify-center p-4 transition-opacity opacity-0" onclick="closePopup()">
+    <div id="popup-notification" class="fixed inset-0 bg-black/10 z-[200] hidden items-center justify-center p-4 transition-opacity opacity-0" onclick="window.closePopup()">
         <div class="bg-white rounded-[40px] shadow-[0_10px_40px_rgba(0,0,0,0.15)] px-12 py-10 flex items-center flex-col transform transition max-w-[500px] w-11/12 text-center border-none pointer-events-auto" onclick="event.stopPropagation()">
             
             <div id="popup-icon-success" class="w-20 h-20 rounded-full bg-[#00d775] flex items-center justify-center text-white text-[45px] mb-6 shadow-sm hidden">
@@ -311,363 +357,26 @@
         </div>
     </div>
 
+    <script src="../../assets/js/schedule.js"></script>
     <script>
-        // Mảng Quản lý Dữ Liệu
-        let currentWeekOffset = 0;
-        let todayRefDate = new Date();
-        // Giả lập ID tự động
-        let guid = 100;
-
-        let shifts = [
-            { id: '1', empId: 'NV001', name: 'Nguyễn Thị Thu Trang', date: formatFullDate(new Date()), start: '06:15', end: '12:30', note: 'Ca sáng' },
-            { id: '2', empId: 'NV002', name: 'Trần Văn Bình', date: formatFullDate(new Date()), start: '13:00', end: '17:00', note: 'Ca chiều' },
-        ];
-
-        // Tạm mảng dữ liệu nhân viên để làm gợi ý nhập (sau này liên kết qua API/Database)
-        const mockEmployeesData = [
-            { id: 'NV001', name: 'Nguyễn Thị Thu Trang', bg: 'bg-[#316aff]', border: 'border-[#1b4edc]' }, // Blue
-            { id: 'NV002', name: 'Trần Văn Bình', bg: 'bg-[#10b981]', border: 'border-[#059669]' }, // Green
-            { id: 'NV003', name: 'Lê Văn Cảng', bg: 'bg-[#8b5cf6]', border: 'border-[#6d28d9]' }, // Purple
-            { id: 'NV004', name: 'Phạm Thị Dung', bg: 'bg-[#f59e0b]', border: 'border-[#d97706]' }, // Orange
-            { id: 'NV005', name: 'Hoàng Văn Em', bg: 'bg-[#ec4899]', border: 'border-[#be185d]' }  // Pink
-        ];
-
-        let actionShiftId = null; 
-
-        // Khởi tạo Datalist cho input chọn tên
-        function initDatalist() {
-            const datalist = document.createElement('datalist');
-            datalist.id = 'employee-list';
-            mockEmployeesData.forEach(emp => {
-                const option = document.createElement('option');
-                option.value = emp.name;
-                datalist.appendChild(option);
-            });
-            document.body.appendChild(datalist);
+        function toggleDropdown() {
+            const dd = document.getElementById('baoCaoDropdown');
+            dd.classList.toggle('open');
         }
-
-        // Xử lý sự kiện nhập/chọn Tên nhân viên
-        window.handleEmployeeSelect = function(mode) {
-            const nameInput = document.getElementById(mode + '-empName').value;
-            const idInput = document.getElementById(mode + '-empId');
-            
-            const matchedEmp = mockEmployeesData.find(e => e.name === nameInput.trim());
-            if(matchedEmp) {
-                // Nếu trùng tên trong danh sách nhân viên -> lấy mã cố định
-                idInput.value = matchedEmp.id;
-            } else {
-                // Xóa mã nếu tên nhập vào chưa tồn tại trong danh sách
-                idInput.value = '';
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dd = document.getElementById('baoCaoDropdown');
+            if (dd && !dd.contains(e.target)) {
+                dd.classList.remove('open');
             }
-        };
-
-        function getMonday(d) {
-            let nd = new Date(d);
-            let day = nd.getDay();
-            let diff = nd.getDate() - day + (day === 0 ? -6 : 1); 
-            let monday = new Date(nd.setDate(diff));
-            monday.setHours(0,0,0,0);
-            return monday;
-        }
-
-        function formatDate(date) {
-            let d = date.getDate().toString().padStart(2, '0');
-            let m = (date.getMonth() + 1).toString().padStart(2, '0');
-            return `${d}/${m}`;
-        }
-
-        function formatFullDate(date) {
-            let d = date.getDate().toString().padStart(2, '0');
-            let m = (date.getMonth() + 1).toString().padStart(2, '0');
-            let y = date.getFullYear();
-            return `${y}-${m}-${d}`;
-        }
-
-        // --- Render UI ---
-        function renderCalendar() {
-            let ref = new Date(todayRefDate);
-            ref.setDate(ref.getDate() + currentWeekOffset * 7);
-            
-            let monday = getMonday(ref);
-            let sunday = new Date(monday);
-            sunday.setDate(monday.getDate() + 6);
-            sunday.setHours(23,59,59,999);
-
-            // Cập nhật Header
-            document.getElementById('week-title').innerText = `Tuần ${formatDate(monday)} – ${formatDate(sunday)}/${sunday.getFullYear()}`;
-
-            const dayNames = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'];
-            for (let i = 0; i < 7; i++) {
-                let currentDay = new Date(monday);
-                currentDay.setDate(monday.getDate() + i);
-                document.getElementById(`header-day-${i}`).innerText = `${dayNames[i]}_${formatDate(currentDay)}`;
-            }
-
-            // Cập nhật khung giờ 06:00 -> 24:00 (19 rows)
-            const calendarBody = document.getElementById('calendar-body');
-            let htmlGrid = "";
-            for(let hour = 6; hour <= 24; hour++) {
-                const hourText = hour.toString().padStart(2, '0') + ":00";
-                htmlGrid += `<div class="grid grid-cols-[60px_1fr_1fr_1fr_1fr_1fr_1fr_1fr] border-b border-gray-100 min-h-[50px] w-full">`;
-                
-                // Hour column
-                htmlGrid += `
-                    <div class="relative flex items-start justify-center text-[#9ca3af] font-medium pt-2 border-r border-gray-100 bg-white z-0">
-                        <span class="bg-white px-1 leading-none text-[11px]">${hourText}</span>
-                    </div>
-                `;
-                
-                // Days columns
-                for(let day = 0; day < 7; day++) {
-                    let currentDay = new Date(monday);
-                    currentDay.setDate(monday.getDate() + day);
-                    let dateStr = formatFullDate(currentDay);
-                    // Bấm vào bất kỳ đâu trên cell sẽ gọi AddModal truyền vào Ngày và Mặc định giờ
-                    let defaultTime = hour.toString().padStart(2, '0') + ":00";
-                    htmlGrid += `<div class="cursor-pointer border-r border-gray-100/50 hover:bg-[#f3ece8]/30 transition z-0 text-transparent" onclick="window.openAddModal('${dateStr}', '${defaultTime}')">.</div>`;
-                }
-                htmlGrid += `</div>`;
-            }
-            calendarBody.innerHTML = htmlGrid;
-
-            // Render Các Thẻ nhân viên (Shifts)
-            renderShifts(monday, sunday);
-        }
-
-        function renderShifts(monday, sunday) {
-            const container = document.getElementById('shifts-container');
-            container.innerHTML = ""; // Clear existing
-
-            // Để các khối bên trong cuộn cùng `calendar-body`, JS sẽ đọc scrollTop.
-            // Giải pháp tốt nhất là đặt #shift-container có độ cao bằng `calendar-body.scrollHeight` 
-            // và sử dụng script để đồng bộ hoá cuộn. 
-            // Thay vì thế, ta sẽ append card trực tiếp vào #calendar-body để cuộn tự nhiên.
-            const gridBody = document.getElementById('calendar-body');
-
-            // Xóa hết bài cữ
-            const olds = gridBody.querySelectorAll('.shift-card');
-            olds.forEach(o => o.remove());
-
-            shifts.forEach(shift => {
-                const shiftDate = new Date(shift.date);
-                if (shiftDate >= monday && shiftDate <= sunday) {
-                    const dayIndex = shiftDate.getDay() === 0 ? 6 : shiftDate.getDay() - 1; 
-                    
-                    const startParts = shift.start.split(':');
-                    const endParts = shift.end.split(':');
-                    const startHour = parseInt(startParts[0]) + parseInt(startParts[1])/60;
-                    const endHour = parseInt(endParts[0]) + parseInt(endParts[1])/60;
-
-                    // Vì lịch bắt đầu từ 06:00, ta tính toán Top so với 06:00
-                    // Nếu ca bắt đầu trước 6h, ta có thể bỏ qua hoặc scale. Hiện cho là dữ liệu luôn > 06h
-                    let topPos = (startHour - 6) * 50;
-                    if(topPos < 0) topPos = 0; 
-                    let heightPos = (endHour - startHour) * 50;
-
-                    // Tìm màu tương ứng với nhân viên
-                    const empData = mockEmployeesData.find(e => e.id === shift.empId);
-                    const bgClass = empData ? empData.bg : 'bg-[#64748b]'; // Gray fallback
-                    const borderClass = empData ? empData.border : 'border-[#475569]';
-
-                    const card = document.createElement('div');
-                    card.className = `shift-card absolute ${bgClass} rounded-md text-white p-2 shadow-sm flex flex-col transition-transform duration-200 hover:scale-[1.01] cursor-pointer border ${borderClass} group z-30 pointer-events-auto`;
-                    
-                    card.style.left = `calc(60px + ${dayIndex} * ((100% - 60px) / 7) + 2px)`; // Cách trái
-                    card.style.width = `calc(((100% - 60px) / 7) - 4px)`; // Độ rộng cột
-                    card.style.top = `${topPos}px`;
-                    card.style.height = `${heightPos}px`;
-                    card.style.minHeight = `45px`; // Minimum để bấm
-                    card.innerHTML = `
-                        <div class="overflow-hidden flex-grow flex flex-col justify-start pointer-events-none">
-                            <div class="font-bold text-[12px] md:text-[13px] leading-tight truncate px-1">${shift.empId}</div>
-                            <div class="font-bold text-[12px] md:text-[13px] leading-tight mb-1 truncate px-1">${shift.name}</div>
-                            <div class="text-[10px] md:text-[11px] opacity-90 font-medium px-1">${shift.start} - ${shift.end}</div>
-                        </div>
-                        <div class="flex items-center justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity p-1 bg-gradient-to-t from-black/20 to-transparent mt-auto rounded-b-md">
-                            <button onclick="event.stopPropagation(); window.openEditModal('${shift.id}')" class="text-white hover:text-gray-200 transition p-1"><i class="fa-solid fa-pencil text-[12px] md:text-[14px]"></i></button>
-                            <button onclick="event.stopPropagation(); window.openDeleteModal('${shift.id}')" class="text-white hover:text-red-200 transition p-1"><i class="fa-regular fa-trash-can text-[13px] md:text-[15px]"></i></button>
-                        </div>
-                    `;
-                    gridBody.appendChild(card);
-                }
-            });
-        }
-
-        // --- Logic Chức Năng Cốt Lõi ---
-        
-        // Điều hướng tuần
-        window.changeWeek = function(diff) {
-            currentWeekOffset += diff;
-            renderCalendar();
-        };
-
-        window.jumpToDate = function(dateStr) {
-            if(!dateStr) return;
-            const targetDate = new Date(dateStr);
-            const currentMon = getMonday(todayRefDate);
-            const targetMon = getMonday(targetDate);
-            const diffTime = Math.abs(targetMon - currentMon);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-            const weeks = targetMon < currentMon ? -(diffDays/7) : (diffDays/7);
-            currentWeekOffset = Math.round(weeks);
-            renderCalendar();
-        };
-
-        // Modal Form Controllers
-        window.openAddModal = function(dateStr, defaultTime = '06:00') {
-            document.getElementById('form-add').reset();
-            document.getElementById('add-date').value = dateStr;
-            document.getElementById('add-start').value = defaultTime;
-            
-            // Auto complete end time (+4 hour padding logic or empty)
-            let endHour = parseInt(defaultTime.split(':')[0]) + 4;
-            if(endHour > 23) endHour = 23;
-            document.getElementById('add-end').value = endHour.toString().padStart(2, '0') + ":00";
-
-            openModal('modal-add');
-        };
-
-        window.submitAddSchedule = function() {
-            const empId = document.getElementById('add-empId').value;
-            const empName = document.getElementById('add-empName').value;
-            
-            // Validate Mã nhân viên
-            if(!empId) {
-                showPopup('Tên nhân viên không tồn tại', 'error');
-                return;
-            }
-
-            const start = document.getElementById('add-start').value;
-            const end = document.getElementById('add-end').value;
-            const note = document.getElementById('add-note').value;
-            const date = document.getElementById('add-date').value;
-
-            shifts.push({
-                id: 'S' + (++guid),
-                empId, name: empName, date, start, end, note
-            });
-            
-            closeModal('modal-add');
-            renderCalendar();
-            showPopup('Tạo lịch làm việc thành công', 'success');
-        };
-
-        window.openEditModal = function(id) {
-            actionShiftId = id;
-            const shift = shifts.find(s => s.id === id);
-            if(shift) {
-                document.getElementById('edit-id').value = shift.id;
-                document.getElementById('edit-date').value = shift.date;
-                document.getElementById('edit-empId').value = shift.empId;
-                document.getElementById('edit-empName').value = shift.name;
-                document.getElementById('edit-start').value = shift.start;
-                document.getElementById('edit-end').value = shift.end;
-                document.getElementById('edit-note').value = shift.note;
-                
-                openModal('modal-edit');
-            }
-        };
-
-        window.submitEditSchedule = function() {
-            const empId = document.getElementById('edit-empId').value;
-            // Validate Mã nhân viên
-            if(!empId) {
-                showPopup('Tên nhân viên không tồn tại', 'error');
-                return;
-            }
-            const shiftIndex = shifts.findIndex(s => s.id === actionShiftId);
-            if(shiftIndex > -1) {
-                shifts[shiftIndex].empId = document.getElementById('edit-empId').value;
-                shifts[shiftIndex].name = document.getElementById('edit-empName').value;
-                shifts[shiftIndex].start = document.getElementById('edit-start').value;
-                shifts[shiftIndex].end = document.getElementById('edit-end').value;
-                shifts[shiftIndex].note = document.getElementById('edit-note').value;
-            }
-
-            closeModal('modal-edit');
-            renderCalendar();
-            showPopup('Cập nhật lịch làm việc thành công', 'success');
-        };
-
-        window.openDeleteModal = function(id) {
-            actionShiftId = id;
-            openModal('modal-delete');
-        };
-
-        window.submitDeleteSchedule = function() {
-            shifts = shifts.filter(s => s.id !== actionShiftId);
-            closeModal('modal-delete');
-            renderCalendar();
-            showPopup('Xóa lịch làm việc thành công', 'success');
-        };
-
-        // --- View Handlers ---
-        window.openModal = function(id) {
-            const m = document.getElementById(id);
-            m.classList.remove('hidden');
-            m.classList.add('flex');
-            // Trigger animation
-            setTimeout(() => m.classList.remove('opacity-0'), 10);
-        };
-
-        window.closeModal = function(id) {
-            const m = document.getElementById(id);
-            m.classList.add('opacity-0');
-            setTimeout(() => { 
-                m.classList.add('hidden'); 
-                m.classList.remove('flex'); 
-            }, 300);
-        };
-
-        window.closeOnBackdrop = function(e, id) {
-            if (e.target.id === id) {
-                closeModal(id);
-            }
-        };
-
-        // --- Popup ---
-        let popupTimer;
-        window.showPopup = function(msg, type) {
-            const popup = document.getElementById('popup-notification');
-            const iconSuccess = document.getElementById('popup-icon-success');
-            const iconError = document.getElementById('popup-icon-error');
-            const textEl = document.getElementById('popup-msg');
-
-            iconSuccess.classList.add('hidden');
-            iconError.classList.add('hidden');
-            clearTimeout(popupTimer);
-
-            textEl.innerHTML = msg;
-            if (type === 'success') {
-                iconSuccess.classList.remove('hidden');
-            } else {
-                iconError.classList.remove('hidden');
-            }
-
-            popup.classList.remove('hidden');
-            popup.classList.add('flex');
-            setTimeout(() => popup.classList.remove('opacity-0'), 10);
-
-            popupTimer = setTimeout(() => {
-                closePopup();
-            }, 2500);
-        };
-
-        window.closePopup = function() {
-            const popup = document.getElementById('popup-notification');
-            popup.classList.add('opacity-0');
-            setTimeout(() => {
-                popup.classList.add('hidden');
-                popup.classList.remove('flex');
-            }, 300);
-        }
-
-        // Init App 
-        document.addEventListener('DOMContentLoaded', () => {
-             initDatalist();
-             initCalendar();
         });
 
+        // Đảm bảo khởi tạo lịch sau khi tải script
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderCalendar === 'function') {
+                renderCalendar();
+            }
+        });
     </script>
 </body>
 
