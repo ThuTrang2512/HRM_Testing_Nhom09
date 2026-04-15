@@ -8,6 +8,7 @@
 
     <!-- Global CSS -->
     <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/employee_cards.css">
 
     <!-- Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -25,11 +26,10 @@
                     colors: {
                         brand: {
                             text: '#5c4133', /* Matching dashboard.html font color */
-                            dark: 'rgba(75, 46, 31, 0.87)', 
-                            primary: '#8C5A41', 
-                            light: '#f4ede7', 
-                            active: '#d6b5a3', 
-                            border: '#d2c5bc' 
+                            dark: 'rgba(75, 46, 31, 0.87)', primary: '#8C5A41',
+                            light: '#f4ede7',
+                            active: '#d6b5a3',
+                            border: '#d2c5bc'
                         }
                     }
                 }
@@ -62,6 +62,7 @@
         .table-container::-webkit-scrollbar {
             height: 8px;
         }
+
         .table-container::-webkit-scrollbar-thumb {
             background-color: #cbd5e1;
             border-radius: 4px;
@@ -71,6 +72,7 @@
         .nav-dropdown {
             position: relative;
         }
+
         .nav-dropdown-menu {
             display: none;
             position: absolute;
@@ -79,14 +81,16 @@
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
             min-width: 200px;
             z-index: 999;
             overflow: hidden;
         }
+
         .nav-dropdown.open .nav-dropdown-menu {
             display: block;
         }
+
         .nav-dropdown-menu a {
             display: block;
             padding: 12px 20px;
@@ -99,38 +103,47 @@
             text-decoration: none;
             transition: background 0.15s;
         }
+
         .nav-dropdown-menu a:hover {
             background: #f5ede8;
         }
-        .nav-dropdown-menu a + a {
+
+        .nav-dropdown-menu a+a {
             border-top: 1px solid #f3f4f6;
         }
     </style>
 </head>
 
-<body class="bg-[#fcfcfc] min-h-screen text-[23px] text-gray-800 flex flex-col font-sans">
+<body class="bg-white min-h-screen text-[23px] text-gray-800 flex flex-col font-sans">
 
     <!-- Header Section -->
-    <header class="bg-white px-8 py-3 flex justify-between items-center sm:flex-row flex-col gap-4 border-b border-gray-100">
+    <header
+        class="bg-white px-8 py-3 flex justify-between items-center sm:flex-row flex-col gap-4 border-b border-gray-100">
         <div class="flex items-center gap-4">
-            <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center bg-[#2d221c]">
+            <div
+                class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center bg-[#2d221c]">
                 <img src="../../assets/images/logo.png" alt="Logo Đi Lạc" class="w-full h-full object-cover">
             </div>
             <h1 class="font-bold text-[26px] uppercase tracking-wider text-brand-text m-0">ĐI LẠC COFFEE</h1>
         </div>
         <div class="flex items-center gap-4">
-            <span class="text-gray-800 text-[23px]"><span class="italic font-medium">Xin chào, </span><span class="italic font-bold">Đi Lạc coffee</span></span>
-            <div class="w-12 h-12 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition">
+            <span class="text-gray-800 text-[23px]"><span class="italic font-medium">Xin chào, </span><span
+                    class="italic font-bold">Đi Lạc coffee</span></span>
+            <div
+                class="w-12 h-12 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition">
                 <i class="fa-regular fa-circle-user text-[40px]"></i>
             </div>
         </div>
     </header>
 
     <!-- Navigation -->
-    <nav class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold">
+    <nav
+        class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold">
         <a href="../dashboard.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Tổng quan</a>
-        <a href="employee_list.html" class="nav-item active py-[16px] transition-colors hover:text-[#d6b5a3]">Nhân viên</a>
-        <a href="../contract/contract_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Hợp đồng</a>
+        <a href="employee_list.html" class="nav-item active py-[16px] transition-colors hover:text-[#d6b5a3]">Nhân
+            viên</a>
+        <a href="../contract/contract_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Hợp
+            đồng</a>
         <!-- Lịch làm việc Dropdown -->
         <div class="relative group cursor-pointer">
             <div class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] flex items-center gap-2">
@@ -138,16 +151,22 @@
                 <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
             </div>
             <!-- Dropdown menu -->
-            <div class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
-                <a href="../schedule/schedule_list.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium border-b border-gray-50">Tạo lịch làm việc</a>
-                <a href="../schedule/schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium">Gửi thông báo lịch làm việc</a>
+            <div
+                class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
+                <a href="../schedule/schedule_list.html"
+                    class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium border-b border-gray-50">Tạo
+                    lịch làm việc</a>
+                <a href="../schedule/schedule_notification.html"
+                    class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium">Gửi
+                    thông báo lịch làm việc</a>
             </div>
         </div>
         <a href="../request/request.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
         <a href="../salary/salary.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Bảng lương</a>
         <!-- Báo cáo dropdown -->
         <div class="nav-dropdown nav-item py-[16px]" id="baoCaoDropdown">
-            <span class="cursor-pointer hover:text-[#d6b5a3] transition-colors select-none" onclick="toggleDropdown()">Báo cáo</span>
+            <span class="cursor-pointer hover:text-[#d6b5a3] transition-colors select-none"
+                onclick="toggleDropdown()">Báo cáo</span>
             <div class="nav-dropdown-menu" id="baoCaoMenu">
                 <a href="../report/report_salary.html">Báo cáo lương</a>
                 <a href="../report/report_attendance.html">Báo cáo chấm công</a>
@@ -156,110 +175,120 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-grow p-8 max-w-[1600px] w-full mx-auto">
+    <main class="flex-grow py-10 px-8 max-w-[1500px] w-full mx-auto">
+
         <!-- Toolbar (Search & Add) -->
-        <div class="flex justify-between items-center mb-6">
-            <div class="flex items-center gap-4 w-full max-w-[60%] relative">
-                
-                <!-- Notification Toast overlaying search box -->
-                <div id="successBanner" class="hidden absolute left-0 top-0 bottom-0 z-10 bg-[#95F2C8] rounded-md pl-4 pr-10 py-2 shadow-sm min-w-[360px] flex items-center">
+        <div class="flex justify-between items-center mb-10 gap-6 flex-wrap relative">
+            <div class="flex items-center gap-4 flex-1 min-w-[300px] relative">
+                <!-- Notification Toast -->
+                <div id="successBanner"
+                    class="hidden absolute left-0 top-0 bottom-0 z-10 bg-[#95F2C8] rounded-md pl-4 pr-10 py-2 shadow-sm min-w-[360px] flex items-center">
                     <div class="flex items-start gap-3">
                         <i class="fa-regular fa-circle-check text-green-900 text-[20px] mt-[2px]"></i>
                         <div class="flex flex-col">
-                            <span class="text-gray-900 font-bold text-[18px] leading-tight">Đã thêm nhân viên thành công</span>
-                            <span class="text-gray-700 text-[14px] leading-tight mt-1">Danh sách đã được cập nhật.</span>
+                            <span class="text-gray-900 font-bold text-[18px] leading-tight">Đã thêm nhân viên thành
+                                công</span>
+                            <span class="text-gray-700 text-[14px] leading-tight mt-1">Danh sách đã được cập
+                                nhật.</span>
                         </div>
                     </div>
-                    <button id="closeBannerBtn" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-900">
+                    <button id="closeBannerBtn"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-900">
                         <i class="fa-solid fa-xmark text-[18px]"></i>
                     </button>
                 </div>
 
-                <div class="relative w-full shadow-sm rounded-md border border-gray-200 bg-white flex items-center overflow-hidden">
-                    <div class="pl-4 text-gray-400">
-                        <i class="fa-solid fa-magnifying-glass text-[20px]"></i>
+                <div class="flex items-center gap-2 w-full max-w-[1250px]">
+                    <div
+                        class="relative shadow-sm rounded-lg border border-gray-200 bg-white flex items-center overflow-hidden w-full">
+                        <div class="pl-5 text-gray-400">
+                            <i class="fa-solid fa-magnifying-glass text-[20px]"></i>
+                        </div>
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm theo tên nhân viên..."
+                            class="w-full py-[10px] px-4 text-[18px] outline-none placeholder-gray-400 text-brand-dark border-none">
                     </div>
-                    <input type="text" id="searchInput" placeholder="Nhập tên nhân viên" class="w-full py-3 px-4 text-[20px] outline-none placeholder-gray-400 text-brand-dark border-none">
+                    <button id="searchEmployeeBtn"
+                        class="bg-brand-primary text-white h-[46px] min-w-[180px] px-6 rounded-lg font-bold text-[18px] shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap">
+                        Tìm kiếm
+                    </button>
                 </div>
-                <button class="bg-[#78594A] text-white px-6 py-3 rounded-md font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="btnThongBao">
-                    <i class="fa-solid fa-magnifying-glass mr-2 text-[18px]"></i> Tìm kiếm
-                </button>
             </div>
-            <div>
-                <button id="addEmployeeBtn" class="bg-[#78594A] text-white px-8 py-3 rounded-md font-bold text-[22px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap">
-                    + Thêm
-                </button>
-            </div>
+
+            <button id="addEmployeeBtn"
+                class="bg-brand-primary text-white h-[46px] min-w-[180px] px-6 rounded-lg font-bold text-[18px] shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap uppercase">
+                + Thêm
+            </button>
         </div>
 
-        <!-- Table Container -->
-        <div class="bg-white rounded-md shadow-sm border border-brand-border overflow-hidden table-container overflow-x-auto">
-            <table class="w-full text-center whitespace-nowrap min-w-[1200px]" id="employeeTable">
-                <thead>
-                    <tr class="bg-[#78594A] text-white font-bold text-[22px]">
-                        <th class="py-4 px-2 border-r border-white w-[80px]">STT</th>
-                        <th class="py-4 px-4 border-r border-white">Mã nhân viên</th>
-                        <th class="py-4 px-4 border-r border-white">Tên nhân viên</th>
-                        <th class="py-4 px-4 border-r border-white">Ngày sinh</th>
-                        <th class="py-4 px-4 border-r border-white">Số điện thoại</th>
-                        <th class="py-4 px-4 border-r border-white">Chức vụ</th>
-                        <th class="py-4 px-4 w-[120px]">Hành động</th>
-                    </tr>
-                </thead>
-                <tbody class="text-[20px] text-brand-dark" id="employeeTableBody">
-                    <!-- Data Rows will be rendered by JS -->
-                </tbody>
-            </table>
+        <!-- White card form container -->
+        <div class="bg-[#f1f5f9] rounded-[25px] shadow-sm p-8 md:p-12 min-h-[600px] border border-gray-100">
+
+            <!-- Employee Cards Grid -->
+            <div id="employeeCardsContainer"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Cards will be rendered by JS -->
+            </div>
         </div>
     </main>
 
 
     <!-- Notification Toast Edit Employee (Image 9) -->
-    <div id="editSuccessToast" class="fixed bottom-8 right-8 z-[60] bg-[#95F2C8] rounded-md px-6 py-4 shadow-lg flex items-center gap-4 transition-all duration-300 hidden min-w-[320px]">
+    <div id="editSuccessToast"
+        class="fixed bottom-8 right-8 z-[60] bg-[#95F2C8] rounded-md px-6 py-4 shadow-lg flex items-center gap-4 transition-all duration-300 hidden min-w-[320px]">
         <i class="fa-regular fa-circle-check text-green-900 text-[20px]"></i>
-        <span id="editToastTitle" class="text-gray-900 font-bold text-[16px] leading-tight flex-1 text-center">Cập nhật thông tin nhân viên<br>thành công.</span>
+        <span id="editToastTitle" class="text-gray-900 font-bold text-[16px] leading-tight flex-1 text-center">Cập nhật
+            thông tin nhân viên<br>thành công.</span>
         <button id="closeEditToastBtn" class="text-gray-700 hover:text-gray-900 self-start">
             <i class="fa-solid fa-xmark text-[18px]"></i>
         </button>
     </div>
 
     <!-- Notification Toast Info (Flow 7a) -->
-    <div id="infoToast" class="fixed bottom-8 right-8 z-[60] bg-[#222222] rounded-md px-6 py-4 shadow-lg flex items-center gap-4 transition-all duration-300 hidden min-w-[320px]">
+    <div id="infoToast"
+        class="fixed bottom-8 right-8 z-[60] bg-[#222222] rounded-md px-6 py-4 shadow-lg flex items-center gap-4 transition-all duration-300 hidden min-w-[320px]">
         <i class="fa-solid fa-circle-info text-white text-[20px]"></i>
-        <span class="text-white font-medium text-[16px] leading-tight flex-1 text-center">Không có thông tin nào của<br>nhân viên được cập nhật.</span>
+        <span class="text-white font-medium text-[16px] leading-tight flex-1 text-center">Không có thông tin nào
+            của<br>nhân viên được cập nhật.</span>
         <button id="closeInfoToastBtn" class="text-gray-400 hover:text-white self-start">
             <i class="fa-solid fa-xmark text-[18px]"></i>
         </button>
     </div>
 
     <!-- Notification Toast Error (Delete Flow 6a) -->
-    <div id="errorDeleteToast" class="fixed bottom-8 right-8 z-[60] bg-[#FCE38A] rounded-md px-6 py-4 shadow-lg flex items-center gap-4 transition-all duration-300 hidden min-w-[320px]">
+    <div id="errorDeleteToast"
+        class="fixed bottom-8 right-8 z-[60] bg-[#FCE38A] rounded-md px-6 py-4 shadow-lg flex items-center gap-4 transition-all duration-300 hidden min-w-[320px]">
         <i class="fa-solid fa-circle-exclamation text-yellow-900 text-[20px]"></i>
-        <span class="text-yellow-900 font-bold text-[16px] leading-tight flex-1 text-center">Không thể xóa nhân viên này !<br><span class="font-normal text-[14px]">Vui lòng kiểm tra lại !</span></span>
+        <span class="text-yellow-900 font-bold text-[16px] leading-tight flex-1 text-center">Không thể xóa nhân viên này
+            !<br><span class="font-normal text-[14px]">Vui lòng kiểm tra lại !</span></span>
         <button id="closeErrorDeleteToastBtn" class="text-yellow-700 hover:text-yellow-900 self-start">
             <i class="fa-solid fa-xmark text-[18px]"></i>
         </button>
     </div>
 
     <!-- Confirm Modal Popup (Xóa Nhân Viên) -->
-    <div id="deleteConfirmModal" class="fixed inset-0 bg-black/40 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <div id="deleteConfirmModalContent" class="bg-white rounded-[20px] shadow-2xl p-8 max-w-[460px] w-[90%] flex flex-col items-center transform scale-95 opacity-0 transition-all duration-300">
+    <div id="deleteConfirmModal"
+        class="fixed inset-0 bg-black/40 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div id="deleteConfirmModalContent"
+            class="bg-white rounded-[20px] shadow-2xl p-8 max-w-[460px] w-[90%] flex flex-col items-center transform scale-95 opacity-0 transition-all duration-300">
             <!-- Warning Icon -->
             <div class="w-14 h-14 rounded-full border-[1.5px] border-[#F05243] flex items-center justify-center mb-4">
                 <i class="fa-solid fa-exclamation text-[#F05243] text-[28px]"></i>
             </div>
-            
+
             <h3 class="text-[#8B6E60] font-bold text-[22px] uppercase mb-2 tracking-wide text-center">XÁC NHẬN XÓA</h3>
             <div class="text-center mb-8 w-full">
                 <p class="text-gray-500 text-[16px] mb-1">Bạn có chắc chắn muốn xóa nhân viên này?</p>
-                <p class="text-gray-700 text-[16px] font-medium">Dữ liệu sẽ được chuyển sang trạng thái <span class="font-bold text-[#6B4B3E]">"Ngừng hoạt động"</span>.</p>
+                <p class="text-gray-700 text-[16px] font-medium">Dữ liệu sẽ được chuyển sang trạng thái <span
+                        class="font-bold text-[#6B4B3E]">"Ngừng hoạt động"</span>.</p>
             </div>
-            
+
             <div class="flex gap-4 w-full justify-center">
-                <button type="button" id="btnDeleteNo" class="bg-[#E5E5E5] text-gray-700 font-bold px-8 py-2 rounded-md hover:bg-gray-300 transition text-[18px] min-w-[120px]">
+                <button type="button" id="btnDeleteNo"
+                    class="bg-[#E5E5E5] text-gray-700 font-bold px-8 py-2 rounded-md hover:bg-gray-300 transition text-[18px] min-w-[120px]">
                     Không
                 </button>
-                <button type="button" id="btnDeleteYes" class="bg-[#6B4B3E] text-white font-bold px-8 py-2 rounded-md hover:bg-[#5c4133] transition text-[18px] min-w-[120px]">
+                <button type="button" id="btnDeleteYes"
+                    class="bg-[#6B4B3E] text-white font-bold px-8 py-2 rounded-md hover:bg-[#5c4133] transition text-[18px] min-w-[120px]">
                     Đồng ý
                 </button>
             </div>
@@ -268,12 +297,12 @@
 
     <!-- Scripts -->
     <script>
-        function toggleDropdown() {
+   n toggleDropdown() {
             const dd = document.getElementById('baoCaoDropdown');
             dd.classList.toggle('open');
         }
         // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             const dd = document.getElementById('baoCaoDropdown');
             if (dd && !dd.contains(e.target)) {
                 dd.classList.remove('open');

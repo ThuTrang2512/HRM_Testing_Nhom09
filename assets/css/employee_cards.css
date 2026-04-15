@@ -1,0 +1,150 @@
+/* Employee Cards Styling */
+
+.grid {
+    display: grid;
+}
+
+.grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+    .sm\:grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .lg\:grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .xl\:grid-cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.gap-6 {
+    gap: 1.5rem;
+}
+
+/* Employee Card */
+.employee-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    border: 1px solid #f3f4f6;
+    transition: all 0.3s ease;
+}
+
+.employee-card:hover {
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.employee-card-header {
+    padding: 1.5rem 1rem 1rem 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.employee-avatar {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.employee-card-name {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: #5c4133;
+    margin: 1rem 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.employee-card-info {
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex-grow: 1;
+}
+
+.employee-info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+.employee-info-item i {
+    width: 1rem;
+    color: #8C5A41;
+}
+
+.employee-card-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+    justify-content: center;
+}
+
+.employee-action-btn {
+    flex: 1;
+    color: #8C5A41;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: color 0.2s;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.employee-action-btn:hover {
+    color: #5c4133;
+}
+
+.employee-action-btn.delete-btn {
+    color: #ef4444;
+}
+
+.employee-action-btn.delete-btn:hover {
+    color: #dc2626;
+}
+
+.employee-action-btn i {
+    margin-right: 0.25rem;
+}
+
+/* Empty state */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #9ca3af;
+}
+
+.empty-state i {
+    font-size: 2.25rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+

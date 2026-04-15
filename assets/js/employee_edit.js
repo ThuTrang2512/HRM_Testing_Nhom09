@@ -86,42 +86,125 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('empCccd').value = empData.cccd;
     document.getElementById('empPhone').value = empData.phone;
 
-    // Populate Data into Active fields
+    // Load and display avatar if exists
+    const avatarImage = document.getElementById('avatarImage');
+    const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+    if (empData.avatar) {
+        avatarImage.src = empData.avatar;
+        avatarImage.classList.remove('hidden');
+        avatarPlaceholder.classList.add('hidden');
+    }
+
+    // Handle image upload
+    const avatarContainer = document.getElementById('avatarContainer');
+    const imageInput = document.getElementById('imageInput');
+
+    if (avatarContainer) {
+        avatarContainer.addEventListener('click', () => {
+            imageInput.click();
+        });
+    }
+
+    if (imageInput) {
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const imageData = event.target.result; // Base64 string
+
+                    // Save image to localStorage
+                    empData.avatar = imageData;
+                    employees[empIndex].avatar = imageData;
+                    localStorage.setItem('employees', JSON.stringify(employees));
+
+                    // Display image on UI
+                    avatarImage.src = imageData;
+                    avatarImage.classList.remove('hidden');
+                    avatarPlaceholder.classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Populate Data into Editable fields
+    const empName = document.getElementById('empName');
+    const empGender = document.getElementById('empGender');
+    const empDob = document.getElementById('empDob');
+    const empCccd = document.getElementById('empCccd');
+    const empPhone = document.getElementById('empPhone');
+    const empBankAccount = document.getElementById('empBankAccount');
     const empRole = document.getElementById('empRole');
     const empAddress = document.getElementById('empAddress');
-    const empTempAddress = document.getElementById('empTempAddress');
+    const empWorkAddress = document.getElementById('empWorkAddress');
 
-    empRole.value = empData.role;
+    empName.value = empData.name || '';
+    empGender.value = empData.gender || '';
+    empDob.value = empData.dob || '';
+    empCccd.value = empData.cccd || '';
+    empPhone.value = empData.phone || '';
+    if (empBankAccount) empBankAccount.value = empData.bankAccount || '';
+    empRole.value = empData.role || '';
     empAddress.value = empData.address || '';
-    empTempAddress.value = empData.tempAddress || '';
+    empWorkAddress.value = empData.workAddress || '';
+
+    // Enable editing for Address and TempAddress
+    empAddress.removeAttribute('readonly');
+    empAddress.classList.remove('bg-gray-50');
+    empAddress.classList.add('bg-white');
+
+    empWorkAddress.removeAttribute('readonly');
+    empWorkAddress.classList.remove('bg-gray-50');
+    empWorkAddress.classList.add('bg-white');
 
     // Handle form submit (Save)
     const form = document.getElementById('employeeEditForm');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
+        const name = empName.value.trim();
+        const gender = empGender.value.trim();
+        const dob = empDob.value.trim();
+        const cccd = empCccd.value.trim();
+        const phone = empPhone.value.trim();
+        const bankAccount = empBankAccount.value.trim();
         const role = empRole.value.trim();
         const address = empAddress.value.trim();
-        const tempAddress = empTempAddress.value.trim();
+        const workAddress = empWorkAddress.value.trim();
 
-        // 7b: Invalid empty data checking
-        if (!role || !address || !tempAddress) {
+        // Validate empty data
+        if (!name || !gender || !dob || !cccd || !phone || !bankAccount || !role || !address || !workAddress) {
             showError('<p class="text-gray-400 text-[16px] mb-1">Thông tin nhập vào không hợp lệ ?</p><p class="text-gray-700 text-[18px] font-medium">Xin vui lòng nhập lại thông tin chính xác !</p>');
             return;
         }
 
-        // 7a: Data not changed checking
-        if (role === empData.role && address === (empData.address || '') && tempAddress === (empData.tempAddress || '')) {
+        // Check if data changed
+        if (name === empData.name &&
+            gender === empData.gender &&
+            dob === empData.dob &&
+            cccd === empData.cccd &&
+            phone === empData.phone &&
+            bankAccount === (empData.bankAccount || '') &&
+            role === empData.role &&
+            address === (empData.address || '') &&
+            workAddress === (empData.workAddress || '')) {
             sessionStorage.setItem('showInfoToast', 'true');
             window.location.href = 'employee_list.html';
             return;
         }
 
         try {
-            // Main Flow: Update DB (localStorage)
+            // Update all fields in database (localStorage)
+            employees[empIndex].name = name;
+            employees[empIndex].gender = gender;
+            employees[empIndex].dob = dob;
+            employees[empIndex].cccd = cccd;
+            employees[empIndex].phone = phone;
+            employees[empIndex].bankAccount = bankAccount;
             employees[empIndex].role = role;
             employees[empIndex].address = address;
-            employees[empIndex].tempAddress = tempAddress;
+            employees[empIndex].workAddress = workAddress;
             
             localStorage.setItem('employees', JSON.stringify(employees));
             
@@ -131,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = 'employee_list.html';
 
         } catch (err) {
-            // 9a: Exception saving
+            // Exception saving
             showError('Không thể cập nhật thông tin nhân viên. Vui lòng thử lại sau.');
         }
     });
