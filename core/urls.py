@@ -14,6 +14,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import mimetypes
+mimetypes.add_type("application/javascript", ".js", True)
+mimetypes.add_type("text/css", ".css", True)
+
 from django.contrib import admin
 from django.urls import path, re_path, include
 from django.http import HttpResponse, HttpResponseRedirect
@@ -28,14 +32,19 @@ urlpatterns = [
     path('', lambda r: HttpResponseRedirect('/index.html')),
     path('admin/', admin.site.urls),
     path('favicon.ico', favicon_view),
+    
+    # Modules
     path('salary/', include('pages.salary.urls')),
+    path('requests/', include('pages.request.urls')),
     
     # Shortcuts
     path('salary', lambda r: HttpResponseRedirect('/pages/salary/salary.html')),
-    path('salary/', lambda r: HttpResponseRedirect('/pages/salary/salary.html')),
     
-    # Serve raw HTML files similarly to a static web server
+    # Serving static files
     re_path(r'^pages/(?P<path>.*)$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'pages')}),
     re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'assets')}),
     re_path(r'^(?P<path>index\.html)$', serve, {'document_root': settings.BASE_DIR}),
+    
+    # Catch-all from develop branch
+    re_path(r'^(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR, 'show_indexes': True}),
 ]

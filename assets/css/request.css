@@ -141,7 +141,7 @@ body {
 
 .toolbar-row {
     display: grid;
-    grid-template-columns: 210px 1fr 112px;
+    grid-template-columns: 210px 350px 112px;
     gap: 10px;
     align-items: center;
     margin-bottom: 12px;
@@ -281,25 +281,31 @@ body {
 }
 
 .request-table th:nth-child(1),
-.request-table td:nth-child(1) { width: 5%; }
+.request-table td:nth-child(1) { width: 4%; }
 
 .request-table th:nth-child(2),
-.request-table td:nth-child(2) { width: 14%; }
+.request-table td:nth-child(2) { width: 10%; }
 
 .request-table th:nth-child(3),
-.request-table td:nth-child(3) { width: 20%; }
+.request-table td:nth-child(3) { width: 10%; }
 
 .request-table th:nth-child(4),
 .request-table td:nth-child(4) { width: 16%; }
 
 .request-table th:nth-child(5),
-.request-table td:nth-child(5) { width: 14%; }
+.request-table td:nth-child(5) { width: 11%; }
 
 .request-table th:nth-child(6),
-.request-table td:nth-child(6) { width: 14%; }
+.request-table td:nth-child(6) { width: 15%; }
 
 .request-table th:nth-child(7),
-.request-table td:nth-child(7) { width: 17%; }
+.request-table td:nth-child(7) { width: 11%; }
+
+.request-table th:nth-child(8),
+.request-table td:nth-child(8) { width: 11%; }
+
+.request-table th:nth-child(9),
+.request-table td:nth-child(9) { width: 12%; }
 
 .status-pending {
     color: #d79a00;
