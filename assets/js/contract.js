@@ -1,29 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const defaultContracts = [
-        { id: 'HD00001', employeeId: 'NV00001', employeeName: 'Nguyễn Văn An', employeeRole: 'Pha chế', contractType: 'Part-time', status: 'Còn hạn', startDate: '25/12/2025', endDate: '25/12/2026', salary: '2.000.000', baseSalary: '', hourSalary: '50.000', minHour: '80', bonus: '200.000', note: 'Ký hợp đồng 1 năm.' },
-        { id: 'HD00002', employeeId: 'NV00002', employeeName: 'Lê Hoài Bảo An', employeeRole: 'Giữ xe', contractType: 'Full-time', status: 'Còn hạn', startDate: '01/03/2024', endDate: '01/03/2026', salary: '4.500.000', baseSalary: '3.480.000', hourSalary: '217.500', minHour: '174', bonus: '1.020.000', note: 'Hợp đồng chính thức.' },
-        { id: 'HD00003', employeeId: 'NV00003', employeeName: 'Trần Thị Mai Loan', employeeRole: 'Phục vụ', contractType: 'Part-time', status: 'Hết hiệu lực', startDate: '01/05/2023', endDate: '30/04/2024', salary: '3.200.000', baseSalary: '', hourSalary: '40.000', minHour: '80', bonus: '0', note: 'Đã hết hạn và chờ tái ký.' },
-        { id: 'HD00004', employeeId: 'NV00004', employeeName: 'Phạm Quang Bảo', employeeRole: 'Phục vụ', contractType: 'Full-time', status: 'Còn hạn', startDate: '01/02/2024', endDate: '31/01/2025', salary: '4.000.000', baseSalary: '3.200.000', hourSalary: '183.908', minHour: '174', bonus: '800.000', note: '' },
-        { id: 'HD00005', employeeId: 'NV00005', employeeName: 'Nguyễn Viết Bảo', employeeRole: 'Pha chế', contractType: 'Full-time', status: 'Còn hạn', startDate: '01/04/2024', endDate: '01/04/2026', salary: '4.800.000', baseSalary: '3.840.000', hourSalary: '220.690', minHour: '174', bonus: '960.000', note: '' },
-        { id: 'HD00006', employeeId: 'NV00006', employeeName: 'Lê Văn Nhật Anh', employeeRole: 'Giữ xe', contractType: 'Part-time', status: 'Sắp hiệu lực', startDate: '08/05/2024', endDate: '07/05/2025', salary: '2.500.000', baseSalary: '', hourSalary: '31.250', minHour: '80', bonus: '0', note: 'Đang chờ ký hợp đồng cuối.' },
-        { id: 'HD00007', employeeId: 'NV00007', employeeName: 'Nguyễn Văn Anh', employeeRole: 'Pha chế', contractType: 'Part-time', status: 'Còn hạn', startDate: '10/03/2024', endDate: '09/03/2025', salary: '2.200.000', baseSalary: '', hourSalary: '27.500', minHour: '80', bonus: '0', note: '' },
-        { id: 'HD00008', employeeId: 'NV00008', employeeName: 'Trần Lê Văn Khoa', employeeRole: 'Giữ xe', contractType: 'Full-time', status: 'Còn hạn', startDate: '05/04/2024', endDate: '04/04/2025', salary: '3.800.000', baseSalary: '3.040.000', hourSalary: '174.138', minHour: '174', bonus: '760.000', note: '' }
-    ];
+    let contracts = [];
 
-    let contracts = JSON.parse(localStorage.getItem('contracts'));
-    if (!contracts) {
-        contracts = defaultContracts;
-        localStorage.setItem('contracts', JSON.stringify(contracts));
-    } else {
-        // Update old statuses to new ones if they exist
-        contracts = contracts.map(c => {
-            if (c.status === 'Hiệu lực') c.status = 'Còn hạn';
-            if (c.status === 'Hết hạn') c.status = 'Hết hiệu lực';
-            if (c.status === 'Chờ') c.status = 'Sắp hiệu lực';
-            return c;
-        });
-        localStorage.setItem('contracts', JSON.stringify(contracts));
-    }
+    const loadContracts = () => {
+        fetch('/contract/api/data/')
+            .then(res => res.json())
+            .then(data => {
+                contracts = data.contracts || [];
+                renderTable();
+            })
+            .catch(err => console.error("Lỗi tải API hợp đồng:", err));
+    };
+
+    loadContracts();
 
     let contractToDelete = null;
     const tableBody = document.getElementById('contractTableBody');
@@ -167,21 +155,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     };
 
+    const convertDateToISO = (dateStr) => {
+        if (!dateStr || !dateStr.includes('/')) return dateStr;
+        const [d, m, y] = dateStr.split('/');
+        return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+    };
+
     const showDetailViewModal = (contract) => {
         if (!detailViewModal || !detailViewContent) return;
+        
+        // Helper to format currency values for display
+        const formatForInput = (val) => {
+            if (val === undefined || val === null || val === '') return '0';
+            return parseFloat(val).toLocaleString('vi-VN');
+        };
+
         document.getElementById('viewContractId').value = normalizeDetailValue(contract.id, '');
         document.getElementById('viewEmployeeId').value = normalizeDetailValue(contract.employeeId, '');
         document.getElementById('viewEmployeeName').value = normalizeDetailValue(contract.employeeName, '');
         document.getElementById('viewContractType').value = normalizeContractType(normalizeDetailValue(contract.contractType, ''));
-        document.getElementById('viewSalary').value = normalizeDetailValue(contract.salary, '');
-        document.getElementById('viewStartDate').value = normalizeDetailValue(contract.startDate, '');
-        document.getElementById('viewBaseSalary').value = normalizeDetailValue(contract.baseSalary, '');
-        document.getElementById('viewHourSalary').value = normalizeDetailValue(contract.hourSalary, '');
-        document.getElementById('viewEndDate').value = normalizeDetailValue(contract.endDate, '');
-        document.getElementById('viewMinHour').value = normalizeDetailValue(contract.minHour, '');
-        document.getElementById('viewBonus').value = normalizeDetailValue(contract.bonus, '');
+        document.getElementById('viewSalary').value = formatForInput(contract.salary);
+        document.getElementById('viewStartDate').value = convertDateToISO(contract.startDate);
+        document.getElementById('viewBaseSalary').value = formatForInput(contract.baseSalary);
+        document.getElementById('viewHourSalary').value = formatForInput(contract.hourSalary);
+        document.getElementById('viewEndDate').value = convertDateToISO(contract.endDate);
+        document.getElementById('viewMinHour').value = normalizeDetailValue(contract.minHour, '0');
+        document.getElementById('viewBonus').value = formatForInput(contract.bonus);
         document.getElementById('viewEmployeeRole').value = normalizeDetailValue(contract.employeeRole, '');
-        document.getElementById('viewWorkplace').value = '24 Nguyễn Công Trứ';
+        document.getElementById('viewWorkplace').value = '24 Nguyễn Công Trứ'; // Fixed location
         document.getElementById('viewNote').value = normalizeDetailValue(contract.note, '');
 
         detailViewModal.classList.remove('hidden');
@@ -306,15 +307,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideDeleteModal();
                 return;
             }
-            const index = contracts.findIndex(c => c.id === contractToDelete);
-            if (index >= 0) {
-                contracts[index].status = 'deleted';
-                localStorage.setItem('contracts', JSON.stringify(contracts));
-                renderTable();
-                showToast('Đã xóa hợp đồng lao động');
-            }
-            contractToDelete = null;
-            hideDeleteModal();
+            
+            fetch('/contract/api/action/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'DELETE', id: contractToDelete })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Đã xóa hợp đồng thành công');
+                    loadContracts();
+                } else {
+                    showError('Lỗi xóa: ' + (data.error || 'Vui lòng thử lại.'));
+                }
+            })
+            .catch(err => {
+                console.error("Lỗi:", err);
+                showError('Không thể kết nối đến máy chủ.');
+            })
+            .finally(() => {
+                contractToDelete = null;
+                hideDeleteModal();
+            });
         });
     }
 
@@ -339,7 +354,5 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast(sessionStorage.getItem('contractToast'));
         sessionStorage.removeItem('contractToast');
     }
-
-    renderTable();
 });
 

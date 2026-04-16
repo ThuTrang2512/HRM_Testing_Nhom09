@@ -34,6 +34,8 @@ urlpatterns = [
     path('favicon.ico', favicon_view),
     
     # Modules
+    path('employee/', include('pages.employee.urls')),
+    path('contract/', include('pages.contract.urls')),
     path('salary/', include('pages.salary.urls')),
     path('requests/', include('pages.request.urls')),
     

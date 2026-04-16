@@ -17,25 +17,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelConfirmBtn = document.getElementById('cancelConfirmBtn');
     const confirmCancelBtn = document.getElementById('confirmCancelBtn');
 
-    let contracts = JSON.parse(localStorage.getItem('contracts')) || [];
+    let contracts = [];
+    let employeeList = [];
 
-    const createContractId = () => {
+    // Lấy danh sách hợp đồng và nhân viên từ API
+    Promise.all([
+        fetch('/contract/api/data/').then(res => res.json()),
+        fetch('/employee/api/data/').then(res => res.json())
+    ]).then(([contractData, employeeData]) => {
+        contracts = contractData.contracts || [];
+        employeeList = employeeData.employees || [];
+
+        // Tạo Contract ID
         const lastId = contracts
             .map(contract => contract.id.replace(/\D/g, ''))
             .map(Number)
             .filter(Boolean)
             .sort((a, b) => b - a)[0] || 0;
-        return `HD${String(lastId + 1).padStart(5, '0')}`;
-    };
+        contractIdInput.value = `HD${String(lastId + 1).padStart(8, '0')}`;
 
-    contractIdInput.value = createContractId();
-
-    // Lấy danh sách nhân viên từ localStorage và render vào datalist một lần duy nhất
-    const employeeList = JSON.parse(localStorage.getItem('employees')) || [];
-    const employeeDatalist = document.getElementById('employeeList');
-    if (employeeDatalist) {
-        employeeDatalist.innerHTML = employeeList.map(emp => `<option value="${emp.name}" data-id="${emp.id}"></option>`).join('');
-    }
+        // Đổ dữ liệu Datalist
+        const employeeDatalist = document.getElementById('employeeList');
+        if (employeeDatalist) {
+            employeeDatalist.innerHTML = employeeList.map(emp => `<option value="${emp.name}" data-id="${emp.id}"></option>`).join('');
+        }
+    }).catch(err => console.error("Lỗi khi tải dữ liệu API:", err));
 
     employeeNameInput.addEventListener('input', (event) => {
         const value = event.target.value.trim();
@@ -127,10 +133,34 @@ document.addEventListener('DOMContentLoaded', () => {
         newContract.startDate = formatToVN(startDateInput.value);
         newContract.endDate = formatToVN(endDateInput.value);
 
-        contracts.push(newContract);
-        localStorage.setItem('contracts', JSON.stringify(contracts));
-        sessionStorage.setItem('contractToast', 'Tạo hợp đồng lao động thành công');
-        window.location.href = 'contract_list.html';
+        // Submit via API
+        const payload = {
+            action: 'CREATE',
+            ...newContract,
+            baseSalary: parseFloat(baseSalaryInput.value.replace(/[^\d]/g, '')) || 0,
+            hourSalary: parseFloat(hourSalaryInput.value.replace(/[^\d]/g, '')) || 0,
+            bonus: parseFloat(bonusInput.value.replace(/[^\d]/g, '')) || 0,
+            minHour: parseInt(minHourInput.value.replace(/[^\d]/g, '')) || 0,
+        };
+
+        fetch('/contract/api/action/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                sessionStorage.setItem('contractToast', 'Tạo hợp đồng lao động thành công');
+                window.location.href = 'contract_list.html';
+            } else {
+                showError('Lỗi từ server: ' + (data.error || 'Vui lòng thử lại.'));
+            }
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            showError('Lỗi kết nối tới máy chủ.');
+        });
     });
 
     cancelBtn.addEventListener('click', showConfirm);
