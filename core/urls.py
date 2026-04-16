@@ -14,9 +14,20 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import mimetypes
+mimetypes.add_type("application/javascript", ".js", True)
+mimetypes.add_type("text/css", ".css", True)
+
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path, include
+from django.views.static import serve
+from django.conf import settings
+from django.http import HttpResponseRedirect
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('requests/', include('pages.request.urls')),
+    path('', lambda r: HttpResponseRedirect('/index.html')),
+    re_path(r'^(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR, 'show_indexes': True}),
 ]
+

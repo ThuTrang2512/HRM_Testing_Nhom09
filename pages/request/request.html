@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,9 +10,11 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="page-shell">
         <header class="top-header">
@@ -32,38 +35,38 @@
         </header>
 
 
-      <nav class="main-nav">
-    <a href="../dashboard.html" class="nav-link">Tổng quan</a>
-    <a href="../employee/employee_list.html" class="nav-link">Nhân viên</a>
-    <a href="../contract/contract_list.html" class="nav-link">Hợp đồng</a>
+        <nav class="main-nav">
+            <a href="../dashboard.html" class="nav-link">Tổng quan</a>
+            <a href="../employee/employee_list.html" class="nav-link">Nhân viên</a>
+            <a href="../contract/contract_list.html" class="nav-link">Hợp đồng</a>
 
-    <div class="nav-dropdown-hover">
-        <div class="nav-link nav-link-dropdown">
-            <span>Lịch làm việc</span>
-            <i class="fa-solid fa-chevron-down nav-dropdown-icon"></i>
-        </div>
+            <div class="nav-dropdown-hover">
+                <div class="nav-link nav-link-dropdown">
+                    <span>Lịch làm việc</span>
+                    <i class="fa-solid fa-chevron-down nav-dropdown-icon"></i>
+                </div>
 
-        <div class="nav-dropdown-hover-menu">
-            <a href="../schedule/schedule_list.html">Tạo lịch làm việc</a>
-            <a href="../schedule/schedule_notification.html">Gửi thông báo lịch làm việc</a>
-        </div>
-    </div>
+                <div class="nav-dropdown-hover-menu">
+                    <a href="../schedule/schedule_list.html">Tạo lịch làm việc</a>
+                    <a href="../schedule/schedule_notification.html">Gửi thông báo lịch làm việc</a>
+                </div>
+            </div>
 
-    <a href="request.html" class="nav-link active">Yêu cầu</a>
-    <a href="../salary/salary.html" class="nav-link">Bảng lương</a>
+            <a href="request.html" class="nav-link active">Yêu cầu</a>
+            <a href="../salary/salary.html" class="nav-link">Bảng lương</a>
 
-    <div class="nav-dropdown" id="baoCaoDropdown">
-        <div class="nav-link nav-link-dropdown" onclick="toggleDropdown()">
-            <span>Báo cáo</span>
-            <i class="fa-solid fa-chevron-down nav-dropdown-icon"></i>
-        </div>
+            <div class="nav-dropdown" id="baoCaoDropdown">
+                <div class="nav-link nav-link-dropdown" onclick="toggleDropdown()">
+                    <span>Báo cáo</span>
+                    <i class="fa-solid fa-chevron-down nav-dropdown-icon"></i>
+                </div>
 
-        <div class="nav-dropdown-menu" id="baoCaoMenu">
-            <a href="../report/report_salary.html">Báo cáo lương</a>
-            <a href="../report/report_attendance.html">Báo cáo chấm công</a>
-        </div>
-    </div>
-</nav>
+                <div class="nav-dropdown-menu" id="baoCaoMenu">
+                    <a href="../report/report_salary.html">Báo cáo lương</a>
+                    <a href="../report/report_attendance.html">Báo cáo chấm công</a>
+                </div>
+            </div>
+        </nav>
 
 
         <main class="request-page">
@@ -78,7 +81,7 @@
 
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input id="searchInput" type="text" placeholder="Tìm kiếm">
+                        <input id="searchInput" type="text" placeholder="Nhập tên nhân viên">
                     </div>
 
 
@@ -103,8 +106,10 @@
                             <tr>
                                 <th>STT</th>
                                 <th>Mã yêu cầu</th>
+                                <th>Mã nhân viên</th>
                                 <th>Tên nhân viên</th>
                                 <th>Loại yêu cầu</th>
+                                <th>Ca làm</th>
                                 <th>Ngày đăng ký</th>
                                 <th>Trạng thái</th>
                                 <th>Hành động</th>
@@ -176,11 +181,8 @@
 
 
             <div class="reject-modal-body">
-                <textarea
-                    id="rejectReasonInput"
-                    class="reject-reason-textarea"
-                    placeholder="Nhập lý do từ chối"
-                ></textarea>
+                <textarea id="rejectReasonInput" class="reject-reason-textarea"
+                    placeholder="Nhập lý do từ chối"></textarea>
                 <div id="rejectReasonError" class="reject-error-text">*Vui lòng nhập lý do từ chối</div>
             </div>
 
@@ -209,18 +211,19 @@
 
 
     <script>
-    function toggleDropdown() {
-        const dd = document.getElementById("baoCaoDropdown");
-        dd.classList.toggle("open");
-    }
-
-    document.addEventListener("click", function (e) {
-        const dd = document.getElementById("baoCaoDropdown");
-        if (dd && !dd.contains(e.target)) {
-            dd.classList.remove("open");
+        function toggleDropdown() {
+            const dd = document.getElementById("baoCaoDropdown");
+            dd.classList.toggle("open");
         }
-    });
-</script>
-<script src="../../assets/js/request.js"></script>
+
+        document.addEventListener("click", function (e) {
+            const dd = document.getElementById("baoCaoDropdown");
+            if (dd && !dd.contains(e.target)) {
+                dd.classList.remove("open");
+            }
+        });
+    </script>
+    <script src="../../assets/js/request.js"></script>
 </body>
+
 </html>
