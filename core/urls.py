@@ -15,8 +15,27 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path, include
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.static import serve
+from django.conf import settings
+import os
+
+def favicon_view(request):
+    return HttpResponse(status=204)
 
 urlpatterns = [
+    path('', lambda r: HttpResponseRedirect('/index.html')),
     path('admin/', admin.site.urls),
+    path('favicon.ico', favicon_view),
+    path('salary/', include('pages.salary.urls')),
+    
+    # Shortcuts
+    path('salary', lambda r: HttpResponseRedirect('/pages/salary/salary.html')),
+    path('salary/', lambda r: HttpResponseRedirect('/pages/salary/salary.html')),
+    
+    # Serve raw HTML files similarly to a static web server
+    re_path(r'^pages/(?P<path>.*)$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'pages')}),
+    re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'assets')}),
+    re_path(r'^(?P<path>index\.html)$', serve, {'document_root': settings.BASE_DIR}),
 ]

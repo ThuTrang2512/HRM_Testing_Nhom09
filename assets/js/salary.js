@@ -1,25 +1,32 @@
-const payrolls = [
-    { id: "ML0011", employeeId: "NV0015", employeeName: "Võ Thành Đạt", month: "02/2026", totalSalary: 3500000, bonus: 200000, penalty: 0, status: "pending" },
-    { id: "ML0012", employeeId: "NV0013", employeeName: "Lê Minh Tuấn", month: "02/2026", totalSalary: 3200000, bonus: 150000, penalty: 0, status: "pending" },
-    { id: "ML0013", employeeId: "NV0014", employeeName: "Phạm Ngọc Anh", month: "02/2026", totalSalary: 196000, bonus: 100000, penalty: 12000, status: "pending" },
-    { id: "ML0014", employeeId: "NV0012", employeeName: "Trần Thị Thu Hà", month: "02/2026", totalSalary: 365200, bonus: 100000, penalty: 20000, status: "pending" },
-    { id: "ML0015", employeeId: "NV0016", employeeName: "Trần Thị Thảo Nguyên", month: "02/2026", totalSalary: 3000000, bonus: 180000, penalty: 0, status: "approved" },
-    { id: "ML0016", employeeId: "NV0017", employeeName: "Nguyễn Minh Hòa", month: "02/2026", totalSalary: 2800000, bonus: 100000, penalty: 50000, status: "rejected" }
-];
+let payrolls = [];
+let attendanceData = [];
 
-const attendanceData = [
-    { employeeId: "NV0011", employeeName: "Nguyễn Hoàng Long", month: "02/2026", workedHours: 0, baseSalary: 0, hourlyRate: 0 },
-    { employeeId: "NV0012", employeeName: "Trần Thị Thu Hà", month: "02/2026", workedHours: 16.6, baseSalary: 0, hourlyRate: 22000 },
-    { employeeId: "NV0013", employeeName: "Lê Minh Tuấn", month: "02/2026", workedHours: 10, baseSalary: 3200000, hourlyRate: 0 },
-    { employeeId: "NV0014", employeeName: "Phạm Ngọc Anh", month: "02/2026", workedHours: 9.8, baseSalary: 0, hourlyRate: 20000 },
-    { employeeId: "NV0015", employeeName: "Võ Thành Đạt", month: "02/2026", workedHours: 17.8, baseSalary: 3500000, hourlyRate: 0 },
-    { employeeId: "NV0016", employeeName: "Trần Thị Thảo Nguyên", month: "02/2026", workedHours: 15, baseSalary: 3000000, hourlyRate: 0 },
-    { employeeId: "NV0017", employeeName: "Nguyễn Minh Hòa", month: "02/2026", workedHours: 12, baseSalary: 2800000, hourlyRate: 0 },
+async function fetchSalaryData() {
+    try {
+        const response = await fetch('/salary/api/data/');
+        const data = await response.json();
+        payrolls = data.payrolls;
+        attendanceData = data.attendanceData;
+        renderTable();
+    } catch (error) {
+        console.error("Lỗi khi tải dữ liệu từ máy chủ:", error);
+    }
+}
 
-    { employeeId: "NV0021", employeeName: "Phạm Văn Long", month: "03/2026", workedHours: 18, baseSalary: 3200000, hourlyRate: 0 },
-    { employeeId: "NV0022", employeeName: "Lê Thị Hồng", month: "03/2026", workedHours: 20, baseSalary: 0, hourlyRate: 22000 },
-    { employeeId: "NV0023", employeeName: "Đặng Thị Mai", month: "03/2026", workedHours: 16, baseSalary: 3500000, hourlyRate: 0 }
-];
+function setDefaultFilterDate() {
+    const today = new Date();
+    const year = String(today.getFullYear());
+    
+    // Mặc định ô Tháng là "Tháng" (giá trị rỗng)
+    if (monthSelect) monthSelect.value = "";
+    // Mặc định ô Năm là năm hiện tại
+    if (yearSelect) yearSelect.value = year;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    setDefaultFilterDate();
+    fetchSalaryData();
+});
 
 let selectedCalcEmployeeId = null;
 let currentSalaryDraft = null;
@@ -163,8 +170,7 @@ function buildFilteredData() {
         const matchKeyword =
             !keyword ||
             item.id.toLowerCase().includes(keyword) ||
-            item.employeeId.toLowerCase().includes(keyword) ||
-            item.employeeName.toLowerCase().includes(keyword);
+            item.employeeId.toLowerCase().includes(keyword);
 
         return matchStatus && matchMonth && matchKeyword;
     });
@@ -182,7 +188,6 @@ function renderTableHeader() {
             <th>STT</th>
             <th>Mã lương</th>
             <th>Mã NV</th>
-            <th>Tên nhân viên</th>
             <th>Tháng</th>
             <th>Lương cơ bản</th>
             <th>Lương theo giờ</th>
@@ -198,7 +203,6 @@ function renderTableHeader() {
             <th>STT</th>
             <th>Mã lương</th>
             <th>Mã NV</th>
-            <th>Tên nhân viên</th>
             <th>Tháng</th>
             <th>Lương cơ bản</th>
             <th>Lương theo giờ</th>
@@ -243,7 +247,7 @@ function renderActionButtons(item) {
 function renderEmptyPendingState() {
     tableBody.innerHTML = `
         <tr>
-            <td colspan="13" class="empty-pending-cell">
+            <td colspan="12" class="empty-pending-cell">
                 <div class="empty-pending-box">
                     <div class="empty-pending-icon">✕</div>
                     <div class="empty-pending-title">Chưa có bảng lương để duyệt</div>
@@ -257,7 +261,7 @@ function renderEmptyPendingState() {
 function renderEmptyNormalState(showAction) {
     tableBody.innerHTML = `
         <tr>
-            <td colspan="${showAction ? 13 : 12}" class="empty-state">Không có dữ liệu phù hợp.</td>
+            <td colspan="${showAction ? 12 : 11}" class="empty-state">Không có dữ liệu phù hợp.</td>
         </tr>
     `;
 }
@@ -289,7 +293,6 @@ function renderTable() {
                     <td>${index + 1}</td>
                     <td>${item.id}</td>
                     <td>${item.employeeId}</td>
-                    <td>${item.employeeName}</td>
                     <td>${item.month}</td>
                     <td>${formatCurrency(baseSalary)}</td>
                     <td>${formatCurrency(hourlyRate)}</td>
@@ -308,7 +311,6 @@ function renderTable() {
                 <td>${index + 1}</td>
                 <td>${item.id}</td>
                 <td>${item.employeeId}</td>
-                <td>${item.employeeName}</td>
                 <td>${item.month}</td>
                 <td>${formatCurrency(baseSalary)}</td>
                 <td>${formatCurrency(hourlyRate)}</td>
@@ -424,9 +426,14 @@ function fillEditSalaryDetail(payroll) {
     salaryCodePreview.textContent = `Mã lương: ${currentSalaryDraft.id}`;
     salaryEmployeePreview.textContent = `Mã NV: ${currentSalaryDraft.employeeId} - ${currentSalaryDraft.employeeName}`;
     salaryMonthPreview.textContent = `Tháng: ${currentSalaryDraft.month}`;
+    
+    // Khóa các trường không được phép sửa trong chế độ Chỉnh sửa 
+    detailBaseSalary.readOnly = true;
+    detailHourlyRate.readOnly = true;
+    detailWorkedHours.readOnly = true;
 
-    detailBaseSalary.value = `${formatCurrency(currentSalaryDraft.baseSalary)} VNĐ`;
-    detailHourlyRate.value = `${formatCurrency(currentSalaryDraft.hourlyRate)} VNĐ`;
+    detailBaseSalary.value = currentSalaryDraft.baseSalary;
+    detailHourlyRate.value = currentSalaryDraft.hourlyRate;
     detailWorkedHours.value = currentSalaryDraft.workedHours;
     detailBonus.value = currentSalaryDraft.bonus;
     detailPenalty.value = currentSalaryDraft.penalty;
@@ -499,11 +506,11 @@ function getCalcEmployeesByMonth(monthText) {
 
 function generatePayrollId() {
     const maxNum = payrolls.reduce((max, item) => {
-        const num = parseInt(String(item.id).replace("ML", ""), 10);
+        const num = parseInt(String(item.id).replace("BL", "").replace("ML", ""), 10);
         return Number.isNaN(num) ? max : Math.max(max, num);
     }, 0);
 
-    return `ML${String(maxNum + 1).padStart(4, "0")}`;
+    return `BL${String(maxNum + 1).padStart(8, "0")}`;
 }
 
 function updateSalaryTotalPreview() {
@@ -511,6 +518,9 @@ function updateSalaryTotalPreview() {
 
     currentSalaryDraft.bonus = Number(detailBonus.value) || 0;
     currentSalaryDraft.penalty = Number(detailPenalty.value) || 0;
+    currentSalaryDraft.baseSalary = Number(detailBaseSalary.value) || 0;
+    currentSalaryDraft.hourlyRate = Number(detailHourlyRate.value) || 0;
+    currentSalaryDraft.workedHours = Number(detailWorkedHours.value) || 0;
 
     const total = calculateNetSalaryFromDraft(currentSalaryDraft);
     currentSalaryDraft.netSalary = total;
@@ -531,7 +541,7 @@ function openCalcSalaryModal() {
 
     calcTableBody.innerHTML = `
         <tr>
-            <td colspan="5" style="text-align:center; padding:20px;">
+            <td colspan="4" style="text-align:center; padding:20px;">
                 Vui lòng chọn tháng và năm, sau đó bấm Hiển thị
             </td>
         </tr>
@@ -556,7 +566,7 @@ function renderCalcTable() {
     if (!selectedMonthText) {
         calcTableBody.innerHTML = `
             <tr>
-                <td colspan="5" style="text-align:center; padding:20px;">
+                <td colspan="4" style="text-align:center; padding:20px;">
                     Vui lòng chọn tháng và năm để hiển thị danh sách nhân viên
                 </td>
             </tr>
@@ -570,7 +580,7 @@ function renderCalcTable() {
     if (data.length === 0) {
         calcTableBody.innerHTML = `
             <tr>
-                <td colspan="5" style="padding: 0; border-bottom: none; background: transparent;">
+                <td colspan="4" style="padding: 0; border-bottom: none; background: transparent;">
                     <div class="calc-empty-box">
                         <div class="calc-empty-icon">✕</div>
                         <div class="calc-empty-title">Không có dữ liệu nhân viên trong kỳ này</div>
@@ -604,7 +614,6 @@ function renderCalcTable() {
                 >
             </td>
             <td>${item.employeeId}</td>
-            <td>${item.employeeName}</td>
             <td>${item.workedHours}</td>
             <td>
                 ${item.isCalculated
@@ -649,9 +658,14 @@ function fillSalaryDetail(data) {
     salaryCodePreview.textContent = `Mã lương: ${salaryCode}`;
     salaryEmployeePreview.textContent = `Mã NV: ${data.employeeId} - ${data.employeeName}`;
     salaryMonthPreview.textContent = `Tháng: ${data.month}`;
+    
+    // Mở khóa các trường cho phép sửa trong chế độ tính lương mới
+    detailBaseSalary.readOnly = false;
+    detailHourlyRate.readOnly = false;
+    detailWorkedHours.readOnly = false;
 
-    detailBaseSalary.value = `${formatCurrency(data.baseSalary)} VNĐ`;
-    detailHourlyRate.value = `${formatCurrency(data.hourlyRate)} VNĐ`;
+    detailBaseSalary.value = data.baseSalary;
+    detailHourlyRate.value = data.hourlyRate;
     detailWorkedHours.value = data.workedHours;
     detailBonus.value = 0;
     detailPenalty.value = 0;
@@ -705,7 +719,7 @@ function renderExportTable() {
     if (approvedList.length === 0) {
         exportTableBody.innerHTML = `
             <tr>
-                <td colspan="5" class="export-empty-cell">
+                <td colspan="4" class="export-empty-cell">
                     <div class="export-empty-box">
                         <div class="export-empty-icon">✕</div>
                         <div class="export-empty-title">Không có bảng lương đã duyệt trong tháng này</div>
@@ -721,7 +735,6 @@ function renderExportTable() {
         <tr>
             <td><input type="checkbox" class="export-check" data-id="${item.id}"></td>
             <td>${item.employeeId}</td>
-            <td>${item.employeeName}</td>
             <td>${formatCurrency(getNetSalary(item))}</td>
             <td class="status-approved">Đã duyệt</td>
         </tr>
@@ -864,6 +877,9 @@ salaryDetailModal.addEventListener("click", (event) => {
 
 detailBonus.addEventListener("input", updateSalaryTotalPreview);
 detailPenalty.addEventListener("input", updateSalaryTotalPreview);
+detailBaseSalary.addEventListener("input", updateSalaryTotalPreview);
+detailHourlyRate.addEventListener("input", updateSalaryTotalPreview);
+detailWorkedHours.addEventListener("input", updateSalaryTotalPreview);
 
 btnSaveSalary.addEventListener("click", () => {
     try {

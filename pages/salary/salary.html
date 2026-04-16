@@ -76,7 +76,7 @@
                         <select id="monthSelect" class="month-input">
                             <option value="">Tháng</option>
                             <option value="01">Tháng 1</option>
-                            <option value="02" selected>Tháng 2</option>
+                            <option value="02">Tháng 2</option>
                             <option value="03">Tháng 3</option>
                             <option value="04">Tháng 4</option>
                             <option value="05">Tháng 5</option>
@@ -92,7 +92,7 @@
                         <select id="yearSelect" class="month-input">
                             <option value="">Năm</option>
                             <option value="2025">2025</option>
-                            <option value="2026" selected>2026</option>
+                            <option value="2026">2026</option>
                             <option value="2027">2027</option>
                         </select>
                     </div>
@@ -131,7 +131,6 @@
                                 <th>STT</th>
                                 <th>Mã lương</th>
                                 <th>Mã NV</th>
-                                <th>Tên nhân viên</th>
                                 <th>Tháng</th>
                                 <th>Lương cơ bản</th>
                                 <th>Lương theo giờ</th>
@@ -166,7 +165,6 @@
                                     <input type="checkbox" id="checkAllExport" />
                                 </th>
                                 <th>Mã nhân viên</th>
-                                <th>Tên nhân viên</th>
                                 <th>Lương thực lĩnh</th>
                                 <th>Trạng thái</th>
                             </tr>
@@ -282,7 +280,6 @@
                             <tr>
                                 <th></th>
                                 <th>Mã NV</th>
-                                <th>Họ tên</th>
                                 <th>Số giờ làm</th>
                                 <th>Trạng thái</th>
                             </tr>
@@ -318,17 +315,17 @@
             <div class="salary-detail-grid">
                 <div class="salary-field">
                     <label>Lương cơ bản</label>
-                    <input id="detailBaseSalary" type="text" readonly />
+                    <input id="detailBaseSalary" type="number" min="0" step="1000" />
                 </div>
 
                 <div class="salary-field">
                     <label>Lương / giờ</label>
-                    <input id="detailHourlyRate" type="text" readonly />
+                    <input id="detailHourlyRate" type="number" min="0" step="1000" />
                 </div>
 
                 <div class="salary-field">
                     <label>Giờ làm</label>
-                    <input id="detailWorkedHours" type="text" readonly />
+                    <input id="detailWorkedHours" type="number" min="0" step="0.5" />
                 </div>
 
                 <div class="salary-field">
