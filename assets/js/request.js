@@ -1,92 +1,10 @@
-const requests = [
-    {
-        id: "DK000001",
-        employeeId: "NV001",
-        employeeName: "Nguyễn Văn An",
-        type: "Nghỉ phép",
-        requestDate: "25/12/2026",
-        status: "pending",
-        startDate: "26/12/2026",
-        endDate: "27/12/2026",
-        reason: "Đi khám sức khỏe",
-        rejectReason: ""
-    },
-    {
-        id: "DK000002",
-        employeeId: "NV002",
-        employeeName: "Nguyễn Thanh Anh",
-        type: "Nghỉ phép",
-        requestDate: "26/02/2025",
-        status: "pending",
-        startDate: "27/02/2025",
-        endDate: "28/02/2025",
-        reason: "Giải quyết việc cá nhân",
-        rejectReason: ""
-    },
-    {
-        id: "DK000003",
-        employeeId: "NV003",
-        employeeName: "Nguyễn Văn Anh",
-        type: "Nghỉ phép",
-        requestDate: "26/03/2025",
-        status: "pending",
-        startDate: "27/03/2025",
-        endDate: "27/03/2025",
-        reason: "Nghỉ ốm",
-        rejectReason: ""
-    },
-    {
-        id: "DK000004",
-        employeeId: "NV004",
-        employeeName: "Nguyễn Thị Anh",
-        type: "Đăng ký ca",
-        requestDate: "25/12/2026",
-        status: "approved",
-        workDate: "08/02/2026",
-        startTime: "08:00",
-        endTime: "17:00",
-        rejectReason: ""
-    },
-    {
-        id: "DK000005",
-        employeeId: "NV005",
-        employeeName: "Nguyễn Văn Ánh",
-        type: "Nghỉ phép",
-        requestDate: "26/05/2025",
-        status: "approved",
-        startDate: "27/05/2025",
-        endDate: "28/05/2025",
-        reason: "Việc gia đình",
-        rejectReason: ""
-    },
-    {
-        id: "DK000006",
-        employeeId: "NV006",
-        employeeName: "Trần Minh Quân",
-        type: "Đăng ký ca",
-        requestDate: "02/06/2025",
-        status: "pending",
-        workDate: "10/06/2025",
-        startTime: "13:00",
-        endTime: "21:00",
-        rejectReason: ""
-    },
-    {
-        id: "DK000007",
-        employeeId: "NV007",
-        employeeName: "Lê Thị Hồng",
-        type: "Nghỉ phép",
-        requestDate: "05/06/2025",
-        status: "pending",
-        startDate: "06/06/2025",
-        endDate: "06/06/2025",
-        reason: "Lý do sức khỏe",
-        rejectReason: ""
-    }
-];
+let requests = [];
 
 let currentStatusFilter = "all";
 let currentRequestId = null;
+
+// Địa chỉ server Django của bạn
+const BASE_URL = "http://127.0.0.1:8000";
 
 const requestTableBody = document.getElementById("requestTableBody");
 const requestTypeFilter = document.getElementById("requestTypeFilter");
@@ -117,6 +35,26 @@ const messagePopupIcon = document.getElementById("messagePopupIcon");
 
 requestDetailModal.classList.remove("show");
 rejectReasonModal.classList.remove("show");
+
+// ========== FETCH DATA FROM BACKEND ==========
+
+async function fetchRequests() {
+    try {
+        // Gọi API với địa chỉ tuyệt đối để chạy được khi mở file trực tiếp
+        const response = await fetch(`${BASE_URL}/requests/api/list/`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        requests = await response.json();
+        renderTable();
+    } catch (error) {
+        console.error("Lỗi khi tải dữ liệu yêu cầu:", error);
+        showMessagePopup("Lỗi kết nối tới Server Django. <br> Hãy đảm bảo server đã được chạy bằng lệnh:<br> <b>python manage.py runserver</b>", "error");
+        renderEmptyState();
+    }
+}
+
+// ========== FORMAT & FILTER ==========
 
 function formatStatus(status) {
     if (status === "approved") {
@@ -152,6 +90,8 @@ function buildFilteredRequests() {
     });
 }
 
+// ========== RENDER ==========
+
 function renderEmptyState() {
     requestTableBody.innerHTML = `
         <tr>
@@ -168,22 +108,31 @@ function renderTable() {
         return;
     }
 
-    requestTableBody.innerHTML = data.map((item, index) => `
-        <tr>
-            <td>${index + 1}</td>
-            <td>${item.id}</td>
-            <td>${item.employeeName}</td>
-            <td>${item.type}</td>
-            <td>${item.requestDate}</td>
-            <td>${formatStatus(item.status)}</td>
-            <td>
-                <button class="view-detail-btn" type="button" onclick="handleViewDetail('${item.id}')">
-                    Xem chi tiết
-                </button>
-            </td>
-        </tr>
-    `).join("");
+    requestTableBody.innerHTML = data.map((item, index) => {
+        // Hiển thị tên ca làm cho mọi loại yêu cầu
+        const displayShift = item.shiftName ? item.shiftName : "-";
+
+        return `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${item.id}</td>
+                <td>${item.employeeId}</td>
+                <td>${item.employeeName}</td>
+                <td>${item.type}</td>
+                <td>${displayShift}</td>
+                <td>${item.requestDate}</td>
+                <td>${formatStatus(item.status)}</td>
+                <td>
+                    <button class="view-detail-btn" type="button" onclick="handleViewDetail('${item.id}')">
+                        Xem chi tiết
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join("");
 }
+
+// ========== MESSAGE POPUP ==========
 
 function showMessagePopup(message, type = "success") {
     messagePopupText.innerHTML = message;
@@ -202,6 +151,8 @@ function showMessagePopup(message, type = "success") {
         messagePopupBox.classList.remove("show");
     }, 2500);
 }
+
+// ========== DETAIL MODAL ==========
 
 function openRequestDetailModal() {
     requestDetailModal.classList.add("show");
@@ -235,18 +186,19 @@ function createDetailRow(label, value, highlight = false) {
 function fillLeaveRequestDetail(request) {
     requestDetailFields.innerHTML = `
         ${createDetailRow("Mã nhân viên:", request.employeeId)}
-        ${createDetailRow("Loại yêu cầu:", request.type, true)}
-        ${createDetailRow("Ngày bắt đầu:", request.startDate)}
-        ${createDetailRow("Ngày kết thúc:", request.endDate, true)}
-        ${createDetailRow("Lý do:", request.reason)}
-        ${createDetailRow("Ngày đăng ký:", request.requestDate, true)}
+        ${createDetailRow("Loại yêu cầu:", "Nghỉ phép", true)}
+        ${createDetailRow("Ca nghỉ:", request.shiftName || "N/A")}
+        ${createDetailRow("Ngày bắt đầu:", request.startDate, true)}
+        ${createDetailRow("Ngày kết thúc:", request.endDate)}
+        ${createDetailRow("Lý do:", request.reason, true)}
+        ${createDetailRow("Ngày đăng ký:", request.requestDate)}
     `;
 }
 
 function fillShiftRequestDetail(request) {
     requestDetailFields.innerHTML = `
         ${createDetailRow("Mã nhân viên:", request.employeeId)}
-        ${createDetailRow("Loại yêu cầu:", "Ca làm việc", true)}
+        ${createDetailRow("Loại yêu cầu:", "Đăng ký ca", true)}
         ${createDetailRow("Ngày làm:", request.workDate)}
         ${createDetailRow("Giờ bắt đầu:", request.startTime, true)}
         ${createDetailRow("Giờ kết thúc:", request.endTime)}
@@ -299,37 +251,46 @@ function handleViewDetail(requestId) {
     openRequestDetailModal();
 }
 
-function approveRequest(requestId) {
-    const request = requests.find((item) => item.id === requestId);
+// ========== APPROVE / REJECT (CALL BACKEND API) ==========
 
-    if (!request) {
-        throw new Error("NOT_FOUND");
+async function approveRequest(requestId) {
+    const response = await fetch(`${BASE_URL}/requests/api/update-status/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId: requestId, status: "approved" })
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Lỗi khi duyệt yêu cầu");
     }
-
-    request.status = "approved";
-    request.rejectReason = "";
+    return await response.json();
 }
 
-function rejectRequest(requestId, reason) {
-    const request = requests.find((item) => item.id === requestId);
-
-    if (!request) {
-        throw new Error("NOT_FOUND");
+async function rejectRequest(requestId, reason) {
+    const response = await fetch(`${BASE_URL}/requests/api/update-status/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId: requestId, status: "rejected", rejectReason: reason })
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Lỗi khi từ chối yêu cầu");
     }
-
-    request.status = "rejected";
-    request.rejectReason = reason;
+    return await response.json();
 }
 
-btnApproveRequest.addEventListener("click", () => {
+// ========== EVENT LISTENERS ==========
+
+btnApproveRequest.addEventListener("click", async () => {
     if (!currentRequestId || btnApproveRequest.disabled) return;
 
     try {
-        approveRequest(currentRequestId);
+        await approveRequest(currentRequestId);
         closeRequestDetailPopup();
-        renderTable();
+        await fetchRequests();
         showMessagePopup(`Duyệt yêu cầu ${currentRequestId} thành công`, "success");
     } catch (error) {
+        console.error(error);
         showMessagePopup("Lỗi kết nối dữ liệu, vui lòng thử lại sau.", "error");
     }
 });
@@ -339,7 +300,7 @@ btnRejectRequest.addEventListener("click", () => {
     openRejectReasonPopup();
 });
 
-btnConfirmReject.addEventListener("click", () => {
+btnConfirmReject.addEventListener("click", async () => {
     const reason = rejectReasonInput.value.trim();
 
     if (!reason) {
@@ -349,12 +310,13 @@ btnConfirmReject.addEventListener("click", () => {
     }
 
     try {
-        rejectRequest(currentRequestId, reason);
+        await rejectRequest(currentRequestId, reason);
         closeRejectReasonPopup();
         closeRequestDetailPopup();
-        renderTable();
+        await fetchRequests();
         showMessagePopup(`Đã từ chối yêu cầu ${currentRequestId}`, "success");
     } catch (error) {
+        console.error(error);
         showMessagePopup("Lỗi kết nối dữ liệu, vui lòng thử lại sau.", "error");
     }
 });
@@ -378,9 +340,9 @@ requestDetailModal.addEventListener("click", (event) => {
 closeRejectReasonModal.addEventListener("click", closeRejectReasonPopup);
 btnCancelReject.addEventListener("click", closeRejectReasonPopup);
 
-rejectReasonModal.addEventListener("click", (event) => {
-    if (event.target === rejectReasonModal) {
-        closeRejectReasonPopup();
+requestDetailModal.addEventListener("click", (event) => {
+    if (event.target === requestDetailModal) {
+        closeRequestDetailPopup();
     }
 });
 
@@ -405,6 +367,7 @@ requestTypeFilter.addEventListener("change", renderTable);
 
 window.handleViewDetail = handleViewDetail;
 
-renderTable();
+// ========== INIT: LOAD DATA FROM BACKEND ==========
+fetchRequests();
 
 /*drp header */

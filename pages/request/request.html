@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đi Lạc Coffee - Yêu cầu</title>
+    <link rel="stylesheet" href="../../assets/css/request.css">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="page-shell">
+        <header class="top-header">
+            <div class="brand-wrap">
+                <div class="brand-logo">
+                    <img src="../../assets/images/logo.png" alt="Logo Đi Lạc Coffee">
+                </div>
+                <div class="brand-name">ĐI LẠC COFFEE</div>
+            </div>
+
+
+            <div class="user-wrap">
+                <div class="hello-text">Xin chào, <strong>Đi Lạc coffee</strong></div>
+                <div class="user-avatar">
+                    <i class="fa-solid fa-circle-user"></i>
+                </div>
+            </div>
+        </header>
+
+
+        <nav class="main-nav">
+            <a href="../dashboard.html" class="nav-link">Tổng quan</a>
+            <a href="../employee/employee_list.html" class="nav-link">Nhân viên</a>
+            <a href="../contract/contract_list.html" class="nav-link">Hợp đồng</a>
+
+            <div class="nav-dropdown-hover">
+                <div class="nav-link nav-link-dropdown">
+                    <span>Lịch làm việc</span>
+                    <i class="fa-solid fa-chevron-down nav-dropdown-icon"></i>
+                </div>
+
+                <div class="nav-dropdown-hover-menu">
+                    <a href="../schedule/schedule_list.html">Tạo lịch làm việc</a>
+                    <a href="../schedule/schedule_notification.html">Gửi thông báo lịch làm việc</a>
+                </div>
+            </div>
+
+            <a href="request.html" class="nav-link active">Yêu cầu</a>
+            <a href="../salary/salary.html" class="nav-link">Bảng lương</a>
+
+            <div class="nav-dropdown" id="baoCaoDropdown">
+                <div class="nav-link nav-link-dropdown" onclick="toggleDropdown()">
+                    <span>Báo cáo</span>
+                    <i class="fa-solid fa-chevron-down nav-dropdown-icon"></i>
+                </div>
+
+                <div class="nav-dropdown-menu" id="baoCaoMenu">
+                    <a href="../report/report_salary.html">Báo cáo lương</a>
+                    <a href="../report/report_attendance.html">Báo cáo chấm công</a>
+                </div>
+            </div>
+        </nav>
+
+
+        <main class="request-page">
+            <section class="request-panel">
+                <div class="toolbar-row">
+                    <select id="requestTypeFilter" class="request-type-select">
+                        <option value="all">Loại yêu cầu: Tất cả</option>
+                        <option value="Nghỉ phép">Loại yêu cầu: Nghỉ phép</option>
+                        <option value="Đăng ký ca">Loại yêu cầu: Đăng ký ca</option>
+                    </select>
+
+
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input id="searchInput" type="text" placeholder="Nhập tên nhân viên">
+                    </div>
+
+
+                    <button id="btnSearch" class="action-btn" type="button">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Tìm kiếm</span>
+                    </button>
+                </div>
+
+
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-status="all">Tất cả</button>
+                    <button class="filter-tab" data-status="pending">Đang chờ duyệt</button>
+                    <button class="filter-tab" data-status="approved">Đã duyệt</button>
+                    <button class="filter-tab" data-status="rejected">Đã từ chối</button>
+                </div>
+
+
+                <div class="table-wrap">
+                    <table class="request-table">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã yêu cầu</th>
+                                <th>Mã nhân viên</th>
+                                <th>Tên nhân viên</th>
+                                <th>Loại yêu cầu</th>
+                                <th>Ca làm</th>
+                                <th>Ngày đăng ký</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+
+    <!-- POPUP CHI TIẾT -->
+    <div id="requestDetailModal" class="popup-overlay">
+        <div class="request-detail-modal">
+            <div class="request-detail-header">
+                <h3>Chi tiết yêu cầu</h3>
+                <button id="closeRequestDetailModal" type="button" class="detail-close-btn">&times;</button>
+            </div>
+
+
+            <div class="request-detail-body">
+                <div class="request-user-card">
+                    <div class="request-user-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+
+                    <div class="request-user-info">
+                        <div id="detailEmployeeName" class="request-user-name">Nguyễn Văn An</div>
+                        <div id="detailEmployeeCodeText" class="request-user-code">Mã nhân viên - NV001</div>
+                    </div>
+                </div>
+
+
+                <div id="requestDetailFields" class="request-detail-fields"></div>
+            </div>
+
+
+            <div class="request-detail-actions center-actions">
+                <button id="btnApproveRequest" class="detail-btn approve-btn" type="button">
+                    <i class="fa-solid fa-check"></i>
+                    <span>Duyệt</span>
+                </button>
+
+
+                <button id="btnRejectRequest" class="detail-btn reject-btn danger-btn" type="button">
+                    <i class="fa-solid fa-xmark"></i>
+                    <span>Từ chối</span>
+                </button>
+
+
+                <button id="btnCloseRequestDetail" class="detail-btn close-btn" type="button" style="display:none;">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- POPUP TỪ CHỐI -->
+    <div id="rejectReasonModal" class="popup-overlay">
+        <div class="reject-modal">
+            <div class="reject-modal-header">
+                <h3>Từ chối yêu cầu</h3>
+                <button id="closeRejectReasonModal" type="button" class="detail-close-btn">&times;</button>
+            </div>
+
+
+            <div class="reject-modal-body">
+                <textarea id="rejectReasonInput" class="reject-reason-textarea"
+                    placeholder="Nhập lý do từ chối"></textarea>
+                <div id="rejectReasonError" class="reject-error-text">*Vui lòng nhập lý do từ chối</div>
+            </div>
+
+
+            <div class="reject-modal-actions">
+                <button id="btnConfirmReject" class="detail-btn reject-btn danger-btn" type="button">
+                    Xác nhận từ chối
+                </button>
+                <button id="btnCancelReject" class="detail-btn cancel-brown-btn" type="button">
+                    Hủy
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- POPUP THÔNG BÁO -->
+    <div id="messagePopup" class="message-popup-wrap">
+        <div id="messagePopupBox" class="message-popup-box success">
+            <div class="message-popup-content">
+                <span id="messagePopupText">Duyệt yêu cầu thành công</span>
+                <i id="messagePopupIcon" class="fa-solid fa-circle-check"></i>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function toggleDropdown() {
+            const dd = document.getElementById("baoCaoDropdown");
+            dd.classList.toggle("open");
+        }
+
+        document.addEventListener("click", function (e) {
+            const dd = document.getElementById("baoCaoDropdown");
+            if (dd && !dd.contains(e.target)) {
+                dd.classList.remove("open");
+            }
+        });
+    </script>
+    <script src="../../assets/js/request.js"></script>
+</body>
+
+</html>

@@ -24,14 +24,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     };
 
+    // Retrieve employees from localStorage or initialize empty array
+    let employees = JSON.parse(localStorage.getItem('employees')) || [];
+
+    // Avatar Logic
+    const avatarContainer = document.getElementById('avatarContainer');
+    const imageInput = document.getElementById('imageInput');
+    const avatarImage = document.getElementById('avatarImage');
+    const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+    let currentAvatarData = null;
+
+    if (avatarContainer && imageInput) {
+        avatarContainer.addEventListener('click', () => {
+            imageInput.click();
+        });
+
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    currentAvatarData = event.target.result; // Base64 string
+                    avatarImage.src = currentAvatarData;
+                    avatarImage.classList.remove('hidden');
+                    avatarPlaceholder.classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
     // Button actions in Error Modal
     if (btnQuayLai) btnQuayLai.addEventListener('click', hideError);
     if (btnThoat) btnThoat.addEventListener('click', () => {
         window.location.href = 'employee_list.html';
     });
-
-    // Retrieve employees from localStorage or initialize empty array
-    let employees = JSON.parse(localStorage.getItem('employees')) || [];
 
     // Helper to format date from "yyyy-mm-dd" to "dd/mm/yyyy"
     const formatDate = (dateStr) => {
@@ -59,12 +86,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const cccd = document.getElementById('empCccd').value.trim();
         const phone = document.getElementById('empPhone').value.trim();
         const address = document.getElementById('empAddress').value.trim();
-        const tempAddress = document.getElementById('empTempAddress').value.trim();
+        const workAddress = document.getElementById('empWorkAddress').value.trim();
 
         const submitBtn = document.getElementById('saveBtn');
 
         // Exception Flow 5a: Missing required fields
-        if (!name || !role || !gender || !dobRaw || !cccd || !phone || !address || !tempAddress) {
+        if (!name || !role || !gender || !dobRaw || !cccd || !phone || !address || !workAddress) {
             showError('Xin vui lòng nhập đầy đủ thông tin !');
             return;
         }
@@ -95,7 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 phone,
                 role,
                 address,
-                tempAddress
+                workAddress,
+                avatar: currentAvatarData // Save uploaded avatar
             };
 
             employees.push(newEmp);

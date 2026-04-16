@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('employees', JSON.stringify(employees));
     }
 
-    const tableBody = document.getElementById('employeeTableBody');
+    const cardsContainer = document.getElementById('employeeCardsContainer');
     const addEmployeeBtn = document.getElementById('addEmployeeBtn');
     const successBanner = document.getElementById('successBanner');
     const closeBannerBtn = document.getElementById('closeBannerBtn');
@@ -50,57 +50,133 @@ document.addEventListener('DOMContentLoaded', () => {
         currentDeleteId = null;
     };
 
-    // Function to render the table 
-    const renderTable = () => {
-        tableBody.innerHTML = '';
+    // Function to generate avatar with initials
+    const getAvatarColor = (index) => {
+        const colors = ['#6366F1', '#8B5CF6', '#EC4899', '#F43F5E', '#F59E0B', '#10B981', '#14B8A6', '#0891B2'];
+        return colors[index % colors.length];
+    };
 
-        // Filter out inactive (soft-deleted) employees
-        const activeEmployees = employees.filter(emp => emp.status !== 'inactive');
+    const getInitials = (name) => {
+        return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    };
 
-        activeEmployees.forEach((emp, index) => {
-            const tr = document.createElement('tr');
-            // Alternating row colors
-            tr.className = index % 2 === 0 ? 'bg-[#f4ede7] hover:bg-[#e8ddd4] cursor-pointer transition-colors text-center text-gray-800' : 'bg-white hover:bg-gray-50 cursor-pointer transition-colors text-center text-gray-800';
-            tr.setAttribute('data-id', emp.id);
-            tr.innerHTML = `
-                <td class="py-4 px-2 border-r border-transparent">${index + 1}</td>
-                <td class="py-4 px-4 border-r border-transparent">${emp.id}</td>
-                <td class="py-4 px-4 border-r border-transparent">
-                    <div class="inline-block text-left w-max">${emp.name}</div>
-                </td>
-                <td class="py-4 px-4 border-r border-transparent">${emp.dob}</td>
-                <td class="py-4 px-4 border-r border-transparent">${emp.phone}</td>
-                <td class="py-4 px-4 border-r border-transparent">${emp.role}</td>
-                <td class="py-4 px-4 text-[#4B2E1F]/80">
-                    <button class="hover:text-black mx-2 edit-btn" title="Sửa" data-id="${emp.id}"><i class="fa-solid fa-pen"></i></button>
-                    <button class="hover:text-black mx-2 delete-btn" title="Xóa" data-id="${emp.id}"><i class="fa-regular fa-trash-can"></i></button>
-                </td>
-            `;
+    const formatDateValue = (dateStr) => {
+        if (!dateStr) return '';
+        // If format is YYYY-MM-DD (contains hyphens and first part is length 4)
+        if (dateStr.includes('-')) {
+            const parts = dateStr.split('-');
+            if (parts[0].length === 4) {
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+        }
+        return dateStr;
+    };
 
-            // View details event
-            tr.addEventListener('click', (e) => {
-                // Ignore if clicked on a button or its icon
-                if (e.target.closest('button')) return;
+    // Function to render employee cards
+    const renderCards = (searchTerm = '') => {
+        cardsContainer.innerHTML = '';
 
-                sessionStorage.setItem('viewingEmployeeId', emp.id);
-                window.location.href = 'employee_detail.html';
-            });
-
-            tableBody.appendChild(tr);
+        // Filter by status and search term
+        const activeEmployees = employees.filter(emp => {
+            const matchesStatus = emp.status !== 'inactive';
+            const matchesSearch = emp.name.toLowerCase().includes(searchTerm.toLowerCase());
+            return matchesStatus && matchesSearch;
         });
 
-        // Bind Edit buttons
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = e.currentTarget.getAttribute('data-id');
-                sessionStorage.setItem('editingEmployeeId', id);
-                window.location.href = 'employee_edit.html';
-            });
+        if (activeEmployees.length === 0) {
+            cardsContainer.innerHTML = `
+                <div class="col-span-full text-center py-20 text-gray-400">
+                    <i class="fa-solid fa-magnifying-glass text-6xl mb-4 opacity-20"></i>
+                    <p class="text-xl font-medium">Không tìm thấy nhân viên phù hợp</p>
+                    <p class="text-sm mt-2">Vui lòng thử lại với tên khác</p>
+                </div>`;
+            return;
+        }
+
+        activeEmployees.forEach((emp, index) => {
+            const card = document.createElement('div');
+            const avatarColor = getAvatarColor(index);
+            const initials = getInitials(emp.name);
+
+            card.className = 'bg-white rounded-[15px] shadow-sm hover:shadow-md transition-all cursor-pointer border border-[#f0f0f0] p-4 flex gap-4 items-center';
+            card.style.height = 'auto';
+
+            // Create avatar HTML - show image if available, otherwise show initials
+            let avatarHTML = '';
+            if (emp.avatar) {
+                avatarHTML = `<img src="${emp.avatar}" alt="${emp.name}" class="w-full h-full object-cover">`;
+            } else {
+                avatarHTML = `<div class="w-full h-full flex items-center justify-center text-white font-bold text-2xl" style="background-color: ${avatarColor}">${initials}</div>`;
+            }
+
+            card.innerHTML = `
+                <!-- Left: Avatar (Slightly Smaller for 4-col) -->
+                <div class="w-24 h-28 flex-shrink-0 rounded-[12px] overflow-hidden bg-gray-50 border border-gray-100 shadow-sm">
+                    ${avatarHTML}
+                </div>
+
+                <!-- Right: Content -->
+                <div class="flex-1 flex flex-col justify-between h-full min-h-[112px] overflow-hidden">
+                    <!-- Employee Name -->
+                    <h3 class="font-bold text-[16px] text-[#2d3748] mt-1 mb-1 leading-tight hover:text-brand-primary transition employee-name-edit truncate" title="${emp.name}">${emp.name}</h3>
+
+                    <!-- Employee info and action -->
+                    <div class="flex justify-between items-end gap-1">
+                        <!-- Employee Info -->
+                        <div class="space-y-[0px] cursor-pointer hover:opacity-75 transition employee-info-edit">
+                            <div class="flex items-center gap-1.5 text-[13px] text-gray-600">
+                                <i class="fa-solid fa-briefcase text-brand-primary w-4 text-center"></i>
+                                <span class="truncate max-w-[90px]">${emp.role}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-[12px] text-gray-500">
+                                <i class="fa-solid fa-phone text-brand-primary w-4 text-center"></i>
+                                <span>${emp.phone}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-[12px] text-gray-500">
+                                <i class="fa-solid fa-calendar text-brand-primary w-4 text-center"></i>
+                                <span>${formatDateValue(emp.dob)}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-[12px] text-gray-400">
+                                <i class="fa-solid fa-id-card text-brand-primary w-4 text-center"></i>
+                                <span>${emp.id}</span>
+                            </div>
+                        </div>
+
+                        <!-- Delete Button (Icon Only) -->
+                        <button class="delete-btn text-red-400 hover:text-red-600 transition flex-shrink-0 p-2 hover:bg-red-50 rounded-full translate-y-3" data-id="${emp.id}" title="Xóa nhân viên">
+                            <i class="fa-solid fa-trash-can text-[18px]"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Add click event to view employee details
+            const nameElement = card.querySelector('.employee-name-edit');
+            const infoElement = card.querySelector('.employee-info-edit');
+
+            if (nameElement) {
+                nameElement.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    sessionStorage.setItem('viewingEmployeeId', emp.id);
+                    window.location.href = 'employee_detail.html';
+                });
+            }
+
+            if (infoElement) {
+                infoElement.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    sessionStorage.setItem('viewingEmployeeId', emp.id);
+                    window.location.href = 'employee_detail.html';
+                });
+            }
+
+            cardsContainer.appendChild(card);
         });
 
         // Bind Delete buttons
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 currentDeleteId = e.currentTarget.getAttribute('data-id');
                 showDeleteModal();
             });
@@ -108,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Initial render
-    renderTable();
+    renderCards();
 
     // Check Toast Notification state
     if (sessionStorage.getItem('showSuccessToast') === 'true') {
@@ -198,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }, 5000);
                     }
 
-                    renderTable();
+                    renderCards();
                 }
             }
             hideDeleteModal();
@@ -231,6 +307,39 @@ document.addEventListener('DOMContentLoaded', () => {
         closeInfoToastBtn.addEventListener('click', () => {
             const infoToast = document.getElementById('infoToast');
             if (infoToast) infoToast.classList.add('hidden');
+        });
+    }
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchEmployeeBtn');
+
+    if (searchInput) {
+        // Real-time search as user types
+        searchInput.addEventListener('input', (e) => {
+            renderCards(e.target.value);
+        });
+
+        // Trigger search on Enter key
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                renderCards(searchInput.value);
+            }
+        });
+    }
+
+    if (searchBtn) {
+        // Trigger search on button click
+        searchBtn.addEventListener('click', () => {
+            renderCards(searchInput.value ? searchInput.value : '');
+        });
+    }
+
+    // Branch filter functionality
+    const branchFilter = document.getElementById('branchFilter');
+    if (branchFilter) {
+        branchFilter.addEventListener('change', () => {
+            renderCards(searchInput ? searchInput.value : '');
         });
     }
 });

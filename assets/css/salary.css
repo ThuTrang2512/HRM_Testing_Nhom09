@@ -3,11 +3,9 @@
     --main-brown-hover: #3e261a;
 }
 
-
 * {
     box-sizing: border-box;
 }
-
 
 body {
     margin: 0;
@@ -16,14 +14,12 @@ body {
     color: #4b2e1f;
 }
 
-
 .page-shell {
     width: 100%;
     min-height: 100vh;
     background: #f2f2f2;
     border: 1px solid #d6d6d6;
 }
-
 
 .top-header {
     background: #ffffff;
@@ -34,13 +30,11 @@ body {
     border-bottom: 1px solid #f1f1f1;
 }
 
-
 .brand-wrap {
     display: flex;
     align-items: center;
     gap: 16px;
 }
-
 
 .brand-logo {
     width: 64px;
@@ -54,13 +48,11 @@ body {
     justify-content: center;
 }
 
-
 .brand-logo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-
 
 .brand-name {
     font-size: 26px;
@@ -70,13 +62,11 @@ body {
     color: #5c4133;
 }
 
-
 .user-wrap {
     display: flex;
     align-items: center;
     gap: 16px;
 }
-
 
 .hello-text {
     font-size: 23px;
@@ -85,11 +75,9 @@ body {
     color: #1f2937;
 }
 
-
 .hello-text strong {
     font-weight: 700;
 }
-
 
 .user-avatar {
     width: 48px;
@@ -102,7 +90,6 @@ body {
     line-height: 1;
 }
 
-
 .main-nav {
     background: rgba(75, 46, 31, 0.87);
     display: flex;
@@ -111,7 +98,6 @@ body {
     gap: 48px;
     padding: 0 32px;
 }
-
 
 .nav-link {
     color: #ffffff;
@@ -124,17 +110,14 @@ body {
     transition: color 0.2s ease;
 }
 
-
 .nav-link:hover {
     color: #d6b5a3;
 }
-
 
 .nav-link.active {
     font-weight: 700;
     color: #d6b5a3;
 }
-
 
 .nav-link.active::after {
     content: "";
@@ -147,86 +130,84 @@ body {
     border-radius: 2px 2px 0 0;
 }
 
-
 .salary-page {
     padding: 26px 24px 44px;
     width: 100%;
 }
 
-
 .salary-panel {
     width: 100%;
 }
 
-
+/* ===== TOOLBAR ===== */
 .toolbar-row {
-    display: grid;
-    grid-template-columns: 140px 1fr 106px 106px 106px;
-    gap: 10px;
+    display: flex;
     align-items: center;
+    gap: 12px;
     margin-bottom: 12px;
+    flex-wrap: nowrap;
 }
 
-
-.export-toolbar {
-    width: 140px;
-    margin-bottom: 16px;
+.month-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
 }
-
 
 .month-input {
-    width: 100%;
-    height: 36px;
+    height: 40px;
     border: 1px solid #cfcfcf;
-    border-radius: 4px;
+    border-radius: 6px;
     background: #ffffff;
     padding: 0 12px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     color: #4b2e1f;
     outline: none;
 }
 
+.month-filter-group .month-input {
+    width: 120px;
+}
 
 .search-box {
     position: relative;
     width: 100%;
+    max-width: 340px;
+    flex: 0 1 340px;
 }
-
 
 .search-box i {
     position: absolute;
     left: 11px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 12px;
+    font-size: 13px;
     color: #a8a8a8;
 }
 
-
 .search-box input {
     width: 100%;
-    height: 36px;
+    height: 40px;
     border: 1px solid #cfcfcf;
-    border-radius: 4px;
+    border-radius: 6px;
     background: #ffffff;
-    padding: 0 12px 0 30px;
+    padding: 0 12px 0 32px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     outline: none;
 }
-
 
 .search-box input::placeholder {
     color: #b1b1b1;
 }
 
-
 .action-btn {
-    width: 100%;
-    height: 36px;
+    min-width: 132px;
+    height: 40px;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     background: #70452F;
     color: #ffffff;
     font-family: 'Montserrat', sans-serif;
@@ -237,19 +218,18 @@ body {
     justify-content: center;
     gap: 6px;
     cursor: pointer;
-    padding: 0 10px;
+    padding: 0 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
-
 
 .action-btn:hover {
     background: #875b3c;
 }
 
-
 .action-btn i {
     font-size: 11px;
 }
-
 
 .filter-tabs {
     display: flex;
@@ -257,10 +237,9 @@ body {
     margin-bottom: 14px;
 }
 
-
 .filter-tab {
-    height: 34px;
-    padding: 0 16px;
+    height: 40px;
+    padding: 0 20px;
     border: none;
     border-radius: 999px;
     background: #efefef;
@@ -271,31 +250,28 @@ body {
     cursor: pointer;
 }
 
-
 .filter-tab.active {
     background: rgba(183, 157, 141, 0.6);
     color: #000;
     font-weight: 700;
 }
 
-
+/* ===== TABLE ===== */
 .table-wrap {
-    overflow-x: auto;
+    width: 100%;
+    overflow-x: hidden;
+    border-radius: 8px;
 }
-
 
 .salary-table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;
-    min-width: 980px;
+    table-layout: auto;
 }
-
 
 .salary-table thead tr {
     background: #70452F;
 }
-
 
 .salary-table th {
     color: #ffffff;
@@ -305,7 +281,6 @@ body {
     text-align: center;
     white-space: nowrap;
 }
-
 
 .salary-table td {
     font-size: 12px;
@@ -317,77 +292,72 @@ body {
     border-bottom: 1px solid #e8e2dd;
     vertical-align: middle;
 }
-
-
 .salary-table tbody tr:nth-child(even) td {
     background: #ece6e1;
 }
 
-
+/* 13 cột */
 .salary-table th:nth-child(1),
-.salary-table td:nth-child(1) { width: 5%; }
-
+.salary-table td:nth-child(1) { width: 3.5%; }   /* STT */
 
 .salary-table th:nth-child(2),
-.salary-table td:nth-child(2) { width: 10%; }
-
+.salary-table td:nth-child(2) { width: 7%; }     /* Mã lương */
 
 .salary-table th:nth-child(3),
-.salary-table td:nth-child(3) { width: 9%; }
-
+.salary-table td:nth-child(3) { width: 6.5%; }   /* Mã NV */
 
 .salary-table th:nth-child(4),
-.salary-table td:nth-child(4) { width: 18%; }
-
+.salary-table td:nth-child(4) {
+    width: 13%;
+    white-space: normal;
+    line-height: 1.35;
+}                                                  /* Tên nhân viên */
 
 .salary-table th:nth-child(5),
-.salary-table td:nth-child(5) { width: 8%; }
-
+.salary-table td:nth-child(5) { width: 7%; }      /* Tháng */
 
 .salary-table th:nth-child(6),
-.salary-table td:nth-child(6) { width: 11%; }
-
+.salary-table td:nth-child(6) { width: 8%; }      /* Lương cơ bản */
 
 .salary-table th:nth-child(7),
-.salary-table td:nth-child(7) { width: 9%; }
-
+.salary-table td:nth-child(7) { width: 8%; }      /* Lương theo giờ */
 
 .salary-table th:nth-child(8),
-.salary-table td:nth-child(8) { width: 6%; }
-
+.salary-table td:nth-child(8) { width: 6.5%; }    /* Số giờ làm */
 
 .salary-table th:nth-child(9),
-.salary-table td:nth-child(9) { width: 11%; }
-
+.salary-table td:nth-child(9) { width: 7%; }      /* Thưởng */
 
 .salary-table th:nth-child(10),
-.salary-table td:nth-child(10) { width: 8%; }
-
+.salary-table td:nth-child(10) { width: 6.5%; }   /* Phạt */
 
 .salary-table th:nth-child(11),
-.salary-table td:nth-child(11) { width: 10%; }
+.salary-table td:nth-child(11) { width: 8.5%; }   /* Lương thực lãnh */
 
+.salary-table th:nth-child(12),
+.salary-table td:nth-child(12) { width: 5%; }     /* Hành động */
+
+.salary-table th:nth-child(13),
+.salary-table td:nth-child(13) { width: 5%; }     /* Trạng thái */
 
 .action-group {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 10px;
 }
 
-
 .action-icon {
-    font-size: 19px;
+    font-size: 18px;
     color: #111111;
     cursor: pointer;
     line-height: 1;
+    flex-shrink: 0;
 }
-
 
 .action-icon:hover {
     opacity: 0.75;
 }
-
 
 .status-symbols {
     display: flex;
@@ -397,20 +367,17 @@ body {
     line-height: 1;
 }
 
-
 .status-check {
     color: #555555;
     font-size: 17px;
     font-weight: 700;
 }
 
-
 .status-cross {
     color: #ff0000;
     font-size: 17px;
     font-weight: 700;
 }
-
 
 .empty-state {
     padding: 24px 10px;
@@ -419,51 +386,70 @@ body {
     color: #666666;
 }
 
-
-.export-title {
-    margin: 0 0 12px;
-    font-size: 18px;
+.status-approved-text {
+    color: #16a34a;
     font-weight: 700;
-    color: #4b2e1f;
 }
 
-
-.export-bottom-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
-    gap: 12px;
-    margin-top: 16px;
+.status-rejected-text {
+    color: #ff1f1f;
+    font-weight: 700;
 }
 
+.action-approve,
+.action-reject {
+    cursor: pointer;
+}
 
-.export-action-stack {
+.action-approve:hover,
+.action-reject:hover {
+    opacity: 0.75;
+}
+
+.empty-pending-cell {
+    padding: 0 !important;
+    background: transparent !important;
+    border-bottom: none !important;
+}
+
+.empty-pending-box {
+    min-height: 260px;
+    margin: 18px 0;
+    border-radius: 10px;
+    background: #f4f1ef;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    width: 110px;
+    align-items: center;
+    justify-content: center;
 }
 
-
-.export-small-btn {
-    height: 28px;
-    font-size: 11px;
+.empty-pending-icon {
+    color: #ff1f1f;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 10px;
 }
 
-
-.white-btn {
-    background: #ffffff;
-    color: #4b2e1f;
-    border: 1px solid #bfbfbf;
+.empty-pending-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #7b543b;
+    margin-bottom: 6px;
 }
 
-
-.white-btn:hover {
-    background: #f4f4f4;
+.empty-pending-subtitle {
+    font-size: 12px;
+    color: #9b9b9b;
 }
 
+.export-checkbox {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
 
-/* Popup xác nhận xóa */
+/* ===== POPUP XÓA ===== */
 .popup-overlay {
     position: fixed;
     inset: 0;
@@ -474,11 +460,9 @@ body {
     z-index: 2000;
 }
 
-
 .popup-overlay.show {
     display: flex;
 }
-
 
 .delete-popup {
     width: 470px;
@@ -489,7 +473,6 @@ body {
     text-align: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
 }
-
 
 .delete-popup-icon {
     width: 34px;
@@ -504,7 +487,6 @@ body {
     font-size: 16px;
 }
 
-
 .delete-popup-title {
     margin: 0 0 10px;
     font-size: 30px;
@@ -513,7 +495,6 @@ body {
     letter-spacing: 0.5px;
 }
 
-
 .delete-popup-text {
     margin: 0 0 24px;
     font-size: 14px;
@@ -521,13 +502,11 @@ body {
     line-height: 1.6;
 }
 
-
 .delete-popup-actions {
     display: flex;
     justify-content: center;
     gap: 16px;
 }
-
 
 .popup-btn {
     min-width: 110px;
@@ -541,30 +520,25 @@ body {
     transition: all 0.2s ease;
 }
 
-
 .popup-btn-cancel {
     background: #d9d9d9;
     color: #5a5a5a;
 }
-
 
 .popup-btn-confirm {
     background: #7b543b;
     color: #ffffff;
 }
 
-
 .popup-btn-cancel:hover {
     opacity: 0.9;
 }
-
 
 .popup-btn-confirm:hover {
     background: #684530;
 }
 
-
-/* Popup thông báo */
+/* ===== POPUP THÔNG BÁO ===== */
 .message-popup-wrap {
     position: fixed;
     left: 50%;
@@ -573,7 +547,6 @@ body {
     z-index: 2100;
     pointer-events: none;
 }
-
 
 .message-popup-box {
     min-width: 520px;
@@ -587,12 +560,10 @@ body {
     transition: all 0.25s ease;
 }
 
-
 .message-popup-box.show {
     opacity: 1;
     transform: translateY(0);
 }
-
 
 .message-popup-content {
     display: flex;
@@ -604,23 +575,19 @@ body {
     color: #333333;
 }
 
-
 .message-popup-box.success {
     border: none;
 }
-
 
 .message-popup-box.success #messagePopupIcon {
     color: #36c56b;
     font-size: 30px;
 }
 
-
 .message-popup-box.error {
     border: 2px solid #ff5c5c;
     background: #ffffff;
 }
-
 
 .message-popup-box.error .message-popup-content {
     justify-content: center;
@@ -629,84 +596,9 @@ body {
     line-height: 1.5;
 }
 
-
 .message-popup-box.error #messagePopupIcon {
     display: none;
 }
-
-
-.status-approved-text {
-    color: #16a34a;
-    font-weight: 700;
-}
-
-
-.status-rejected-text {
-    color: #ff1f1f;
-    font-weight: 700;
-}
-
-
-.action-approve,
-.action-reject {
-    cursor: pointer;
-}
-
-
-.action-approve:hover,
-.action-reject:hover {
-    opacity: 0.75;
-}
-
-
-.empty-pending-cell {
-    padding: 0 !important;
-    background: transparent !important;
-    border-bottom: none !important;
-}
-
-
-.empty-pending-box {
-    min-height: 260px;
-    margin: 18px 0;
-    border-radius: 10px;
-    background: #f4f1ef;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-
-.empty-pending-icon {
-    color: #ff1f1f;
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 10px;
-}
-
-
-.empty-pending-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #7b543b;
-    margin-bottom: 6px;
-}
-
-
-.empty-pending-subtitle {
-    font-size: 12px;
-    color: #9b9b9b;
-}
-
-
-.export-checkbox {
-    width: 14px;
-    height: 14px;
-    cursor: pointer;
-}
-
 
 /* ===== TÍNH LƯƠNG ===== */
 .calc-modal {
@@ -718,7 +610,6 @@ body {
     box-shadow: 0 12px 30px rgba(0,0,0,0.15);
 }
 
-
 .calc-modal-header {
     background: #7b543b;
     color: #fff;
@@ -728,13 +619,11 @@ body {
     padding: 14px 18px;
 }
 
-
 .calc-modal-header h3 {
     margin: 0;
     font-size: 18px;
     font-weight: 700;
 }
-
 
 .calc-close-btn {
     border: none;
@@ -745,11 +634,9 @@ body {
     font-weight: 700;
 }
 
-
 .calc-modal-body {
     padding: 18px;
 }
-
 
 .calc-month-row {
     display: flex;
@@ -758,30 +645,25 @@ body {
     margin-bottom: 14px;
 }
 
-
 .calc-month-row label {
     font-size: 14px;
     font-weight: 500;
     color: #333;
 }
 
-
 .calc-table-wrap {
     max-height: 260px;
     overflow: auto;
 }
-
 
 .calc-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-
 .calc-table thead tr {
     background: #ddd3cb;
 }
-
 
 .calc-table th,
 .calc-table td {
@@ -791,11 +673,9 @@ body {
     border-bottom: 1px solid #ececec;
 }
 
-
 .calc-table tbody tr:nth-child(even) {
     background: #faf8f6;
 }
-
 
 .calc-modal-actions {
     display: flex;
@@ -803,7 +683,6 @@ body {
     gap: 12px;
     padding: 0 18px 18px;
 }
-
 
 .calc-btn {
     min-width: 110px;
@@ -816,18 +695,15 @@ body {
     cursor: pointer;
 }
 
-
 .calc-btn-cancel {
     background: #c8b3a3;
     color: #fff;
 }
 
-
 .calc-btn-confirm {
     background: #7b543b;
     color: #fff;
 }
-
 
 .calc-empty-box {
     min-height: 120px;
@@ -841,7 +717,6 @@ body {
     margin-top: 8px;
 }
 
-
 .calc-empty-icon {
     color: red;
     font-size: 28px;
@@ -849,19 +724,16 @@ body {
     margin-bottom: 6px;
 }
 
-
 .calc-empty-title {
     font-size: 13px;
     font-weight: 700;
     margin-bottom: 4px;
 }
 
-
 .calc-empty-subtitle {
     font-size: 11px;
     color: #999;
 }
-
 
 .salary-detail-modal {
     width: 620px;
@@ -873,7 +745,6 @@ body {
     padding-bottom: 16px;
 }
 
-
 .salary-detail-header {
     background: #fff;
     color: #222;
@@ -883,13 +754,11 @@ body {
     padding: 14px 18px 8px;
 }
 
-
 .salary-detail-title-wrap {
     display: flex;
     align-items: center;
     gap: 16px;
 }
-
 
 .salary-detail-title-wrap h3 {
     margin: 0;
@@ -897,25 +766,21 @@ body {
     font-weight: 700;
 }
 
-
 .salary-code-text {
     font-size: 13px;
     color: #8b6a55;
     font-weight: 600;
 }
 
-
 .salary-detail-header .calc-close-btn {
     color: #7b543b;
 }
-
 
 .salary-detail-topbar {
     display: flex;
     gap: 12px;
     padding: 0 18px 14px;
 }
-
 
 .salary-detail-chip {
     flex: 1;
@@ -927,7 +792,6 @@ body {
     font-weight: 700;
 }
 
-
 .salary-detail-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -935,20 +799,17 @@ body {
     padding: 0 18px;
 }
 
-
 .salary-field {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-
 .salary-field label {
     font-size: 12px;
     color: #555;
     font-weight: 600;
 }
-
 
 .salary-field input {
     height: 38px;
@@ -961,11 +822,9 @@ body {
     background: #f8f8f8;
 }
 
-
 .salary-field input[type="number"] {
     background: #fff;
 }
-
 
 .salary-total-box {
     margin: 14px 18px 0;
@@ -975,7 +834,6 @@ body {
     padding: 14px 12px;
 }
 
-
 .salary-total-label {
     font-size: 11px;
     color: #8b6a55;
@@ -984,13 +842,11 @@ body {
     text-transform: uppercase;
 }
 
-
 .salary-total-value {
     font-size: 26px;
     color: #4f6d52;
     font-weight: 800;
 }
-
 
 .salary-detail-actions {
     display: flex;
@@ -999,46 +855,34 @@ body {
     padding: 12px 18px 0;
 }
 
-
-/*Tính lương*/
 .calc-table tbody tr.selected {
     background: #efe4dc !important;
 }
-
 
 .calc-table input[type="radio"] {
     cursor: pointer;
     transform: scale(0.9);
 }
 
-
 .calc-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
-/*lỗi sửa lưuong*/
-
-
-
 
 .input-error {
     border: 1px solid #ff6b6b !important;
     color: #c62828 !important;
 }
 
-
 .salary-field input[readonly] {
     background: #f8f8f8;
 }
 
-
-/*mờ ảnh*/
 .detail-btn:disabled,
 .detail-btn.disabled-btn {
     cursor: not-allowed;
     opacity: 1;
 }
-
 
 .approve-btn:disabled,
 .approve-btn.disabled-btn {
@@ -1046,13 +890,11 @@ body {
     color: #ffffff !important;
 }
 
-
 .reject-btn:disabled,
 .reject-btn.disabled-btn {
     background: #f3d1d1 !important;
     color: #ffffff !important;
 }
-
 
 .detail-btn:disabled i,
 .detail-btn.disabled-btn i,
@@ -1061,8 +903,7 @@ body {
     opacity: 0.95;
 }
 
-/*drp header*/
-/* ===== DROPDOWN MENU GIỐNG DASHBOARD ===== */
+/* ===== DROPDOWN HEADER ===== */
 .nav-dropdown,
 .nav-dropdown-hover {
     position: relative;
@@ -1127,7 +968,7 @@ body {
     border-top: 1px solid #f3f4f6;
 }
 
-/*meu xuất*/
+/* ===== EXPORT ===== */
 .export-layout {
     padding: 18px 18px 28px;
     background: #f3f3f3;
@@ -1143,17 +984,7 @@ body {
 
 .export-toolbar {
     margin-bottom: 22px;
-}
-
-.month-input {
     width: 140px;
-    height: 32px;
-    border: 1px solid #bfbfbf;
-    border-radius: 4px;
-    background: #fff;
-    padding: 0 10px;
-    font-size: 14px;
-    color: #333;
 }
 
 .export-table-wrap {
@@ -1167,6 +998,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     background: white;
+    min-width: 700px;
 }
 
 .export-table thead th {
@@ -1174,12 +1006,12 @@ body {
     color: white;
     font-size: 12px;
     font-weight: 700;
-    padding: 6px 8px;
+    padding: 8px 8px;
     text-align: center;
 }
 
 .export-table tbody td {
-    padding: 8px 8px;
+    padding: 10px 8px;
     font-size: 12px;
     color: #444;
     text-align: center;
@@ -1254,8 +1086,7 @@ body {
     font-size: 10px;
     margin-left: 4px;
 }
-/*drop in xuất*/
-/*drop in xuất*/
+
 .format-dropdown {
     position: relative;
     width: 160px;
@@ -1313,7 +1144,6 @@ body {
     background: #f7f1ed;
 }
 
-/*trang khong có lương cần in*/
 .export-empty-cell {
     padding: 0 !important;
     background: transparent !important;
@@ -1351,4 +1181,49 @@ body {
     font-size: 11px;
     color: #b0a7a2;
     text-align: center;
+}
+
+@media (max-width: 1200px) {
+    .toolbar-row {
+        flex-wrap: wrap;
+    }
+
+    .search-box {
+        max-width: 100%;
+        flex: 1 1 320px;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    .salary-table {
+        min-width: 1200px;
+    }
+}
+
+
+
+.calculated-row {
+    opacity: 0.75;
+}
+
+.calc-done-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    color: #666;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.calc-pending-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #e8f5e9;
+    color: #1b8f3a;
+    font-size: 11px;
+    font-weight: 700;
 }
