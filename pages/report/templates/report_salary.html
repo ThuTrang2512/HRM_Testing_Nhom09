@@ -1,0 +1,633 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo cáo lương - Đi Lạc Coffee</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Montserrat', 'sans-serif'] }, colors: { brand: { text: '#5c4133' } } } }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fcfcfc;
+            font-size: 23px;
+        }
+
+        .nav-item {
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-item.active {
+            font-weight: 700;
+            color: #d6b5a3;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #d6b5a3;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+            min-width: 210px;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .nav-dropdown.open .nav-dropdown-menu {
+            display: block;
+        }
+
+        .nav-dropdown-menu a {
+            display: block;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #4B2E1F;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            white-space: nowrap;
+            text-decoration: none;
+            transition: background .15s;
+        }
+
+        .nav-dropdown-menu a:hover {
+            background: #f5ede8;
+        }
+
+        .nav-dropdown-menu a.active-report {
+            background: #f5ede8;
+        }
+
+        .nav-dropdown-menu a+a {
+            border-top: 1px solid #f3f4f6;
+        }
+
+        /* Print modal */
+        #printModal {
+            display: none;
+        }
+
+        #printModal.open {
+            display: flex;
+        }
+
+        /* Toast */
+        #toastBackdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            z-index: 9998;
+        }
+
+        #toast {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(.85);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .18);
+            padding: 36px 56px;
+            z-index: 9999;
+            text-align: center;
+            min-width: 320px;
+            opacity: 0;
+            transition: opacity .25s ease, transform .25s ease;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+    </style>
+</head>
+
+<body class="text-gray-800 font-sans min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white px-8 py-3 flex justify-between items-center border-b border-gray-100">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-[#2d221c]">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" class="w-full h-full object-cover">
+            </div>
+            <h1 class="font-bold text-[26px] uppercase tracking-wider text-brand-text">ĐI LẠC COFFEE</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-[23px]"><span class="italic font-medium">Xin chào, </span><span
+                    class="italic font-bold">Đi Lạc coffee</span></span>
+            <i class="fa-regular fa-circle-user text-[40px]"></i>
+        </div>
+    </header>
+
+    <!-- Nav -->
+    <nav
+        class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold">
+        <a href="{% url 'dashboard' %}" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Tổng quan</a>
+        <a href="../employee/employee_list.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Nhân
+            viên</a>
+        <a href="../contract/contract_list.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Hợp
+            đồng</a>
+        <!-- Lịch làm việc Dropdown -->
+        <div class="relative group cursor-pointer">
+            <div class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] flex items-center gap-2">
+                Lịch làm việc
+                <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
+            </div>
+            <!-- Dropdown menu -->
+            <div
+                class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
+                <a href="../schedule/schedule_list.html"
+                    class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium border-b border-gray-50">Tạo
+                    lịch làm việc</a>
+                <a href="../schedule/schedule_notification.html"
+                    class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium">Gửi
+                    thông báo lịch làm việc</a>
+            </div>
+        </div>
+        <a href="../request/request.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Yêu cầu</a>
+        <a href="../salary/salary.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Bảng lương</a>
+        <div class="nav-dropdown nav-item active py-[16px]" id="baoCaoDropdown">
+            <span class="cursor-pointer select-none" onclick="toggleDropdown()">Báo cáo</span>
+            <div class="nav-dropdown-menu">
+                <a href="{% url 'report:report_salary' %}" class="active-report">Báo cáo lương</a>
+                <a href="{% url 'report:report_attendance' %}">Báo cáo chấm công</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="p-8 max-w-[1200px] mx-auto">
+        <h2 class="text-[22px] font-bold mb-1">Báo cáo lương</h2>
+        <div class="border-b-2 border-[#4B2E1F] w-48 mb-6"></div>
+
+        <!-- Dashboard Cards -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8 items-stretch">
+            <div class="bg-white rounded-lg shadow-sm p-6 min-h-[220px]">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-[15px] font-semibold text-gray-800">Lương theo chức vụ</h3>
+                    <div class="relative">
+                        <select id="chartCycleSelect"
+                            class="appearance-none text-[13px] font-semibold text-[#4B2E1F] border border-[#d6b5a3] rounded-full px-4 py-1.5 bg-white outline-none cursor-pointer pr-10 hover:bg-[#fcf8f5] transition-colors font-sans">
+                            <option value="Chu kỳ làm việc" {% if not request.GET.cycle or request.GET.cycle == 'Chu kỳ làm việc' %}selected{% endif %}>Tất cả chu kỳ</option>
+                            <option value="Tháng 1/2026" {% if request.GET.cycle == 'Tháng 1/2026' %}selected{% endif %}>Tháng 1/2026</option>
+                            <option value="Tháng 2/2026" {% if request.GET.cycle == 'Tháng 2/2026' %}selected{% endif %}>Tháng 2/2026</option>
+                            <option value="Tháng 3/2026" {% if request.GET.cycle == 'Tháng 3/2026' %}selected{% endif %}>Tháng 3/2026</option>
+                            <option value="Tháng 4/2026" {% if request.GET.cycle == 'Tháng 4/2026' %}selected{% endif %}>Tháng 4/2026</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-[#4B2E1F] pointer-events-none"></i>
+                    </div>
+                </div>
+                <div class="relative h-[220px] bg-white rounded-lg border border-gray-100">
+                    <canvas id="salaryBarChart" width="600" height="220" class="w-full h-full"></canvas>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6 min-h-[220px]">
+                <h3 class="text-[15px] font-semibold text-gray-800 mb-6">Cơ cấu lương</h3>
+                <div class="flex flex-col xl:flex-row items-center justify-center gap-8 h-full">
+                    <div class="relative w-[150px] h-[150px]">
+                        <canvas id="salaryPieChart" width="150" height="150" class="w-full h-full"></canvas>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 bg-[#4f46e5] rounded-full"></div>
+                            <div class="text-[13px] text-gray-600">
+                                <span class="font-medium">Lương cơ bản</span>
+                                <span id="cbRatio" class="text-indigo-600 font-semibold"> (0%)</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 bg-[#10b981] rounded-full"></div>
+                            <div class="text-[13px] text-gray-600">
+                                <span class="font-medium">Lương theo giờ</span>
+                                <span id="gioRatio" class="text-emerald-600 font-semibold"> (0%)</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 bg-[#f59e0b] rounded-full"></div>
+                            <div class="text-[13px] text-gray-600">
+                                <span class="font-medium">Thưởng phạt</span>
+                                <span id="otherRatio" class="text-amber-600 font-semibold"> (0%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Card -->
+        <form method="GET" id="filterForm" class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <div class="flex flex-wrap gap-5 items-end">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block mb-1 text-[14px] font-medium text-gray-600">Nhân viên</label>
+                    <div class="flex items-center border border-gray-300 rounded px-3 py-2 bg-white">
+                        <i class="fa-solid fa-magnifying-glass text-gray-400 mr-2 text-sm"></i>
+                        <input type="text" name="name" placeholder="Tìm kiếm" value="{{ request.GET.name|default:'' }}"
+                            class="outline-none text-sm w-full font-sans">
+                    </div>
+                </div>
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block mb-1 text-[14px] font-medium text-gray-600">Chu kỳ lương</label>
+                    <select name="cycle" id="mainCycleSelect"
+                        class="border border-gray-300 rounded px-3 py-2 bg-white text-sm w-full outline-none font-sans">
+                        <option>Chu kỳ làm việc</option>
+                        <option {% if request.GET.cycle == 'Tháng 1/2026' %}selected{% endif %}>Tháng 1/2026</option>
+                        <option {% if request.GET.cycle == 'Tháng 2/2026' %}selected{% endif %}>Tháng 2/2026</option>
+                        <option {% if request.GET.cycle == 'Tháng 3/2026' %}selected{% endif %}>Tháng 3/2026</option>
+                        <option {% if request.GET.cycle == 'Tháng 4/2026' %}selected{% endif %}>Tháng 4/2026</option>
+                    </select>
+                </div>
+                <div class="flex-1 min-w-[150px]">
+                    <label class="block mb-1 text-[14px] font-medium text-gray-600">Vị trí làm việc</label>
+                    <select name="position"
+                        class="border border-gray-300 rounded px-3 py-2 bg-white text-sm w-full outline-none font-sans">
+                        <option {% if request.GET.position == 'Tất cả' %}selected{% endif %}>Tất cả</option>
+                        <option {% if request.GET.position == 'Pha chế' %}selected{% endif %}>Pha chế</option>
+                        <option {% if request.GET.position == 'Phục vụ' %}selected{% endif %}>Phục vụ</option>
+                        <option {% if request.GET.position == 'Thu ngân' %}selected{% endif %}>Thu ngân</option>
+                        <option {% if request.GET.position == 'Quản lý' %}selected{% endif %}>Quản lý</option>
+                        <option {% if request.GET.position == 'Giữ xe' %}selected{% endif %}>Giữ xe</option>
+                    </select>
+                </div>
+                <div class="flex-1 min-w-[150px]">
+                    <label class="block mb-1 text-[14px] font-medium text-gray-600">Trạng thái làm việc</label>
+                    <select name="status"
+                        class="border border-gray-300 rounded px-3 py-2 bg-white text-sm w-full outline-none font-sans">
+                        <option {% if request.GET.status == 'Tất cả' %}selected{% endif %}>Tất cả</option>
+                        <option {% if request.GET.status == 'Đang làm việc' %}selected{% endif %}>Đang làm việc</option>
+                        <option {% if request.GET.status == 'Đã nghỉ việc' %}selected{% endif %}>Đã nghỉ việc</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-2 ml-auto">
+                    <button type="submit" id="btnXem" onclick="document.getElementById('filterForm').submit()"
+                        class="bg-[#4B2E1F] hover:bg-[#3a2317] text-white font-semibold px-8 py-2 rounded transition text-sm">Xem</button>
+                    <button type="button" id="btnXuat"
+                        class="bg-[#4B2E1F] hover:bg-[#3a2317] text-white font-semibold px-4 py-2 rounded transition text-sm">In/Xuất
+                        báo cáo</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="overflow-x-auto rounded-lg shadow-sm">
+            <table class="w-full table-auto border-collapse">
+                <thead>
+                    <tr class="bg-[#4B2E1F] text-white">
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Mã lương</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Mã nhân viên</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Tên nhân viên</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Chức vụ</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Tháng năm</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Lương cơ bản</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Lương theo giờ</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Số giờ làm</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Thưởng</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Phạt</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Tổng</th>
+                    </tr>
+                </thead>
+                <tbody id="reportBody">
+                    <tr>
+                        <td colspan="11" class="text-center py-10 text-gray-400 text-sm"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Print Modal -->
+    <div id="printModal" class="fixed inset-0 bg-black/40 z-50 items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 overflow-hidden">
+            <div class="bg-[#4B2E1F] h-10"></div>
+            <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+                <h3 class="text-[18px] font-bold">Xuất / In báo cáo</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div class="overflow-x-auto px-4 pt-4">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-[#4B2E1F] text-white">
+                            <th class="px-3 py-2 text-left text-[13px] whitespace-nowrap">Mã lương</th>
+                            <th class="px-3 py-2 text-left text-[13px] whitespace-nowrap">Mã nhân viên</th>
+                            <th class="px-3 py-2 text-left text-[13px] whitespace-nowrap">Tên nhân viên</th>
+                            <th class="px-3 py-2 text-left text-[13px] whitespace-nowrap">Chức vụ</th>
+                            <th class="px-3 py-2 text-left text-[13px] whitespace-nowrap">Tháng năm</th>
+                            <th class="px-3 py-2 text-left text-[13px] whitespace-nowrap">Lương cơ bản</th>
+                            <th class="px-3 py-2 text-left text-[13px] whitespace-nowrap">Lương theo giờ</th>
+                            <th class="px-3 py-2 text-left text-[13px] whitespace-nowrap">Số giờ làm</th>
+                            <th class="px-3 py-2 text-left text-[13px] whitespace-nowrap">Thưởng</th>
+                            <th class="px-3 py-2 text-left text-[13px] whitespace-nowrap">Phạt</th>
+                            <th class="px-3 py-2 text-left text-[13px] whitespace-nowrap">Tổng</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalBody"></tbody>
+                </table>
+            </div>
+            <div class="flex items-center justify-between px-6 py-5">
+                <div class="flex items-center gap-3">
+                    <label class="text-[13px] font-medium text-gray-600">Chọn định dạng xuất:</label>
+                    <select class="border border-gray-300 rounded px-3 py-1.5 text-sm outline-none font-sans w-36">
+                        <option>Excel</option>
+                        <option>PDF</option>
+                        <option>CSV</option>
+                    </select>
+                </div>
+                <div class="flex gap-4">
+                    <button id="btnXuatModal"
+                        class="bg-[#d6b5a3] hover:bg-[#c9a08c] text-[#4B2E1F] font-semibold px-6 py-2 rounded text-sm transition">Xuất
+                        báo cáo</button>
+                    <button id="btnInModal"
+                        class="bg-[#4B2E1F] hover:bg-[#3a2317] text-white font-semibold px-6 py-2 rounded text-sm transition">In
+                        báo cáo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Backdrop & Notification -->
+    <div id="toastBackdrop"></div>
+    <div id="toast">
+        <div
+            style="width:56px;height:56px;background:#3cc16e;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <path d="M5 13l4 4L19 7" stroke="white" stroke-width="3" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </div>
+        <p id="toastMsg" style="font-size:17px;font-weight:700;color:#1a1a1a;margin:0;">Xuất báo cáo thành công</p>
+    </div>
+
+    <script>
+        // Nav dropdown
+        function toggleDropdown() { document.getElementById('baoCaoDropdown').classList.toggle('open'); }
+        document.addEventListener('click', e => {
+            const dd = document.getElementById('baoCaoDropdown');
+            if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+        });
+
+        // Mock data from Database
+        const mockData = [
+            {% for r in reports %}
+        {
+            maLuong: '{{ r.MaLuong.MaLuong }}',
+            maNhanVien: '{{ r.MaNhanVien.MaNhanVien }}',
+            hoTen: '{{ r.MaNhanVien.HoTen }}',
+            chucVu: '{{ r.MaNhanVien.ChucVu }}',
+            thoiGian: '{{ r.Thang|date:"m/Y" }}',
+            luongCoBan: {{ r.MaLuong.LuongCoBan|default:0 }},
+            luongTheoGio: {{ r.MaLuong.LuongTheoGio|default:0 }},
+            soGioLam: {{ r.MaLuong.SoGioLam|default:0 }},
+            tongThuong: {{ r.MaLuong.TongThuong|default:0 }},
+            tongPhat: {{ r.MaLuong.TongPhat|default:0 }},
+            tongThanhToan: {{ r.MaLuong.TongThucLanh|default:0 }}
+        } {% if not forloop.last %},{% endif %}
+        {% endfor %}
+        ];
+        
+        // Fallback sample data if no data from backend AND no search is performed
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasFilter = Array.from(urlParams.entries()).some(([k, v]) => {
+            if (!v || v === 'Tất cả' || v === 'Chu kỳ làm việc' || v === '') return false;
+            return true;
+        });
+        if (mockData.length === 0 && !hasFilter) {
+            mockData.push(
+                { maLuong: 'BL001', maNhanVien: 'NV001', hoTen: 'Nguyễn Văn A', chucVu: 'Pha chế', thoiGian: '04/2026', luongCoBan: 5000000, luongTheoGio: 25000, soGioLam: 160, tongThuong: 200000, tongPhat: 50000, tongThanhToan: 9150000 },
+                { maLuong: 'BL002', maNhanVien: 'NV002', hoTen: 'Trần Thị B', chucVu: 'Phục vụ', thoiGian: '04/2026', luongCoBan: 4500000, luongTheoGio: 20000, soGioLam: 158, tongThuong: 100000, tongPhat: 0, tongThanhToan: 7760000 }
+            );
+        }
+
+        function renderRows() {
+            return mockData.map((r, i) => `
+                <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-[#fdf6f2]'} border-b border-gray-100 hover:bg-amber-50 transition">
+                    <td class="px-3 py-2 text-xs text-center whitespace-nowrap">${r.maLuong}</td>
+                    <td class="px-3 py-2 text-xs text-center whitespace-nowrap">${r.maNhanVien}</td>
+                    <td class="px-3 py-2 text-xs text-center whitespace-nowrap">${r.hoTen}</td>
+                    <td class="px-3 py-2 text-xs text-center whitespace-nowrap">${r.chucVu}</td>
+                    <td class="px-3 py-2 text-xs text-center whitespace-nowrap">${r.thoiGian}</td>
+                    <td class="px-3 py-2 text-xs text-center whitespace-nowrap text-[#4B2E1F] font-semibold">${parseInt(r.luongCoBan).toLocaleString()}đ</td>
+                    <td class="px-3 py-2 text-xs text-center whitespace-nowrap">${parseInt(r.luongTheoGio).toLocaleString()}đ</td>
+                    <td class="px-3 py-2 text-xs text-center whitespace-nowrap">${r.soGioLam}h</td>
+                    <td class="px-3 py-2 text-xs text-center whitespace-nowrap">+${parseInt(r.tongThuong).toLocaleString()}đ</td>
+                    <td class="px-3 py-2 text-xs text-center whitespace-nowrap">-${parseInt(r.tongPhat).toLocaleString()}đ</td>
+                    <td class="px-3 py-2 text-xs text-center whitespace-nowrap text-[#4B2E1F] font-bold">${parseInt(r.tongThanhToan).toLocaleString()}đ</td>
+                </tr>`).join('');
+        }
+
+        document.getElementById('btnXuat').onclick = () => {
+            document.getElementById('modalBody').innerHTML = renderRows();
+            document.getElementById('printModal').classList.add('open');
+        };
+
+        function drawSalaryPieChart() {
+            const canvas = document.getElementById('salaryPieChart');
+            if (!canvas) return;
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = 150 * dpr;
+            canvas.height = 150 * dpr;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+
+            let totalCB = 0, totalGio = 0, totalOther = 0;
+            mockData.forEach(r => {
+                totalCB += parseFloat(r.luongCoBan) || 0;
+                totalGio += (parseFloat(r.luongTheoGio) || 0) * (parseFloat(r.soGioLam) || 0);
+                totalOther += (parseFloat(r.tongThuong) || 0) - (parseFloat(r.tongPhat) || 0);
+            });
+
+            const total = totalCB + totalGio + Math.max(0, totalOther);
+            if (total === 0) {
+                ctx.clearRect(0, 0, 150, 150);
+                ctx.beginPath();
+                ctx.arc(75, 75, 65, -Math.PI / 2, Math.PI * 2 - Math.PI / 2);
+                ctx.strokeStyle = '#f3f4f6';
+                ctx.lineWidth = 15;
+                ctx.stroke();
+                return;
+            }
+            const data = [
+                { percentage: (totalCB / total) * 100, color: '#4f46e5' },
+                { percentage: (totalGio / total) * 100, color: '#10b981' },
+                { percentage: (Math.max(0, totalOther) / total) * 100, color: '#f59e0b' }
+            ];
+
+            let startTime = null;
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / 1000, 1);
+                const eased = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+                ctx.clearRect(0, 0, 150, 150);
+                const centerX = 75, centerY = 75, radius = 65, innerRadius = 45;
+                let startAngle = -Math.PI / 2;
+
+                data.forEach(item => {
+                    const sliceAngle = (item.percentage / 100) * Math.PI * 2 * eased;
+                    if (sliceAngle <= 0) return;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+                    ctx.lineTo(centerX + Math.cos(startAngle + sliceAngle) * innerRadius, centerY + Math.sin(startAngle + sliceAngle) * innerRadius);
+                    ctx.arc(centerX, centerY, innerRadius, startAngle + sliceAngle, startAngle, true);
+                    ctx.closePath();
+                    ctx.fillStyle = item.color;
+                    ctx.fill();
+                    startAngle += sliceAngle;
+                });
+                if (progress < 1) requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+
+            if (total > 0) {
+                document.getElementById('cbRatio').textContent = ` (${Math.round(totalCB / total * 100)}%)`;
+                document.getElementById('gioRatio').textContent = ` (${Math.round(totalGio / total * 100)}%)`;
+                document.getElementById('otherRatio').textContent = ` (${Math.round(Math.max(0, totalOther) / total * 100)}%)`;
+            }
+        }
+
+        function updateSalaryBarChart() {
+            const canvas = document.getElementById('salaryBarChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = 600 * dpr;
+            canvas.height = 220 * dpr;
+            ctx.scale(dpr, dpr);
+
+            const posData = {};
+            mockData.forEach(r => {
+                posData[r.chucVu] = (posData[r.chucVu] || 0) + parseFloat(r.tongThanhToan);
+            });
+
+            const data = Object.keys(posData).map(pos => ({ label: pos, value: posData[pos] }));
+            if (data.length === 0) return;
+
+            const padding = { top: 30, right: 30, bottom: 40, left: 50 };
+            const chartWidth = 600 - padding.left - padding.right;
+            const chartHeight = 220 - padding.top - padding.bottom;
+            const maxValue = data.length > 0 ? Math.max(...data.map(d => d.value)) * 1.2 : 1000000;
+            if (maxValue === 0) return;
+            const colWidth = chartWidth / (data.length || 1);
+            const barWidth = Math.min(60, colWidth * 0.5);
+            const colors = ['#4f46e5', '#10b981', '#f59e0b', '#8b5cf6'];
+
+            let startTime = null;
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / 1000, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                ctx.clearRect(0, 0, 600, 280);
+
+                data.forEach((item, index) => {
+                    const x = padding.left + index * colWidth + (colWidth - barWidth) / 2;
+                    const h = (item.value / maxValue) * chartHeight * eased;
+                    const y = padding.top + chartHeight - h;
+
+                    const grad = ctx.createLinearGradient(x, y, x, y + h);
+                    const color = colors[index % colors.length];
+                    grad.addColorStop(0, color);
+                    grad.addColorStop(1, shadeColor(color, -20));
+
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    if (ctx.roundRect) ctx.roundRect(x, y, barWidth, h, [8, 8, 0, 0]); else ctx.rect(x, y, barWidth, h);
+                    ctx.fill();
+
+                    // Label & Value
+                    ctx.fillStyle = '#4B2E1F';
+                    ctx.font = 'bold 12px Montserrat, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText((item.value / 1000000).toFixed(1) + 'M', x + barWidth / 2, y - 10);
+                    ctx.fillStyle = '#6b7280';
+                    ctx.font = '500 11px Montserrat, sans-serif';
+                    ctx.fillText(item.label, x + barWidth / 2, padding.top + chartHeight + 20);
+                });
+                if (progress < 1) requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function shadeColor(color, percent) {
+            let R = parseInt(color.substring(1, 3), 16);
+            let G = parseInt(color.substring(3, 5), 16);
+            let B = parseInt(color.substring(5, 7), 16);
+            R = parseInt(R * (100 + percent) / 100);
+            G = parseInt(G * (100 + percent) / 100);
+            B = parseInt(B * (100 + percent) / 100);
+            R = (R < 255) ? R : 255; G = (G < 255) ? G : 255; B = (B < 255) ? B : 255;
+            const RR = ((R.toString(16).length == 1) ? "0" + R.toString(16) : R.toString(16));
+            const GG = ((G.toString(16).length == 1) ? "0" + G.toString(16) : G.toString(16));
+            const BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
+            return "#" + RR + GG + BB;
+        }
+
+        function closeModal() { document.getElementById('printModal').classList.remove('open'); }
+        document.getElementById('printModal').addEventListener('click', e => { if (e.target === document.getElementById('printModal')) closeModal(); });
+
+        // Toast
+        function showToast(msg) {
+            document.getElementById('toastMsg').textContent = msg;
+            const backdrop = document.getElementById('toastBackdrop');
+            const toast = document.getElementById('toast');
+            backdrop.style.display = 'block';
+            toast.style.display = 'block';
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => { toast.style.display = 'none'; backdrop.style.display = 'none'; closeModal(); }, 280);
+            }, 2500);
+        }
+
+        document.getElementById('btnXuatModal').onclick = () => showToast('Xuất báo cáo thành công');
+        document.getElementById('btnInModal').onclick = () => showToast('In báo cáo thành công');
+
+        // Initial render
+        window.addEventListener('load', () => {
+            document.getElementById('reportBody').innerHTML = renderRows();
+            drawSalaryPieChart();
+            updateSalaryBarChart();
+
+            // Sync chart selector with main filter
+            const chartSelect = document.getElementById('chartCycleSelect');
+            const mainSelect = document.getElementById('mainCycleSelect');
+            const form = document.getElementById('filterForm');
+
+            if (chartSelect && mainSelect && form) {
+                chartSelect.onchange = () => {
+                    mainSelect.value = chartSelect.value;
+                    form.submit();
+                };
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,141 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Đi Lạc Coffee{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            text: '#5c4133',
+                            active: '#d9b39e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #fcfcfc; font-size: 23px; }
+        .nav-item { position: relative; white-space: nowrap; }
+        .nav-item.active { font-weight: 700; color: #d6b5a3; }
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: 0px; left: 0; right: 0;
+            height: 4px; background-color: #d6b5a3; border-radius: 2px 2px 0 0;
+        }
+        .card-shadow { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); }
+        
+        /* Dropdown nav */
+        .nav-dropdown { position: relative; }
+        .nav-dropdown-menu {
+            display: none; position: absolute; top: 100%; right: 0;
+            background: white; border: 1px solid #e5e7eb; border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 210px; z-index: 999; overflow: hidden;
+        }
+        .nav-dropdown.open .nav-dropdown-menu { display: block; }
+        .nav-dropdown-menu a {
+            display: block; padding: 12px 20px; font-size: 15px; font-weight: 600;
+            color: #4B2E1F; text-transform: uppercase; letter-spacing: 0.05em;
+            white-space: nowrap; text-decoration: none; transition: background 0.15s;
+        }
+        .nav-dropdown-menu a:hover { background: #f5ede8; }
+        .nav-dropdown-menu a + a { border-top: 1px solid #f3f4f6; }
+        .nav-dropdown-menu a.active-report { background: #f5ede8; }
+
+        @media print {
+            header, nav, .no-print { display: none !important; }
+            body { background: white; font-size: 12pt; }
+            .print-only { display: block !important; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="text-gray-800 font-sans min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white px-8 py-3 flex justify-between items-center sm:flex-row flex-col gap-4 border-b border-gray-100 no-print">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center bg-[#2d221c]">
+                <img src="{% static 'images/logo.png' %}" alt="Logo Đi Lạc" class="w-full h-full object-cover">
+            </div>
+            <h1 class="font-bold text-[26px] uppercase tracking-wider text-brand-text">ĐI LẠC COFFEE</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-gray-800 text-[23px]"><span class="italic font-medium">Xin chào, </span><span class="italic font-bold">Đi Lạc coffee</span></span>
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition">
+                <i class="fa-regular fa-circle-user text-[40px]"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold no-print">
+        <a href="{% url 'dashboard' %}" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] {% if active_nav == 'dashboard' %}active{% endif %}">Tổng quan</a>
+        
+        <!-- Redirect via static file or URL depending on setup -->
+        <a href="/pages/employee/employee_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] {% if active_nav == 'employee' %}active{% endif %}">Nhân viên</a>
+        <a href="/pages/contract/contract_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] {% if active_nav == 'contract' %}active{% endif %}">Hợp đồng</a>
+        
+        <!-- Lịch làm việc Dropdown -->
+        <div class="relative group cursor-pointer">
+            <div class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] flex items-center gap-2 {% if active_nav == 'schedule' %}active{% endif %}">
+                Lịch làm việc
+                <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
+            </div>
+            <div class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
+                <a href="/pages/schedule/schedule_list.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium border-b border-gray-50">Tạo lịch làm việc</a>
+                <a href="/pages/schedule/schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium">Gửi thông báo lịch làm việc</a>
+            </div>
+        </div>
+
+        <a href="{% url 'requests' %}" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] {% if active_nav == 'request' %}active{% endif %}">Yêu cầu</a>
+        <a href="{% url 'salary' %}" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] {% if active_nav == 'salary' %}active{% endif %}">Bảng lương</a>
+        
+        <!-- Báo cáo Dropdown -->
+        <div class="nav-dropdown nav-item py-[16px] {% if active_nav == 'report' %}active{% endif %}" id="baoCaoDropdown">
+            <span class="cursor-pointer select-none flex items-center gap-2" onclick="toggleDropdown(event)">
+                Báo cáo
+                <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
+            </span>
+            <div class="nav-dropdown-menu">
+                <a href="{% url 'report:report_salary' %}" class="{% if active_subnav == 'report_salary' %}active-report{% endif %}">Báo cáo lương</a>
+                <a href="{% url 'report:report_attendance' %}" class="{% if active_subnav == 'report_attendance' %}active-report{% endif %}">Báo cáo chấm công</a>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    <script>
+        function toggleDropdown(e) {
+            e.stopPropagation();
+            const dd = document.getElementById('baoCaoDropdown');
+            dd.classList.toggle('open');
+        }
+        document.addEventListener('click', function(e) {
+            const dd = document.getElementById('baoCaoDropdown');
+            if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

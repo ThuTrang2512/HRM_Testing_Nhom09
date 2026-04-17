@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Đi Lạc Coffee - Tổng quan{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card-shadow {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Main Content -->
+<main class="p-8 max-w-[1400px] mx-auto">
+    <!-- Stats Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Stat 1: TỔNG NHÂN VIÊN -->
+        <div class="bg-white rounded-xl p-5 card-shadow border border-gray-100 flex flex-col justify-between">
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-[16px] font-bold text-red-500 tracking-wider">TỔNG NHÂN VIÊN</span>
+                <i class="fa-solid fa-user-group text-gray-800 text-2xl"></i>
+            </div>
+            <div>
+                <div class="text-[44px] font-bold text-gray-900 mb-1 leading-none">{{ total_employees }}</div>
+                <div class="text-[16px] text-gray-400 font-medium mt-2">
+                    <span class="text-green-500">+2</span> từ tháng trước
+                </div>
+            </div>
+        </div>
+
+        <!-- Stat 2: YÊU CẦU CHỜ DUYỆT -->
+        <div class="bg-white rounded-xl p-5 card-shadow border border-gray-100 flex flex-col justify-between">
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-[16px] font-bold text-green-500 tracking-wider uppercase">Yêu cầu chờ duyệt</span>
+                <i class="fa-solid fa-clipboard-list text-gray-800 text-2xl"></i>
+            </div>
+            <div>
+                <div class="text-[44px] font-bold text-gray-900 mb-1 leading-none">{{ pending_requests }}</div>
+                <div class="text-[16px] text-gray-400 font-medium flex gap-3 mt-2">
+                    <span><span class="text-red-400">2</span> nghỉ phép</span>
+                    <span><span class="text-gray-400">3</span> đăng ký ca</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stat 3: CHẤM CÔNG -->
+        <div class="bg-white rounded-xl p-5 card-shadow border border-gray-100 flex flex-col justify-between">
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-[16px] font-bold text-yellow-500 tracking-wider">CHẤM CÔNG</span>
+                <i class="fa-solid fa-user-clock text-gray-800 text-2xl"></i>
+            </div>
+            <div>
+                <div class="text-[44px] font-bold text-gray-900 mb-1 leading-none">5/5</div>
+                <div class="text-[16px] text-gray-400 font-medium mt-2">
+                    <span class="text-green-500">100%</span> đã chấm công
+                </div>
+            </div>
+        </div>
+
+        <!-- Stat 4: TỔNG LƯƠRY CHI -->
+        <div class="bg-white rounded-xl p-5 card-shadow border border-gray-100 flex flex-col justify-between">
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-[16px] font-bold text-blue-500 tracking-wider">TỔNG LƯƠNG CHI</span>
+                <i class="fa-solid fa-coins text-gray-800 text-2xl"></i>
+            </div>
+            <div>
+                <div class="text-[44px] font-bold text-gray-900 mb-1 leading-none">{{ total_salary_m }}tr</div>
+                <div class="text-[16px] text-gray-400 font-medium mt-2">
+                    <span class="text-green-500">+1.6%</span> so với tháng trước
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Chart 1: Tổng giờ làm theo tháng (Area Chart) -->
+        <div class="bg-white rounded-xl card-shadow border border-gray-50 relative h-[500px] overflow-hidden">
+            <!-- Titles -->
+            <div class="absolute top-[35px] left-[40px] z-10">
+                <h3 class="font-bold text-gray-900 text-[20px] leading-[1.25] mb-5 tracking-tight">Tổng giờ<br>làm
+                    theo<br>tháng</h3>
+                <div class="text-[32px] font-extrabold text-[#0f172a]">{{ total_hours_this_month|floatformat:0 }} giờ
+                </div>
+            </div>
+
+
+
+
+
+            <!-- "ĐI LẠC COFFEE" -->
+            <div class="absolute top-[135px] right-[25%] text-left z-10">
+                <div class="text-[20px] text-[#785438] font-bold tracking-[0.02em] leading-[1.6]">ĐI LẠC<br>COFFEE
+                </div>
+            </div>
+
+            <!-- Chart container occupying the space below -->
+            <div class="w-[full] h-[340px] absolute bottom-0 left-0 right-[-15px] z-0 px-2 pb-0 block">
+                <canvas id="chartHours"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 2: Chức vụ (Donut Chart) -->
+        <div class="bg-white p-6 md:p-8 rounded-xl card-shadow border border-gray-50 flex flex-col">
+            <h3 class="font-bold text-gray-900 text-[26px] mb-8">Chức vụ</h3>
+            <div class="flex-grow relative min-h-[300px] flex items-center justify-center w-full">
+                <canvas id="chartRoles"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 3: Tổng lương chi (Horizontal Bar) -->
+        <div class="bg-white p-6 md:p-10 rounded-xl card-shadow border border-gray-50 flex flex-col relative h-[500px]">
+            <!-- Custom HTML legend -->
+            <div class="flex gap-[30px] mb-6 justify-center text-[16px] font-medium text-gray-500">
+                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-[#a380fa] mr-2 rounded-[2px]"></span>2025
+                </div>
+                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-[#f5a198] mr-2 rounded-[2px]"></span>2024
+                </div>
+                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-[#6bcfce] mr-2 rounded-[2px]"></span>2023
+                </div>
+            </div>
+            <!-- Rotated Y-axis label -->
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 -rotate-90 text-[15px] font-bold text-gray-700 tracking-wide"
+                style="white-space: nowrap;">
+                Tổng lương chi
+            </div>
+            <!-- Chart canvas -->
+            <div class="flex-grow relative ml-10">
+                <canvas id="chartSalaryHBar"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 4: Grouped Bar Chart -->
+        <div class="bg-white p-6 md:p-8 rounded-xl card-shadow border border-gray-50 flex flex-col h-[500px]">
+            <div class="flex gap-[45px] mb-10 justify-center text-[16px] font-medium text-gray-500">
+                <div class="flex items-center"><span class="w-[12px] h-[12px] bg-[#d34a6e] mr-2"></span>Giữ xe</div>
+                <div class="flex items-center"><span class="w-[12px] h-[12px] bg-[#f5a198] mr-2"></span>Pha chế
+                </div>
+                <div class="flex items-center"><span class="w-[12px] h-[12px] bg-[#61c9e4] mr-2"></span>Phục vụ
+                </div>
+            </div>
+            <div class="flex-grow relative pl-2 pb-6">
+                <canvas id="chartRolesBar"></canvas>
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data from backend
+    const chartHoursLabels = {{ chart_hours_labels| safe }};
+    const chartHoursValues = {{ chart_hours_values| safe }};
+    const rolesLabels = {{ roles_labels| safe }};
+    const rolesCounts = {{ roles_counts| safe }};
+    const salaryByYear = {{ salary_by_year| safe }};
+    const monthLabels = {{ month_labels| safe }};
+    const rolesDatasets = [
+        {% for ds in roles_datasets %}
+    {
+        label: "{{ ds.label }}",
+            data: { { ds.data | safe } },
+        backgroundColor: "{{ ds.color }}",
+        } {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+    ]; -->
+</script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

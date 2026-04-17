@@ -1,0 +1,646 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo cáo chấm công - Đi Lạc Coffee</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Montserrat','sans-serif'] }, colors: { brand: { text: '#5c4133' } } } }
+        }
+    </script>
+    <style>
+        body { background-color: #fcfcfc; font-size: 23px; }
+        .nav-item { position: relative; white-space: nowrap; }
+        .nav-item.active { font-weight: 700; color: #d6b5a3; }
+        .nav-item.active::after { content:''; position:absolute; bottom:0; left:0; right:0; height:4px; background:#d6b5a3; border-radius:2px 2px 0 0; }
+        .nav-dropdown { position: relative; }
+        .nav-dropdown-menu { display:none; position:absolute; top:100%; right:0; background:white; border:1px solid #e5e7eb; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.12); min-width:210px; z-index:999; overflow:hidden; }
+        .nav-dropdown.open .nav-dropdown-menu { display:block; }
+        .nav-dropdown-menu a { display:block; padding:12px 20px; font-size:15px; font-weight:600; color:#4B2E1F; text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; text-decoration:none; transition:background .15s; }
+        .nav-dropdown-menu a:hover { background:#f5ede8; }
+        .nav-dropdown-menu a.active-report { background:#f5ede8; }
+        .nav-dropdown-menu a + a { border-top:1px solid #f3f4f6; }
+
+        /* Print modal */
+        #printModal { display:none; }
+        #printModal.open { display:flex; }
+
+        /* Toast */
+        #toastBackdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:9998; }
+        #toast {
+            display:none; position:fixed; top:50%; left:50%;
+            transform:translate(-50%,-50%) scale(.85);
+            background:white; border-radius:20px;
+            box-shadow:0 8px 40px rgba(0,0,0,.18);
+            padding:36px 56px; z-index:9999;
+            text-align:center; min-width:320px;
+            opacity:0; transition:opacity .25s ease, transform .25s ease;
+        }
+        #toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
+    </style>
+</head>
+<body class="text-gray-800 font-sans min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white px-8 py-3 flex justify-between items-center border-b border-gray-100">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-[#2d221c]">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" class="w-full h-full object-cover">
+            </div>
+            <h1 class="font-bold text-[26px] uppercase tracking-wider text-brand-text">ĐI LẠC COFFEE</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-[23px]"><span class="italic font-medium">Xin chào, </span><span class="italic font-bold">Đi Lạc coffee</span></span>
+            <i class="fa-regular fa-circle-user text-[40px]"></i>
+        </div>
+    </header>
+
+    <!-- Nav -->
+    <nav class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold">
+        <a href="{% url 'dashboard' %}" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Tổng quan</a>
+        <a href="../employee/employee_list.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Nhân viên</a>
+        <a href="../contract/contract_list.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Hợp đồng</a>
+        <!-- Lịch làm việc Dropdown -->
+        <div class="relative group cursor-pointer">
+            <div class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] flex items-center gap-2">
+                Lịch làm việc
+                <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
+            </div>
+            <!-- Dropdown menu -->
+            <div class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
+                <a href="../schedule/schedule_list.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium border-b border-gray-50">Tạo lịch làm việc</a>
+                <a href="../schedule/schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium">Gửi thông báo lịch làm việc</a>
+            </div>
+        </div>
+        <a href="../request/request.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Yêu cầu</a>
+        <a href="../salary/salary.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Bảng lương</a>
+        <div class="nav-dropdown nav-item active py-[16px]" id="baoCaoDropdown">
+            <span class="cursor-pointer select-none" onclick="toggleDropdown()">Báo cáo</span>
+            <div class="nav-dropdown-menu">
+                <a href="{% url 'report:report_salary' %}">Báo cáo lương</a>
+                <a href="{% url 'report:report_attendance' %}" class="active-report">Báo cáo chấm công</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="p-8 max-w-[1400px] mx-auto">
+        <h2 class="text-[22px] font-bold mb-1">Báo cáo chấm công</h2>
+        <div class="border-b-2 border-[#4B2E1F] w-52 mb-6"></div>
+
+        <!-- Dashboard Cards -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8 items-stretch">
+            <div class="bg-white rounded-lg shadow-sm p-6 min-h-[220px]">
+                <div class="flex justify-between items-start mb-4 gap-4">
+                    <h3 class="text-[15px] font-semibold text-gray-800">Giờ làm theo chức vụ</h3>
+                    <div class="relative">
+                        <select id="chartCycleSelect"
+                            class="appearance-none text-[13px] font-semibold text-[#4B2E1F] border border-[#d6b5a3] rounded-full px-4 py-1.5 bg-white outline-none cursor-pointer pr-10 hover:bg-[#fcf8f5] transition-colors font-sans">
+                            <option value="Chu kỳ làm việc" {% if not request.GET.cycle or request.GET.cycle == 'Chu kỳ làm việc' %}selected{% endif %}>Tất cả chu kỳ</option>
+                            <option value="Tháng 1/2026" {% if request.GET.cycle == 'Tháng 1/2026' %}selected{% endif %}>Tháng 1/2026</option>
+                            <option value="Tháng 2/2026" {% if request.GET.cycle == 'Tháng 2/2026' %}selected{% endif %}>Tháng 2/2026</option>
+                            <option value="Tháng 3/2026" {% if request.GET.cycle == 'Tháng 3/2026' %}selected{% endif %}>Tháng 3/2026</option>
+                            <option value="Tháng 4/2026" {% if request.GET.cycle == 'Tháng 4/2026' %}selected{% endif %}>Tháng 4/2026</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-[#4B2E1F] pointer-events-none"></i>
+                    </div>
+                </div>
+                <div class="relative h-[220px] bg-white rounded-lg border border-gray-100">
+                    <canvas id="attendanceBarChart" width="640" height="220" class="w-full h-full"></canvas>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6 min-h-[220px]">
+                <h3 class="text-[15px] font-semibold text-gray-800 mb-6">Tình trạng nghỉ</h3>
+                <div class="flex flex-col xl:flex-row items-center justify-between gap-6 h-full">
+                    <div class="relative w-[180px] h-[180px] mx-auto xl:mx-0">
+                        <canvas id="attendanceDonutChart" width="180" height="180" class="w-full h-full"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                            <span class="text-[24px] font-bold text-gray-800">50</span>
+                            <span class="text-[12px] text-gray-400">ngày</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 w-full max-w-[200px]">
+                        <div class="flex items-center gap-3">
+                            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                            <div>
+                                <div class="text-[13px] font-semibold text-gray-700">Nghỉ phép</div>
+                                <div class="text-[12px] text-gray-500" id="nghiPhepLegend">42 (84%)</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                            <div>
+                                <div class="text-[13px] font-semibold text-gray-700">Không phép</div>
+                                <div class="text-[12px] text-gray-500" id="khongPhepLegend">8 (16%)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Card -->
+        <form method="GET" id="filterForm" class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <div class="flex flex-wrap gap-5 items-end">
+                <div class="flex-1 min-w-[180px]">
+                    <label class="block mb-1 text-[14px] font-medium text-gray-600">Nhân viên</label>
+                    <div class="flex items-center border border-gray-300 rounded px-3 py-2 bg-white">
+                        <i class="fa-solid fa-magnifying-glass text-gray-400 mr-2 text-sm"></i>
+                        <input type="text" name="name" placeholder="Tìm kiếm" value="{{ request.GET.name|default:'' }}" class="outline-none text-sm w-full font-sans">
+                    </div>
+                </div>
+                <div class="flex-1 min-w-[180px]">
+                    <label class="block mb-1 text-[14px] font-medium text-gray-600">Chu kỳ lương</label>
+                    <select name="cycle" id="mainCycleSelect" class="border border-gray-300 rounded px-3 py-2 bg-white text-sm w-full outline-none font-sans">
+                        <option>Chu kỳ làm việc</option>
+                        <option {% if request.GET.cycle == 'Tháng 1/2026' %}selected{% endif %}>Tháng 1/2026</option>
+                        <option {% if request.GET.cycle == 'Tháng 2/2026' %}selected{% endif %}>Tháng 2/2026</option>
+                        <option {% if request.GET.cycle == 'Tháng 3/2026' %}selected{% endif %}>Tháng 3/2026</option>
+                        <option {% if request.GET.cycle == 'Tháng 4/2026' %}selected{% endif %}>Tháng 4/2026</option>
+                    </select>
+                </div>
+                <div class="flex-1 min-w-[150px]">
+                    <label class="block mb-1 text-[14px] font-medium text-gray-600">Vị trí làm việc</label>
+                    <select name="position" class="border border-gray-300 rounded px-3 py-2 bg-white text-sm w-full outline-none font-sans">
+                        <option {% if request.GET.position == 'Tất cả' %}selected{% endif %}>Tất cả</option>
+                        <option {% if request.GET.position == 'Pha chế' %}selected{% endif %}>Pha chế</option>
+                        <option {% if request.GET.position == 'Phục vụ' %}selected{% endif %}>Phục vụ</option>
+                        <option {% if request.GET.position == 'Thu ngân' %}selected{% endif %}>Thu ngân</option>
+                        <option {% if request.GET.position == 'Quản lý' %}selected{% endif %}>Quản lý</option>
+                        <option {% if request.GET.position == 'Giữ xe' %}selected{% endif %}>Giữ xe</option>
+                    </select>
+                </div>
+                <div class="flex-1 min-w-[150px]">
+                    <label class="block mb-1 text-[14px] font-medium text-gray-600">Trạng thái làm việc</label>
+                    <select name="status" class="border border-gray-300 rounded px-3 py-2 bg-white text-sm w-full outline-none font-sans">
+                        <option {% if request.GET.status == 'Tất cả' %}selected{% endif %}>Tất cả</option>
+                        <option {% if request.GET.status == 'Đang làm việc' %}selected{% endif %}>Đang làm việc</option>
+                        <option {% if request.GET.status == 'Đã nghỉ việc' %}selected{% endif %}>Đã nghỉ việc</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-2 ml-auto">
+                    <button type="submit" id="btnXem" onclick="document.getElementById('filterForm').submit()" class="bg-[#4B2E1F] hover:bg-[#3a2317] text-white font-semibold px-8 py-2 rounded transition text-sm">Xem</button>
+                    <button type="button" id="btnXuat" class="bg-[#4B2E1F] hover:bg-[#3a2317] text-white font-semibold px-4 py-2 rounded transition text-sm">In/Xuất báo cáo</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="overflow-x-auto rounded-lg shadow-sm">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-[#4B2E1F] text-white">
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Mã nhân viên</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Tên nhân viên</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Chức vụ</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Tháng năm</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Tổng giờ làm</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Ngày nghỉ phép</th>
+                        <th class="px-3 py-3 text-center text-[12px] font-semibold whitespace-nowrap">Ngày không phép</th>
+                    </tr>
+                </thead>
+                <tbody id="reportBody">
+                    <tr><td colspan="7" class="text-center py-10 text-gray-400 text-sm"></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Print Modal -->
+    <div id="printModal" class="fixed inset-0 bg-black/40 z-50 items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 overflow-hidden">
+            <div class="bg-[#4B2E1F] h-10"></div>
+            <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+                <h3 class="text-[18px] font-bold">Xuất / In báo cáo</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div class="overflow-x-auto px-4 pt-4">
+                <table class="w-full table-auto border-collapse">
+                    <thead>
+                        <tr class="bg-[#4B2E1F] text-white">
+                            <th class="px-3 py-2 text-left text-[12px] whitespace-nowrap">Mã nhân viên</th>
+                            <th class="px-3 py-2 text-left text-[12px] whitespace-nowrap">Tên nhân viên</th>
+                            <th class="px-3 py-2 text-left text-[12px] whitespace-nowrap">Chức vụ</th>
+                            <th class="px-3 py-2 text-left text-[12px] whitespace-nowrap">Tháng năm</th>
+                            <th class="px-3 py-2 text-left text-[12px] whitespace-nowrap">Tổng giờ làm</th>
+                            <th class="px-3 py-2 text-left text-[12px] whitespace-nowrap">Ngày nghỉ phép</th>
+                            <th class="px-3 py-2 text-left text-[12px] whitespace-nowrap">Ngày không phép</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalBody"></tbody>
+                </table>
+            </div>
+            <div class="flex items-center justify-between px-6 py-5">
+                <div class="flex items-center gap-3">
+                    <label class="text-[13px] font-medium text-gray-600">Chọn định dạng xuất:</label>
+                    <select class="border border-gray-300 rounded px-3 py-1.5 text-sm outline-none font-sans w-36">
+                        <option>Excel</option><option>PDF</option><option>CSV</option>
+                    </select>
+                </div>
+                <div class="flex gap-4">
+                    <button id="btnXuatModal" class="bg-[#d6b5a3] hover:bg-[#c9a08c] text-[#4B2E1F] font-semibold px-6 py-2 rounded text-sm transition">Xuất báo cáo</button>
+                    <button id="btnInModal" class="bg-[#4B2E1F] hover:bg-[#3a2317] text-white font-semibold px-6 py-2 rounded text-sm transition">In báo cáo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toastBackdrop"></div>
+    <div id="toast">
+        <div style="width:56px;height:56px;background:#3cc16e;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <path d="M5 13l4 4L19 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <p id="toastMsg" style="font-size:17px;font-weight:700;color:#1a1a1a;margin:0;">Xuất báo cáo thành công</p>
+    </div>
+
+    <script>
+        // Nav dropdown
+        function toggleDropdown() { document.getElementById('baoCaoDropdown').classList.toggle('open'); }
+        document.addEventListener('click', e => {
+            const dd = document.getElementById('baoCaoDropdown');
+            if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+        });
+
+        // Mock data from Database
+        const mockData = [
+            {% for r in reports %}
+            { 
+                id: '{{ r.MaNhanVien.MaNhanVien }}', 
+                name: '{{ r.MaNhanVien.HoTen }}',  
+                role: '{{ r.MaNhanVien.ChucVu }}', 
+                month: '{{ r.Thang|date:"m/Y" }}', 
+                totalHours: {{ r.TongGioLam|default:0 }}, 
+                leaveDays: {{ r.NgayNghiPhep|default:0 }}, 
+                absentDays: {{ r.NgayKhongPhep|default:0 }} 
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        // Fallback sample data if no data from backend AND no search is performed
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasFilter = Array.from(urlParams.entries()).some(([k, v]) => {
+            if (!v || v === 'Tất cả' || v === 'Chu kỳ làm việc' || v === '') return false;
+            return true;
+        });
+        if (mockData.length === 0 && !hasFilter) {
+            mockData.push(
+                { id: 'NV001', name: 'Nguyễn Văn A', role: 'Pha chế', month: '04/2026', totalHours: 160, leaveDays: 42, absentDays: 8 },
+                { id: 'NV002', name: 'Trần Thị B', role: 'Phục vụ', month: '04/2026', totalHours: 158, leaveDays: 3, absentDays: 1 },
+                { id: 'NV003', name: 'Lê Văn C', role: 'Thu ngân', month: '04/2026', totalHours: 162, leaveDays: 1, absentDays: 0 },
+                { id: 'NV004', name: 'Phạm Thị D', role: 'Quản lý', month: '04/2026', totalHours: 165, leaveDays: 0, absentDays: 0 }
+            );
+        }
+
+        function renderRows() {
+            return mockData.map((r,i) => `
+                <tr class="${i%2===0?'bg-white':'bg-[#fdf6f2]'} border-b border-gray-100 hover:bg-amber-50 transition">
+                    <td class="px-3 py-2 text-xs whitespace-nowrap text-center">${r.id}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap text-center">${r.name}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap text-center">${r.role}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap text-center">${r.month}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap text-center">${r.totalHours}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap text-center">${r.leaveDays}</td>
+                    <td class="px-3 py-2 text-xs whitespace-nowrap text-center">${r.absentDays}</td>
+                </tr>`).join('');
+        }
+
+        // Filter and Modal button logic
+        document.getElementById('btnXuat').onclick = () => {
+            document.getElementById('modalBody').innerHTML = renderRows();
+            document.getElementById('printModal').classList.add('open');
+        };
+
+        function closeModal() { document.getElementById('printModal').classList.remove('open'); }
+        document.getElementById('printModal').addEventListener('click', e => { if(e.target===document.getElementById('printModal')) closeModal(); });
+
+        // Toast
+        function showToast(msg) {
+            document.getElementById('toastMsg').textContent = msg;
+            const backdrop = document.getElementById('toastBackdrop');
+            const toast    = document.getElementById('toast');
+            backdrop.style.display = 'block';
+            toast.style.display    = 'block';
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => { toast.style.display='none'; backdrop.style.display='none'; closeModal(); }, 280);
+            }, 2500);
+        }
+
+        document.getElementById('btnXuatModal').onclick = () => showToast('Xuất báo cáo thành công');
+        document.getElementById('btnInModal').onclick   = () => showToast('In báo cáo thành công');
+
+        function drawAttendanceBarChart() {
+            const canvas = document.getElementById('attendanceBarChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = 640 * dpr;
+            canvas.height = 280 * dpr;
+            ctx.scale(dpr, dpr);
+
+            const positionData = {};
+            mockData.forEach(item => {
+                const pos = item.role;
+                if (!positionData[pos]) positionData[pos] = { totalHours: 0, count: 0 };
+                positionData[pos].totalHours += parseFloat(item.totalHours) || 0;
+                positionData[pos].count += 1;
+            });
+
+            const data = Object.keys(positionData).map(pos => ({
+                label: pos,
+                value: Math.round(positionData[pos].totalHours / positionData[pos].count),
+                color: pos === 'Pha chế' ? '#4f46e5' : pos === 'Phục vụ' ? '#10b981' : pos === 'Thu ngân' ? '#f59e0b' : '#8b5cf6'
+            }));
+
+            if (data.length === 0) {
+                data.push({ label: 'Pha chế', value: 160, color: '#4f46e5' }, { label: 'Phục vụ', value: 158, color: '#10b981' }, { label: 'Thu ngân', value: 162, color: '#f59e0b' });
+            }
+
+            const padding = { top: 30, right: 30, bottom: 40, left: 40 };
+            const chartWidth = 640 - padding.left - padding.right;
+            const chartHeight = 220 - padding.top - padding.bottom;
+            const maxValue = data.length > 0 ? Math.max(...data.map(item => item.value)) * 1.2 : 100;
+            if (maxValue === 0) return;
+            const colWidth = chartWidth / (data.length || 1);
+            const barWidth = Math.min(60, colWidth * 0.5);
+
+            let startTime = null;
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / 1000, 1);
+                const eased = 1 - Math.pow(1 - progress, 3); // Cubic ease out
+
+                ctx.clearRect(0, 0, 640, 280);
+
+                // Grid lines
+                ctx.strokeStyle = '#f3f4f6';
+                ctx.lineWidth = 1;
+                for (let i = 0; i <= 4; i++) {
+                    const y = padding.top + (chartHeight / 4) * i;
+                    ctx.beginPath();
+                    ctx.moveTo(padding.left, y);
+                    ctx.lineTo(640 - padding.right, y);
+                    ctx.stroke();
+                }
+
+                data.forEach((item, index) => {
+                    const x = padding.left + index * colWidth + (colWidth - barWidth) / 2;
+                    const fullBarHeight = (item.value / maxValue) * chartHeight;
+                    const barHeight = fullBarHeight * eased;
+                    const y = padding.top + chartHeight - barHeight;
+
+                    // Shadow
+                    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                    ctx.shadowBlur = 15;
+                    ctx.shadowOffsetY = 5;
+
+                    // Bar Gradient
+                    const grad = ctx.createLinearGradient(x, y, x, y + barHeight);
+                    grad.addColorStop(0, item.color);
+                    grad.addColorStop(1, shadeColor(item.color, -20));
+                    
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    if (ctx.roundRect) {
+                        ctx.roundRect(x, y, barWidth, barHeight, [8, 8, 0, 0]);
+                    } else {
+                        ctx.rect(x, y, barWidth, barHeight);
+                    }
+                    ctx.fill();
+                    
+                    ctx.shadowBlur = 0; // Reset shadow
+
+                    // Value Text
+                    ctx.fillStyle = '#4B2E1F';
+                    ctx.font = 'bold 14px Montserrat, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(Math.round(item.value * eased) + 'h', x + barWidth / 2, y - 10);
+
+                    // Label
+                    ctx.fillStyle = '#6b7280';
+                    ctx.font = '500 12px Montserrat, sans-serif';
+                    ctx.fillText(item.label, x + barWidth / 2, padding.top + chartHeight + 25);
+                });
+
+                if (progress < 1) requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function shadeColor(color, percent) {
+            let R = parseInt(color.substring(1,3),16);
+            let G = parseInt(color.substring(3,5),16);
+            let B = parseInt(color.substring(5,7),16);
+            R = parseInt(R * (100 + percent) / 100);
+            G = parseInt(G * (100 + percent) / 100);
+            B = parseInt(B * (100 + percent) / 100);
+            R = (R<255)?R:255; G = (G<255)?G:255; B = (B<255)?B:255;
+            const RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
+            const GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
+            const BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
+            return "#"+RR+GG+BB;
+        }
+
+        function drawAttendanceBarChart() {
+            const canvas = document.getElementById('attendanceBarChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = 640 * dpr;
+            canvas.height = 220 * dpr;
+            ctx.scale(dpr, dpr);
+
+            // Group data by roles
+            const rolesObj = {};
+            mockData.forEach(r => {
+                rolesObj[r.role] = (rolesObj[r.role] || 0) + parseFloat(totalHours(r.totalHours));
+            });
+            function totalHours(v) { return parseFloat(v) || 0; }
+
+            const data = Object.keys(rolesObj).map(r => ({ label: r, value: rolesObj[r] }));
+            if (data.length === 0) return;
+
+            const padding = { top: 30, right: 30, bottom: 40, left: 40 };
+            const chartWidth = 640 - padding.left - padding.right;
+            const chartHeight = 220 - padding.top - padding.bottom;
+            const maxValue = data.length > 0 ? Math.max(...data.map(item => item.value)) * 1.2 : 100;
+            if (maxValue === 0) return;
+            const colWidth = chartWidth / (data.length || 1);
+            const barWidth = Math.min(60, colWidth * 0.5);
+
+            let startTime = null;
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / 1000, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                ctx.clearRect(0, 0, 640, 220);
+
+                data.forEach((item, index) => {
+                    const x = padding.left + index * colWidth + (colWidth - barWidth) / 2;
+                    const h = (item.value / maxValue) * chartHeight * eased;
+                    const y = padding.top + chartHeight - h;
+
+                    const colors = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+                    const color = colors[index % colors.length];
+                    
+                    const grad = ctx.createLinearGradient(x, y, x, y + h);
+                    grad.addColorStop(0, color);
+                    grad.addColorStop(1, shadeColor(color, -20));
+                    ctx.fillStyle = grad;
+                    
+                    ctx.beginPath();
+                    if (ctx.roundRect) ctx.roundRect(x, y, barWidth, h, [6,6,0,0]); else ctx.rect(x, y, barWidth, h);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#4B2E1F';
+                    ctx.font = 'bold 11px Montserrat, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(Math.round(item.value) + 'h', x + barWidth / 2, y - 8);
+                    ctx.fillStyle = '#6b7280';
+                    ctx.font = '500 10px Montserrat, sans-serif';
+                    ctx.fillText(item.label, x + barWidth / 2, padding.top + chartHeight + 20);
+                });
+                if (progress < 1) requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function drawAttendanceDonutChart() {
+            const canvas = document.getElementById('attendanceDonutChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = 180 * dpr;
+            canvas.height = 180 * dpr;
+            ctx.scale(dpr, dpr);
+
+            let totalNghiPhep = 0, totalKhongPhep = 0;
+            mockData.forEach(item => {
+                totalNghiPhep += parseInt(item.leaveDays) || 0;
+                totalKhongPhep += parseInt(item.absentDays) || 0;
+            });
+
+            const data = [
+                { value: totalNghiPhep, color: '#10b981', label: 'Nghỉ phép' },
+                { value: totalKhongPhep, color: '#f43f5e', label: 'Không phép' }
+            ];
+            const total = data.reduce((sum, item) => sum + item.value, 0);
+
+            // Update UI elements first
+            document.querySelector('#attendanceDonutChart').parentElement.querySelector('span:first-child').textContent = total;
+            const nghiPhepLegend = document.getElementById('nghiPhepLegend');
+            const khongPhepLegend = document.getElementById('khongPhepLegend');
+            if (nghiPhepLegend && khongPhepLegend) {
+                const p1 = total > 0 ? Math.round((data[0].value/total)*100) : 0;
+                const p2 = total > 0 ? Math.round((data[1].value/total)*100) : 0;
+                nghiPhepLegend.textContent = `${data[0].value} (${p1}%)`;
+                khongPhepLegend.textContent = `${data[1].value} (${p2}%)`;
+            }
+
+            if (total === 0) {
+                ctx.clearRect(0,0,180,180);
+                ctx.beginPath();
+                ctx.arc(90,90,75,-Math.PI/2,Math.PI*2-Math.PI/2);
+                ctx.strokeStyle = '#f3f4f6';
+                ctx.lineWidth = 20;
+                ctx.stroke();
+                return;
+            }
+
+            let startTime = null;
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / 1200, 1);
+                const eased = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+                ctx.clearRect(0, 0, 180, 180);
+                const centerX = 90, centerY = 90, radius = 75, innerRadius = 55;
+                let startAngle = -Math.PI / 2;
+
+                data.forEach(item => {
+                    const sliceAngle = (item.value / total) * Math.PI * 2 * eased;
+                    if (sliceAngle <= 0) return;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+                    ctx.lineTo(centerX + Math.cos(startAngle + sliceAngle) * innerRadius, centerY + Math.sin(startAngle + sliceAngle) * innerRadius);
+                    ctx.arc(centerX, centerY, innerRadius, startAngle + sliceAngle, startAngle, true);
+                    ctx.closePath();
+                    const grad = ctx.createRadialGradient(centerX, centerY, innerRadius, centerX, centerY, radius);
+                    grad.addColorStop(0, item.color);
+                    grad.addColorStop(1, shadeColor(item.color, -15));
+                    ctx.fillStyle = grad;
+                    ctx.fill();
+                    startAngle += sliceAngle;
+                });
+                if (progress < 1) requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function shadeColor(color, percent) {
+            let R = parseInt(color.substring(1, 3), 16);
+            let G = parseInt(color.substring(3, 5), 16);
+            let B = parseInt(color.substring(5, 7), 16);
+            R = parseInt(R * (100 + percent) / 100);
+            G = parseInt(G * (100 + percent) / 100);
+            B = parseInt(B * (100 + percent) / 100);
+            R = (R < 255) ? R : 255; G = (G < 255) ? G : 255; B = (B < 255) ? B : 255;
+            const RR = ((R.toString(16).length == 1) ? "0" + R.toString(16) : R.toString(16));
+            const GG = ((G.toString(16).length == 1) ? "0" + G.toString(16) : G.toString(16));
+            const BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
+            return "#" + RR + GG + BB;
+        }
+
+        function closeModal() { document.getElementById('printModal').classList.remove('open'); }
+        document.getElementById('printModal').addEventListener('click', e => { if (e.target === document.getElementById('printModal')) closeModal(); });
+
+        function showToast(msg) {
+            document.getElementById('toastMsg').textContent = msg;
+            const backdrop = document.getElementById('toastBackdrop');
+            const toast = document.getElementById('toast');
+            backdrop.style.display = 'block';
+            toast.style.display = 'block';
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => { toast.style.display = 'none'; backdrop.style.display = 'none'; closeModal(); }, 280);
+            }, 2500);
+        }
+
+        document.getElementById('btnXuat').onclick = () => {
+            document.getElementById('modalBody').innerHTML = renderRows();
+            document.getElementById('printModal').classList.add('open');
+        };
+        document.getElementById('btnXuatModal').onclick = () => showToast('Xuất báo cáo thành công');
+        document.getElementById('btnInModal').onclick = () => showToast('In báo cáo thành công');
+
+        window.addEventListener('load', () => {
+            drawAttendanceBarChart();
+            drawAttendanceDonutChart();
+            document.getElementById('reportBody').innerHTML = renderRows();
+
+            // Sync chart selector with main filter
+            const chartSelect = document.getElementById('chartCycleSelect');
+            const mainSelect = document.getElementById('mainCycleSelect');
+            const form = document.getElementById('filterForm');
+
+            if (chartSelect && mainSelect && form) {
+                chartSelect.onchange = () => {
+                    mainSelect.value = chartSelect.value;
+                    form.submit();
+                };
+            }
+        });
+    </script>
+</body>
+</html>

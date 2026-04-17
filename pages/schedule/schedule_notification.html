@@ -35,7 +35,7 @@
     </script>
     <style>
         body {
-            background-color: #edebea;
+            background-color: #f8f6f4;
             font-size: 23px;
         }
 
@@ -61,26 +61,33 @@
         }
 
         .card-shadow {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 10px 40px rgba(112, 69, 47, 0.08);
         }
         
         /* Table styles to match mockup */
         .table-custom th {
-            font-weight: 600;
-            padding: 12px 8px;
+            font-weight: 700;
+            padding: 20px 15px;
+            letter-spacing: 0.02em;
+            font-size: 14px;
         }
         .table-custom td {
-            padding: 14px 8px;
-            color: #4b5563; /* text-gray-600 */
+            padding: 20px 15px;
+            color: #4b2e1f;
+            font-size: 15px;
         }
         .table-row-odd {
-            background-color: #f6efe9;
+            background-color: #ffffff;
         }
         .table-row-even {
-            background-color: #ffffff;
+            background-color: #fdfbf9;
+        }
+        .table-row:hover {
+            background-color: #f9f5f3 !important;
         }
 
         /* Dropdown nav */
+        /* ... existing dropdown styles ... */
         .nav-dropdown {
             position: relative;
         }
@@ -124,24 +131,24 @@
 <body class="text-gray-800 font-sans min-h-screen flex flex-col">
 
     <!-- Header Section -->
-    <header class="bg-white px-8 py-3 flex justify-between items-center sm:flex-row flex-col gap-4 border-b border-gray-100 flex-shrink-0">
-        <div class="flex items-center gap-4">
+    <header class="bg-white px-8 py-4 flex justify-between items-center sm:flex-row flex-col gap-4 border-b border-gray-100 flex-shrink-0 shadow-sm relative z-[60]">
+        <div class="flex items-center gap-6">
             <!-- Logo -->
-            <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center bg-[#2d221c]">
+            <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center bg-[#2d221c] shadow-md">
                 <img src="../../assets/images/logo.png" alt="Logo Đi Lạc" class="w-full h-full object-cover">
             </div>
-            <h1 class="font-bold text-[26px] uppercase tracking-wider text-brand-text">ĐI LẠC COFFEE</h1>
+            <h1 class="font-bold text-[26px] uppercase tracking-tighter text-[#4B2E1F]">ĐI LẠC COFFEE</h1>
         </div>
-        <div class="flex items-center gap-4">
-            <span class="text-gray-800 text-[23px]"><span class="italic font-medium">Xin chào, </span><span class="italic font-bold">Đi Lạc coffee</span></span>
-            <div class="w-12 h-12 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition">
-                <i class="fa-regular fa-circle-user text-[40px]"></i>
+        <div class="flex items-center gap-6">
+            <span class="text-gray-800 text-[20px]"><span class="italic font-medium text-gray-500">Xin chào, </span><span class="italic font-bold text-[#70452F]">Đi Lạc coffee</span></span>
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-[#70452F] cursor-pointer transition hover:scale-110">
+                <i class="fa-solid fa-circle-user text-[42px]"></i>
             </div>
         </div>
     </header>
 
     <!-- Navigation -->
-    <nav class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold flex-shrink-0">
+    <nav class="bg-[#4B2E1F] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold flex-shrink-0 shadow-lg relative z-50">
         <a href="/pages/dashboard.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Tổng quan</a>
         <a href="/employee/" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Nhân viên</a>
         <a href="/pages/contract/contract_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Hợp đồng</a>
@@ -152,9 +159,9 @@
                 <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
             </div>
             <!-- Dropdown menu -->
-            <div class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
-                <a href="/pages/schedule/schedule_list.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium border-b border-gray-50">Tạo lịch làm việc</a>
-                <a href="/pages/schedule/schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium bg-[#f9f5f3]">Gửi thông báo lịch làm việc</a>
+            <div class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
+                <a href="/pages/schedule/schedule_list.html" class="block px-5 py-4 hover:bg-[#f9f5f3] hover:text-[#70452F] transition-colors font-bold border-b border-gray-50">Tạo lịch làm việc</a>
+                <a href="/pages/schedule/schedule_notification.html" class="block px-5 py-4 hover:bg-[#f9f5f3] hover:text-[#70452F] transition-colors font-bold bg-[#f9f5f3] text-[#70452F]">Gửi thông báo lịch</a>
             </div>
         </div>
         <a href="/pages/request/request.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
@@ -170,37 +177,58 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="w-full max-w-[1300px] mx-auto p-4 md:p-8 flex-grow flex flex-col">
+    <main class="w-full max-w-[1400px] mx-auto p-4 md:p-10 flex-grow flex flex-col">
         
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 flex-grow flex flex-col relative">
+        <div class="bg-white rounded-2xl shadow-[0_10px_40px_rgba(112,69,47,0.06)] border border-[#DAC0B1]/20 p-6 md:p-8 flex-grow flex flex-col relative">
             
-            <!-- Header Group -->
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-                <h2 class="text-[28px] font-bold text-[#8c5a35]">Gửi thông báo lịch làm việc</h2>
+            <!-- Header Group & Navigation -->
+            <div class="flex flex-col mb-6 gap-4">
+                <!-- Title Row -->
+                <div class="border-b border-gray-100 pb-3">
+                    <h2 class="text-[26px] font-black text-[#4B2E1F] tracking-tight">Gửi thông báo lịch làm việc</h2>
+                    <p class="text-[#70452F]/70 font-medium text-[12px] mt-0.5 uppercase tracking-widest">Chọn các ca làm việc để gửi thông báo cho nhân viên</p>
+                </div>
                 
-                <div class="flex items-stretch gap-2">
-                    <div class="relative w-[300px] flex items-center">
-                        <i class="fa-solid fa-magnifying-glass absolute left-4 text-gray-400"></i>
-                        <input type="text" placeholder="Nhập tên nhân viên" class="w-full bg-[#f9f9f9] border border-gray-200 rounded-lg pl-10 pr-4 py-2 text-[15px] outline-none focus:border-[#8c5a35] transition">
+                <!-- Controls Row -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <!-- Week Navigation (Left) -->
+                    <div class="flex items-center gap-2">
+                        <div class="flex border border-[#DAC0B1]/50 rounded-xl overflow-hidden bg-[#fdfbf9] shadow-sm h-[40px]">
+                            <button onclick="window.changeWeek(-1)" class="px-4 h-full hover:bg-[#F9F1EB] border-r border-[#DAC0B1]/50 text-[#70452F] transition-colors flex items-center justify-center"><i class="fa-solid fa-chevron-left text-[12px]"></i></button>
+                            <div class="px-4 h-full flex flex-col items-center justify-center border-r border-[#DAC0B1]/50 bg-white min-w-[200px]">
+                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Tuần làm việc</span>
+                                <span id="week-label" class="text-[13px] font-bold text-[#70452F] leading-none">Đang tải...</span>
+                            </div>
+                            <button onclick="window.changeWeek(1)" class="px-4 h-full hover:bg-[#F9F1EB] text-[#70452F] transition-colors flex items-center justify-center"><i class="fa-solid fa-chevron-right text-[12px]"></i></button>
+                        </div>
+                        <button class="bg-[#70452F] text-white h-[40px] px-4 rounded-xl font-bold text-[12px] uppercase hover:bg-[#4B2E1F] transition-all shadow-md ml-1" onclick="window.jumpToToday()">Hôm nay</button>
                     </div>
-                    <button class="bg-[#8c5a35] hover:bg-[#6c4426] text-white px-6 py-2 rounded-lg font-bold flex items-center gap-2 transition whitespace-nowrap text-[15px]">
-                        <i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm
-                    </button>
+
+                    <!-- Search Bar (Right) -->
+                    <div class="flex items-stretch gap-2 w-full md:w-auto">
+                        <div class="relative w-full md:w-[320px] flex items-center group">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 text-gray-400 group-focus-within:text-[#70452F] transition-colors text-[14px]"></i>
+                            <input type="text" id="search-input" placeholder="Tìm kiếm theo tên, chức vụ..." class="w-full h-[40px] bg-orange-50/50 hover:bg-orange-50 focus:bg-orange-50 border border-orange-200/60 rounded-xl pl-10 pr-4 py-2 text-[14px] outline-none focus:border-[#70452F]/40 focus:ring-4 focus:ring-[#70452F]/10 transition-all font-medium text-gray-700 placeholder-gray-400 shadow-inner">
+                        </div>
+                        <button onclick="window.performSearch()" class="bg-[#70452F] hover:bg-[#4B2E1F] text-white px-6 h-[40px] rounded-xl font-black flex items-center gap-2 transition-all whitespace-nowrap text-[13px] uppercase tracking-wider shadow-lg shadow-[#70452F]/20 active:scale-95">
+                            Tìm kiếm
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- Table Container -->
-            <div class="overflow-x-auto flex-grow rounded-lg border border-gray-100">
-                <table class="w-full text-center table-custom text-[15px]">
-                    <thead class="bg-[#785438] text-white">
+            <div class="overflow-x-auto overflow-y-auto max-h-[500px] custom-scrollbar flex-grow rounded-2xl border border-[#DAC0B1]/20 bg-[#fdfbf9]/30">
+                <table class="w-full text-center table-custom text-[15px] border-collapse relative">
+                    <thead class="bg-[#70452F] text-white sticky top-0 z-10 shadow-sm">
                         <tr>
-                            <th class="w-12"><input type="checkbox" class="w-4 h-4 rounded text-[#8c5a35] cursor-pointer" id="selectAll" onclick="toggleAllChecks()"></th>
+                            <th class="w-16"><input type="checkbox" class="w-5 h-5 rounded border-white/30 text-[#70452F] cursor-pointer focus:ring-0" id="selectAll" onclick="toggleAllChecks()"></th>
                             <th>Mã ca</th>
-                            <th>Ngày</th>
+                            <th>Ngày làm việc</th>
                             <th>Mã NV</th>
-                            <th>Họ và tên NV</th>
-                            <th>Giờ bắt đầu</th>
-                            <th>Giờ kết thúc</th>
+                            <th>Họ và tên</th>
+                            <th>Chức vụ</th>
+                            <th>Ca làm</th>
                             <th>Ghi chú</th>
                             <th>Trạng thái</th>
                         </tr>
@@ -212,9 +240,11 @@
             </div>
 
             <!-- Bottom Action Buttons -->
-            <div class="flex items-center justify-end gap-4 mt-8 pt-4">
-                <button class="px-8 py-3 rounded-lg bg-[#e5e7eb] text-gray-700 font-bold hover:bg-gray-300 transition text-[16px]">Hủy</button>
-                <button onclick="sendNotification()" class="px-8 py-3 rounded-lg bg-[#8c5a35] text-white font-bold hover:bg-[#5c4133] transition shadow-md text-[16px]">Gửi thông báo</button>
+            <div class="flex items-center justify-end gap-6 mt-6 pt-6 border-t border-gray-50">
+                <button class="px-10 py-3 rounded-xl bg-gray-300 text-gray-800 font-extrabold hover:bg-gray-400 transition-all text-[15px] uppercase tracking-widest">Hủy bỏ</button>
+                <button onclick="sendNotification()" class="px-12 py-3 rounded-xl bg-[#70452F] hover:bg-[#4B2E1F] text-white font-black transition-all shadow-xl shadow-[#70452F]/30 text-[15px] uppercase tracking-widest active:scale-95">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Gửi thông báo
+                </button>
             </div>
             
         </div>
@@ -243,48 +273,120 @@
 
     <!-- Script Area -->
     <script>
-        // --- 1. Dữ liệu bảng giả lập theo Mockup ---
-        const tableData = [
-            { id: "C001", date: "2025-07-16", empId: "NV001", empName: "Nguyễn Văn An", start: "07:00", end: "11:00", note: "-", status: "Chưa gửi" },
-            { id: "C002", date: "2025-07-16", empId: "NV002", empName: "Trần Thị Bình", start: "07:00", end: "11:00", note: "Xin đi trễ 10p", status: "Đã gửi" },
-            { id: "C003", date: "2025-07-16", empId: "NV003", empName: "Lê Văn Cảng", start: "13:00", end: "17:00", note: "-", status: "Chưa gửi" },
-            { id: "C004", date: "2025-07-16", empId: "NV004", empName: "Phạm Thị Dung", start: "13:00", end: "17:00", note: "Ca chiều", status: "Đã gửi" },
-            { id: "C005", date: "2025-07-17", empId: "NV005", empName: "Hoàng Văn Em", start: "18:00", end: "22:00", note: "-", status: "Đã gửi" },
-            { id: "C006", date: "2025-07-17", empId: "NV006", empName: "Ngô Thị Hoa", start: "07:00", end: "11:00", note: "-", status: "Chưa gửi" },
-            { id: "C007", date: "2025-07-17", empId: "NV007", empName: "Đặng Văn Hùng", start: "13:00", end: "17:00", note: "-", status: "Đã gửi" },
-            { id: "C008", date: "2025-07-18", empId: "NV008", empName: "Võ Thị Lan", start: "18:00", end: "22:00", note: "Ca tối", status: "Chưa gửi" },
-            { id: "C009", date: "2025-07-18", empId: "NV009", empName: "Bùi Văn Minh", start: "07:00", end: "11:00", note: "-", status: "Đã gửi" },
-            { id: "C010", date: "2025-07-18", empId: "NV010", empName: "Phan Thị Ngọc", start: "13:00", end: "17:00", note: "-", status: "Chưa gửi" },
-            { id: "C011", date: "2025-07-19", empId: "NV011", empName: "Đỗ Văn Phúc", start: "18:00", end: "22:00", note: "-", status: "Đã gửi" },
-            { id: "C012", date: "2025-07-19", empId: "NV012", empName: "Ngô Thế Quân", start: "07:00", end: "11:00", note: "-", status: "Chưa gửi" },
-        ];
-
+        // --- 1. State & Fetch Logic ---
+        let currentWeekOffset = 0;
+        let today = new Date();
+        let schedules = [];
+        let lastConfirmedSearchQuery = "";
         const tbody = document.getElementById('notification-table-body');
+
+        function getMonday(d) {
+            let nd = new Date(d);
+            let day = nd.getDay();
+            let diff = nd.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(nd.setDate(diff));
+        }
+
+        function formatDateISO(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
         
+        function formatDisplayDate(dateStr) {
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return dateStr;
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+
+        async function fetchSchedules() {
+            const monday = getMonday(new Date(today.getTime() + currentWeekOffset * 7 * 24 * 60 * 60 * 1000));
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            
+            const startStr = formatDateISO(monday);
+            const endStr = formatDateISO(sunday);
+            
+            // Update UI week label
+            const weekLabel = document.getElementById('week-label');
+            const monthNames = ["Th1", "Th2", "Th3", "Th4", "Th5", "Th6", "Th7", "Th8", "Th9", "Th10", "Th11", "Th12"];
+            if (weekLabel) {
+                weekLabel.innerText = `${monday.getDate()} ${monthNames[monday.getMonth()]} - ${sunday.getDate()} ${monthNames[sunday.getMonth()]} ${sunday.getFullYear()}`;
+            }
+
+            try {
+                const response = await fetch(`/schedule/api/data/?start=${startStr}&end=${endStr}`);
+                const data = await response.json();
+                schedules = data.schedules || [];
+                renderTable();
+            } catch (error) {
+                console.error('Error fetching schedules:', error);
+            }
+        }
+
+        window.changeWeek = function(diff) {
+            currentWeekOffset += diff;
+            fetchSchedules();
+        }
+
+        window.jumpToToday = function() {
+            currentWeekOffset = 0;
+            fetchSchedules();
+        }
+
+        window.performSearch = function() {
+            lastConfirmedSearchQuery = (document.getElementById('search-input')?.value || "").toLowerCase().trim();
+            renderTable();
+        }
+
         // Render Function
         function renderTable() {
             let html = "";
-            tableData.forEach((row, index) => {
+            let filtered = schedules;
+            
+            if (lastConfirmedSearchQuery) {
+                filtered = schedules.filter(s => 
+                    (s.name && s.name.toLowerCase().includes(lastConfirmedSearchQuery)) ||
+                    (s.role && s.role.toLowerCase().includes(lastConfirmedSearchQuery))
+                );
+            }
+            
+            if (filtered.length === 0) {
+                 tbody.innerHTML = `<tr><td colspan="9" class="py-12 text-[#DAC0B1] text-lg italic font-bold">Không có ca làm việc nào khớp với bộ lọc trong tuần này.</td></tr>`;
+                 return;
+            }
+
+            // Sắp xếp: Đã gửi lêp top danh sách
+            filtered.sort((a, b) => {
+                const aSent = (a.status === 'Đã gửi' || a.status === 'Đang áp dụng') ? 1 : 0;
+                const bSent = (b.status === 'Đã gửi' || b.status === 'Đang áp dụng') ? 1 : 0;
+                return bSent - aSent; // Sort descending (1 comes before 0)
+            });
+
+            filtered.forEach((row, index) => {
                 const rowClass = index % 2 === 0 ? "table-row-odd" : "table-row-even";
                 
                 // Badges
                 let statusHtml = "";
                 if(row.status === "Chưa gửi") {
-                    statusHtml = `<span class="bg-[#ffeaca] text-[#ce8b2c] px-4 py-1.5 rounded-full font-bold text-[12px] inline-block min-w-[90px] text-center">${row.status}</span>`;
+                    statusHtml = `<span class="bg-[#ffeaca] text-[#ce8b2c] px-4 py-1.5 rounded-full font-bold text-[12px] inline-block min-w-[90px] text-center shadow-sm">Chưa gửi</span>`;
+                } else if(row.status === "Đã gửi" || row.status === "Đang áp dụng") {
+                    statusHtml = `<span class="bg-[#dff5e8] text-[#36b27e] px-4 py-1.5 rounded-full font-bold text-[12px] inline-block min-w-[90px] text-center shadow-sm">Đã gửi</span>`;
                 } else {
-                    statusHtml = `<span class="bg-[#dff5e8] text-[#36b27e] px-4 py-1.5 rounded-full font-bold text-[12px] inline-block min-w-[90px] text-center">${row.status}</span>`;
+                    statusHtml = `<span class="bg-gray-100 text-gray-500 px-4 py-1.5 rounded-full font-bold text-[12px] inline-block min-w-[90px] text-center shadow-sm">${row.status}</span>`;
                 }
 
                 html += `
                     <tr class="${rowClass} border-b border-white hover:opacity-90 transition">
-                        <td><input type="checkbox" class="row-checkbox w-4 h-4 rounded text-[#8c5a35] cursor-pointer" data-index="${index}"></td>
-                        <td class="font-medium">${row.id}</td>
-                        <td>${row.date}</td>
-                        <td class="font-medium">${row.empId}</td>
-                        <td class="font-medium">${row.empName}</td>
-                        <td>${row.start}</td>
-                        <td>${row.end}</td>
-                        <td>${row.note}</td>
+                        <td><input type="checkbox" class="row-checkbox w-5 h-5 rounded border-gray-300 text-[#70452F] cursor-pointer focus:ring-[#70452F]/20" data-id="${row.id}" data-status="${row.status}"></td>
+                        <td class="text-[#8c5a35] font-medium">${row.id}</td>
+                        <td class="font-medium">${formatDisplayDate(row.date)}</td>
+                        <td class="text-gray-600 font-medium">${row.empId}</td>
+                        <td class="text-[#4B2E1F] font-medium whitespace-nowrap">${row.name}</td>
+                        <td class="text-gray-500 whitespace-nowrap">${row.role || 'Nhân viên'}</td>
+                        <td class="text-[#70452F] font-medium">${row.start} - ${row.end}</td>
+                        <td class="text-sm italic">${row.note || '-'}</td>
                         <td>${statusHtml}</td>
                     </tr>
                 `;
@@ -292,7 +394,18 @@
             tbody.innerHTML = html;
         }
 
-        renderTable();
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchSchedules();
+            
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        window.performSearch();
+                    }
+                });
+            }
+        });
 
         // Checkbox Toggle All
         function toggleAllChecks() {
@@ -351,28 +464,49 @@
         }
 
         // Action Handlers
-        window.sendNotification = function() {
-            // Lọc ra các checkbox đã được đánh dấu
+        window.sendNotification = async function() {
             const checkboxes = document.querySelectorAll('.row-checkbox:checked');
             if (checkboxes.length === 0) {
-                // Không chọn hàng nào thì không làm gì cả
                 return;
             }
             
-            // Xử lý logic chuyển đổi trạng thái "Chưa gửi" -> "Đã gửi"
+            // Gather selected IDs
+            const selectedIds = [];
             checkboxes.forEach(cb => {
-                const idx = cb.getAttribute('data-index');
-                if(tableData[idx].status === 'Chưa gửi') {
-                    tableData[idx].status = 'Đã gửi';
+                const id = cb.getAttribute('data-id');
+                const status = cb.getAttribute('data-status');
+                if (status === 'Chưa gửi') {
+                    selectedIds.push(id);
                 }
             });
-            
-            // Sau khi thay đổi trạng thái, render lại bảng & bỏ tick tất cả
-            renderTable();
-            document.getElementById('selectAll').checked = false;
 
-            // Hiển thị thông báo thành công
-            showPopup('Gửi thông báo thành công', 'success');
+            if (selectedIds.length === 0) {
+                showPopup('Tất cả lịch đã được gửi trước đó', 'error', 'Vui lòng chọn ca chưa gửi.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/schedule/api/send/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ids: selectedIds })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showPopup(data.message, 'success');
+                    // Refresh data from server
+                    fetchSchedules();
+                    document.getElementById('selectAll').checked = false;
+                } else {
+                    showPopup('Đã xảy ra lỗi', 'error', data.message);
+                }
+            } catch (error) {
+                console.error("Error sending notification:", error);
+                showPopup('Lỗi máy chủ', 'error', 'Không thể kết nối đến server.');
+            }
         };
 
     </script>
