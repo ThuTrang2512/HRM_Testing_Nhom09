@@ -11,12 +11,19 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'NV00008', name: 'Nguyễn Lê Mỹ', dob: '19/02/1999', phone: '0966942511', role: 'Pha chế', cccd: '010101010108', gender: 'Nữ', address: '', tempAddress: '' }
     ];
 
-    // Read from localStorage or apply default
-    let employees = JSON.parse(localStorage.getItem('employees'));
-    if (!employees) {
-        employees = defaultEmployees;
-        localStorage.setItem('employees', JSON.stringify(employees));
-    }
+    let employees = [];
+
+    const loadEmployees = () => {
+        fetch('/employee/api/data/')
+            .then(res => res.json())
+            .then(data => {
+                employees = data.employees || [];
+                renderCards();
+            })
+            .catch(err => console.error("Lỗi tải API nhân viên:", err));
+    };
+
+    loadEmployees();
 
     const cardsContainer = document.getElementById('employeeCardsContainer');
     const addEmployeeBtn = document.getElementById('addEmployeeBtn');
