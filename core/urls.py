@@ -30,7 +30,7 @@ def favicon_view(request):
     return HttpResponse(status=204)
 
 urlpatterns = [
-    path('', lambda r: HttpResponseRedirect('/index.html')),
+    path('', lambda r: HttpResponseRedirect('/pages/dashboard.html')),
     path('admin/', admin.site.urls),
     path('favicon.ico', favicon_view),
     
