@@ -68,10 +68,10 @@ function loadFilters() {
 
 document.addEventListener("DOMContentLoaded", () => {
     // Không ép buộc lọc theo tháng hiện tại ngay lập tức để người dùng thấy được dữ liệu cũ nếu có
-    if (monthSelect) monthSelect.value = ""; 
+    if (monthSelect) monthSelect.value = "";
     if (yearSelect) yearSelect.value = "2026"; // Mặc định năm 2026
-    
-    loadFilters(); 
+
+    loadFilters();
     fetchSalaryData();
 });
 
@@ -159,9 +159,11 @@ function getCalcMonthText() {
 }
 
 function getExportMonthText() {
-    if (!exportMonth.value) return "";
+    if (!exportMonth || !exportMonth.value) return "";
     const [year, month] = exportMonth.value.split("-");
-    return `${month}/${year}`;
+    const result = `${month}/${year}`;
+    console.log("Export filter month:", result);
+    return result;
 }
 
 function getAttendanceRecord(employeeId, monthText) {
@@ -272,7 +274,7 @@ function renderStatus(status) {
     if (status === "rejected") return `<span class="status-rejected-text">Đã từ chối</span>`;
     return `
         <div class="status-symbols">
-            <span class="status-check">✓</span>
+            <span class="status-check">✔</span>
             <span class="status-cross">✕</span>
         </div>
     `;
@@ -281,7 +283,7 @@ function renderStatus(status) {
 function renderPendingStatus(payrollId) {
     return `
         <div class="status-symbols">
-            <span class="status-check action-approve" title="Duyệt" onclick="handleApproveClick('${payrollId}')">✓</span>
+            <span class="status-check action-approve" title="Duyệt" onclick="handleApproveClick('${payrollId}')">✔</span>
             <span class="status-cross action-reject" title="Từ chối" onclick="handleRejectClick('${payrollId}')">✕</span>
         </div>
     `;
@@ -478,8 +480,8 @@ function fillEditSalaryDetail(payroll) {
     salaryCodePreview.textContent = `Mã lương: ${currentSalaryDraft.id}`;
     salaryEmployeePreview.textContent = `Mã NV: ${currentSalaryDraft.employeeId} - ${currentSalaryDraft.employeeName}`;
     salaryMonthPreview.textContent = `Tháng: ${currentSalaryDraft.month}`;
-    
-    // Khóa các trường không được phép sửa trong chế độ Chỉnh sửa 
+
+    // Khóa các trường không được phép sửa trong chế độ Chỉnh sửa
     detailBaseSalary.readOnly = true;
     detailHourlyRate.readOnly = true;
     detailWorkedHours.readOnly = true;
@@ -527,7 +529,7 @@ async function handleApproveClick(payrollId) {
             id: payrollId,
             status: 'approved'
         });
-        
+
         if (success) {
             approvePayroll(payrollId);
             renderTable();
@@ -620,6 +622,7 @@ function openCalcSalaryModal() {
     `;
     btnStartCalc.disabled = true;
 }
+
 function closeSalaryDetailPopup() {
     salaryDetailModal.classList.remove("show");
     currentSalaryDraft = null;
@@ -677,7 +680,7 @@ function renderCalcTable() {
     calcTableBody.innerHTML = data.map((item) => `
         <tr class="calc-row ${selectedCalcEmployeeId === item.employeeId ? "selected" : ""} ${item.isCalculated ? "calculated-row" : ""}">
             <td>
-                <input 
+                <input
                     type="radio"
                     name="calcEmployeeSelect"
                     value="${item.employeeId}"
@@ -730,7 +733,7 @@ function fillSalaryDetail(data) {
     salaryCodePreview.textContent = `Mã lương: ${salaryCode}`;
     salaryEmployeePreview.textContent = `Mã NV: ${data.employeeId} - ${data.employeeName}`;
     salaryMonthPreview.textContent = `Tháng: ${data.month}`;
-    
+
     // Mở khóa các trường cho phép sửa trong chế độ tính lương mới
     detailBaseSalary.readOnly = false;
     detailHourlyRate.readOnly = false;
@@ -779,12 +782,16 @@ function renderExportTable() {
     if (!exportTableBody) return;
 
     const selectedMonth = getExportMonthText();
+    console.log("Rendering export table for month:", selectedMonth);
+    console.log("Total payrolls available:", payrolls.length);
 
     const approvedList = payrolls.filter((item) => {
         const matchStatus = item.status === "approved";
         const matchMonth = !selectedMonth || item.month === selectedMonth;
         return matchStatus && matchMonth;
     });
+
+    console.log("Approved records found:", approvedList.length);
 
     if (checkAllExport) checkAllExport.checked = false;
 
@@ -1093,5 +1100,102 @@ window.handleDeleteClick = handleDeleteClick;
 window.handleApproveClick = handleApproveClick;
 window.handleRejectClick = handleRejectClick;
 window.handleEditClick = handleEditClick;
+
+
+function initCustomMonthPicker() {
+    const picker = document.getElementById("exportMonthPicker");
+    const display = document.getElementById("exportMonthDisplay");
+    const dropdown = document.getElementById("exportMonthDropdown");
+    const label = document.getElementById("exportMonthLabel");
+    const hiddenInput = document.getElementById("exportMonth");
+    const displayYear = document.getElementById("displayYear");
+    const prevYear = document.getElementById("prevYear");
+    const nextYear = document.getElementById("nextYear");
+    const monthItems = document.querySelectorAll(".picker-month");
+    const clearBtn = document.getElementById("clearPicker");
+    const todayBtn = document.getElementById("todayPicker");
+
+    if (!picker || !display || !dropdown) return;
+
+    let currentYear = 2026;
+    let selectedMonth = "04";
+
+    function updateLabel() {
+        label.textContent = `Tháng ${selectedMonth} ${currentYear}`;
+        hiddenInput.value = `${currentYear}-${selectedMonth}`;
+        renderExportTable();
+    }
+
+    display.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("show");
+        display.classList.toggle("active");
+    });
+
+    prevYear.addEventListener("click", (e) => {
+        e.stopPropagation();
+        currentYear--;
+        displayYear.textContent = currentYear;
+        updateLabel();
+    });
+
+    nextYear.addEventListener("click", (e) => {
+        e.stopPropagation();
+        currentYear++;
+        displayYear.textContent = currentYear;
+        updateLabel();
+    });
+
+    monthItems.forEach((item) => {
+        item.addEventListener("click", (e) => {
+            e.stopPropagation();
+            selectedMonth = item.dataset.month;
+            monthItems.forEach((m) => m.classList.remove("active"));
+            item.classList.add("active");
+            updateLabel();
+            dropdown.classList.remove("show");
+            display.classList.remove("active");
+        });
+    });
+
+    if (clearBtn) {
+        clearBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            selectedMonth = "";
+            hiddenInput.value = "";
+            label.textContent = "Chọn tháng";
+            monthItems.forEach((m) => m.classList.remove("active"));
+            renderExportTable();
+            dropdown.classList.remove("show");
+            display.classList.remove("active");
+        });
+    }
+
+    if (todayBtn) {
+        todayBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const now = new Date();
+            currentYear = now.getFullYear();
+            selectedMonth = String(now.getMonth() + 1).padStart(2, "0");
+            displayYear.textContent = currentYear;
+
+            monthItems.forEach((m) => {
+                if (m.dataset.month === selectedMonth) m.classList.add("active");
+                else m.classList.remove("active");
+            });
+
+            updateLabel();
+            dropdown.classList.remove("show");
+            display.classList.remove("active");
+        });
+    }
+
+    document.addEventListener("click", () => {
+        dropdown.classList.remove("show");
+        display.classList.remove("active");
+    });
+}
+
+initCustomMonthPicker();
 
 renderTable();

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,15 +9,11 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    />
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-        rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 </head>
+
 <body>
     <div class="page-shell">
         <header class="top-header">
@@ -155,7 +152,38 @@
                 <h2 class="export-title">Xuất/In phiếu lương</h2>
 
                 <div class="export-toolbar">
-                    <input id="exportMonth" type="month" class="month-input" value="2026-02" />
+                    <div class="custom-month-picker" id="exportMonthPicker">
+                        <div class="picker-display" id="exportMonthDisplay">
+                            <span id="exportMonthLabel">Tháng 04 2026</span>
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                        <div class="picker-dropdown" id="exportMonthDropdown">
+                            <div class="picker-header">
+                                <button type="button" class="picker-nav" id="prevYear">❮</button>
+                                <span class="picker-year" id="displayYear">2026</span>
+                                <button type="button" class="picker-nav" id="nextYear">❯</button>
+                            </div>
+                            <div class="picker-grid">
+                                <div class="picker-month" data-month="01">1</div>
+                                <div class="picker-month" data-month="02">2</div>
+                                <div class="picker-month" data-month="03">3</div>
+                                <div class="picker-month active" data-month="04">4</div>
+                                <div class="picker-month" data-month="05">5</div>
+                                <div class="picker-month" data-month="06">6</div>
+                                <div class="picker-month" data-month="07">7</div>
+                                <div class="picker-month" data-month="08">8</div>
+                                <div class="picker-month" data-month="09">9</div>
+                                <div class="picker-month" data-month="10">10</div>
+                                <div class="picker-month" data-month="11">11</div>
+                                <div class="picker-month" data-month="12">12</div>
+                            </div>
+                            <div class="picker-footer">
+                                <button type="button" class="picker-btn" id="clearPicker">Xóa</button>
+                                <button type="button" class="picker-btn" id="todayPicker">Tháng này</button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="exportMonth" value="2026-04">
+                    </div>
                 </div>
 
                 <div class="table-wrap export-table-wrap">
@@ -240,34 +268,35 @@
             </div>
 
             <div class="calc-modal-body">
-                <div class="calc-filter-row" style="display: flex; gap: 12px; align-items: end; flex-wrap: wrap; margin-bottom: 16px;">
+                <div class="calc-filter-row"
+                    style="display: flex; gap: 12px; align-items: end; flex-wrap: wrap; margin-bottom: 16px;">
                     <div style="flex: 1; min-width: 180px;">
                         <label for="calcMonthSelect">Chọn tháng</label>
                         <select id="calcMonthSelect" class="month-input" style="width: 100%;">
-    <option value="" selected>-- Tháng --</option>
-    <option value="01">01</option>
-    <option value="02">02</option>
-    <option value="03">03</option>
-    <option value="04">04</option>
-    <option value="05">05</option>
-    <option value="06">06</option>
-    <option value="07">07</option>
-    <option value="08">08</option>
-    <option value="09">09</option>
-    <option value="10">10</option>
-    <option value="11">11</option>
-    <option value="12">12</option>
-</select>
+                            <option value="" selected>-- Tháng --</option>
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
                     </div>
 
                     <div style="flex: 1; min-width: 180px;">
                         <label for="calcYearSelect">Chọn năm</label>
                         <select id="calcYearSelect" class="month-input" style="width: 100%;">
-    <option value="" selected>-- Năm --</option>
-    <option value="2025">2025</option>
-    <option value="2026">2026</option>
-    <option value="2027">2027</option>
-</select>
+                            <option value="" selected>-- Năm --</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                        </select>
                     </div>
 
                     <button id="btnShowCalcEmployees" type="button" class="action-btn" style="min-width: 120px;">
@@ -368,4 +397,5 @@
 
     <script src="../../assets/js/salary.js"></script>
 </body>
+
 </html>
