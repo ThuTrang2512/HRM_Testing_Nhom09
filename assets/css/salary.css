@@ -156,19 +156,190 @@ body {
 }
 
 .month-input {
-    height: 40px;
-    border: 1px solid #cfcfcf;
-    border-radius: 6px;
+    height: 44px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
     background: #ffffff;
-    padding: 0 12px;
+    padding: 0 16px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     color: #4b2e1f;
     outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.month-input:hover {
+    border-color: #9ca3af;
+}
+
+.month-input:focus {
+    border-color: #7b543b;
+    box-shadow: 0 0 0 3px rgba(123, 84, 59, 0.1);
 }
 
 .month-filter-group .month-input {
     width: 120px;
+}
+
+/* Custom Month Picker Styling */
+.custom-month-picker {
+    position: relative;
+    width: 240px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.picker-display {
+    height: 44px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 15px;
+    color: #4b2e1f;
+    transition: all 0.2s ease;
+}
+
+.picker-display:hover {
+    border-color: #9ca3af;
+}
+
+.picker-display.active {
+    border-color: #7b543b;
+    box-shadow: 0 0 0 3px rgba(123, 84, 59, 0.1);
+}
+
+.picker-display i {
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.picker-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 280px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+    padding: 16px;
+    display: none;
+    animation: slideDown 0.2s ease-out;
+}
+
+.picker-dropdown.show {
+    display: block;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.picker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.picker-year {
+    font-weight: 700;
+    font-size: 16px;
+    color: #4b2e1f;
+}
+
+.picker-nav {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7b543b;
+    transition: background 0.2s;
+}
+
+.picker-nav:hover {
+    background: #fdf2f2;
+}
+
+.picker-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.picker-month {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4b2e1f;
+    transition: all 0.2s;
+}
+
+.picker-month:hover {
+    background: #f3f4f6;
+    color: #7b543b;
+}
+
+.picker-month.active {
+    background: #7b543b;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.picker-footer {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.picker-btn {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.picker-btn:hover {
+    background: #eff6ff;
+}
+
+#clearPicker {
+    color: #ef4444;
+}
+
+#clearPicker:hover {
+    background: #fef2f2;
 }
 
 .search-box {
@@ -292,53 +463,104 @@ body {
     border-bottom: 1px solid #e8e2dd;
     vertical-align: middle;
 }
+
 .salary-table tbody tr:nth-child(even) td {
     background: #ece6e1;
 }
 
 /* 13 cột */
 .salary-table th:nth-child(1),
-.salary-table td:nth-child(1) { width: 3.5%; }   /* STT */
+.salary-table td:nth-child(1) {
+    width: 3.5%;
+}
+
+/* STT */
 
 .salary-table th:nth-child(2),
-.salary-table td:nth-child(2) { width: 7%; }     /* Mã lương */
+.salary-table td:nth-child(2) {
+    width: 7%;
+}
+
+/* Mã lương */
 
 .salary-table th:nth-child(3),
-.salary-table td:nth-child(3) { width: 6.5%; }   /* Mã NV */
+.salary-table td:nth-child(3) {
+    width: 6.5%;
+}
+
+/* Mã NV */
 
 .salary-table th:nth-child(4),
 .salary-table td:nth-child(4) {
     width: 13%;
     white-space: normal;
     line-height: 1.35;
-}                                                  /* Tên nhân viên */
+}
+
+/* Tên nhân viên */
 
 .salary-table th:nth-child(5),
-.salary-table td:nth-child(5) { width: 7%; }      /* Tháng */
+.salary-table td:nth-child(5) {
+    width: 7%;
+}
+
+/* Tháng */
 
 .salary-table th:nth-child(6),
-.salary-table td:nth-child(6) { width: 8%; }      /* Lương cơ bản */
+.salary-table td:nth-child(6) {
+    width: 8%;
+}
+
+/* Lương cơ bản */
 
 .salary-table th:nth-child(7),
-.salary-table td:nth-child(7) { width: 8%; }      /* Lương theo giờ */
+.salary-table td:nth-child(7) {
+    width: 8%;
+}
+
+/* Lương theo giờ */
 
 .salary-table th:nth-child(8),
-.salary-table td:nth-child(8) { width: 6.5%; }    /* Số giờ làm */
+.salary-table td:nth-child(8) {
+    width: 6.5%;
+}
+
+/* Số giờ làm */
 
 .salary-table th:nth-child(9),
-.salary-table td:nth-child(9) { width: 7%; }      /* Thưởng */
+.salary-table td:nth-child(9) {
+    width: 7%;
+}
+
+/* Thưởng */
 
 .salary-table th:nth-child(10),
-.salary-table td:nth-child(10) { width: 6.5%; }   /* Phạt */
+.salary-table td:nth-child(10) {
+    width: 6.5%;
+}
+
+/* Phạt */
 
 .salary-table th:nth-child(11),
-.salary-table td:nth-child(11) { width: 8.5%; }   /* Lương thực lãnh */
+.salary-table td:nth-child(11) {
+    width: 8.5%;
+}
+
+/* Lương thực lãnh */
 
 .salary-table th:nth-child(12),
-.salary-table td:nth-child(12) { width: 5%; }     /* Hành động */
+.salary-table td:nth-child(12) {
+    width: 5%;
+}
+
+/* Hành động */
 
 .salary-table th:nth-child(13),
-.salary-table td:nth-child(13) { width: 5%; }     /* Trạng thái */
+.salary-table td:nth-child(13) {
+    width: 5%;
+}
+
+/* Trạng thái */
 
 .action-group {
     display: flex;
@@ -607,7 +829,7 @@ body {
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
 }
 
 .calc-modal-header {
@@ -741,7 +963,7 @@ body {
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
     padding-bottom: 16px;
 }
 
@@ -963,8 +1185,8 @@ body {
     background: #f5ede8;
 }
 
-.nav-dropdown-menu a + a,
-.nav-dropdown-hover-menu a + a {
+.nav-dropdown-menu a+a,
+.nav-dropdown-hover-menu a+a {
     border-top: 1px solid #f3f4f6;
 }
 
@@ -1227,68 +1449,3 @@ body {
     font-size: 11px;
     font-weight: 700;
 }
-
-/* ===== DROPDOWN MENU GIỐNG DASHBOARD ===== */
-.nav-dropdown,
-.nav-dropdown-hover {
-    position: relative;
-}
-
-.nav-link-dropdown {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
-
-.nav-dropdown-icon {
-    font-size: 14px;
-    opacity: 0.75;
-}
-
-.nav-dropdown-menu,
-.nav-dropdown-hover-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 260px;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    z-index: 999;
-    overflow: hidden;
-}
-
-.nav-dropdown.open .nav-dropdown-menu {
-    display: block;
-}
-
-.nav-dropdown-hover:hover .nav-dropdown-hover-menu {
-    display: block;
-}
-
-.nav-dropdown-menu a,
-.nav-dropdown-hover-menu a {
-    display: block;
-    padding: 12px 20px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #4B2E1F;
-    text-decoration: none;
-    background: #ffffff;
-    transition: background 0.15s ease;
-    white-space: nowrap;
-}
-
-.nav-dropdown-menu a:hover,
-.nav-dropdown-hover-menu a:hover {
-    background: #f5ede8;
-}
-
-.nav-dropdown-menu a + a,
-.nav-dropdown-hover-menu a + a {
-    border-top: 1px solid #f3f4f6;
-}
