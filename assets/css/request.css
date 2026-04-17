@@ -618,9 +618,8 @@ body {
 /* message */
 .message-popup-wrap {
     position: fixed;
-    left: 50%;
+    right: 32px;
     bottom: 32px;
-    transform: translateX(-50%);
     z-index: 2100;
     pointer-events: none;
 }

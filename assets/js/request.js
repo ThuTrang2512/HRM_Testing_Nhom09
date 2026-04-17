@@ -325,10 +325,11 @@ btnApproveRequest.addEventListener("click", async () => {
     if (!currentRequestId || btnApproveRequest.disabled) return;
 
     try {
-        await approveRequest(currentRequestId);
+        const savedId = currentRequestId;
+        await approveRequest(savedId);
         closeRequestDetailPopup();
         await fetchRequests();
-        showMessagePopup(`Duyệt yêu cầu ${currentRequestId} thành công`, "success");
+        showMessagePopup("Duyệt yêu cầu thành công", "success");
     } catch (error) {
         console.error(error);
         showMessagePopup("Lỗi kết nối dữ liệu, vui lòng thử lại sau.", "error");
@@ -350,11 +351,12 @@ btnConfirmReject.addEventListener("click", async () => {
     }
 
     try {
-        await rejectRequest(currentRequestId, reason);
+        const savedId = currentRequestId;
+        await rejectRequest(savedId, reason);
         closeRejectReasonPopup();
         closeRequestDetailPopup();
         await fetchRequests();
-        showMessagePopup(`Đã từ chối yêu cầu ${currentRequestId}`, "success");
+        showMessagePopup("Từ chối yêu cầu thành công", "success");
     } catch (error) {
         console.error(error);
         showMessagePopup("Lỗi kết nối dữ liệu, vui lòng thử lại sau.", "error");
