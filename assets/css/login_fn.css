@@ -323,9 +323,9 @@ body {
 .modal-card {
     background: #ffffff;
     width: 100%;
-    max-width: 480px;
+    max-width: 460px; /* Nhích nhẹ chiều rộng để đủ chỗ cho chữ trên 1 hàng */
     border-radius: 12px;
-    padding: 45px 50px;
+    padding: 25px 35px; /* Thu gọn padding hơn nữa */
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
     position: relative;
     text-align: center;
@@ -368,11 +368,12 @@ body {
 }
 
 .modal-subtitle {
-    font-size: 14px;
+    font-size: 13px; /* Giảm cỡ chữ để nằm vừa trên 1 hàng */
     color: #888;
     margin-top: 0;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
     line-height: 1.5;
+    white-space: nowrap; /* Ép không được xuống hàng */
 }
 
 /* OTP INPUTS */
@@ -484,4 +485,37 @@ body {
     color: #444;
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
+}
+
+/* NHÓM NÚT BẤM TRONG MODAL */
+.modal-btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 25px;
+    width: 100%;
+}
+
+.modal-btn-group button {
+    margin-top: 0 !important;
+    padding: 10px 25px;
+    font-size: 15px;
+    min-width: 110px; /* Nhỉnh hơn một chút để cân đối */
+    height: 45px;    /* Cố định chiều cao để 2 nút bằng nhau */
+    border-radius: 8px; /* Bo góc mượt mà hơn */
+}
+
+.btn-cancel {
+    background-color: #f5f5f5; /* Nền xám nhạt */
+    color: #666;              /* Chữ xám đậm */
+    border: 1px solid #ddd;   /* Thêm viền nhẹ để trông sang trọng hơn */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    background-color: #eeeeee;
+    color: #333;
+    border-color: #ccc;
 }

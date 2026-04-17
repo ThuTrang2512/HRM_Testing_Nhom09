@@ -2,8 +2,31 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
-from .models import NhanVien
 from django.db.models import Q
+from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import NhanVien
+
+@csrf_exempt
+def api_login(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password')
+            
+            user = authenticate(request, username=username, password=password)
+            
+            if user is not None:
+                login(request, user)
+                return JsonResponse({'success': True, 'message': 'Đăng nhập thành công'})
+            else:
+                return JsonResponse({'success': False, 'message': 'Tên đăng nhập hoặc mật khẩu không đúng'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Lỗi hệ thống: {str(e)}'})
+    
+    return JsonResponse({'success': False, 'message': 'Phương thức không được hỗ trợ'})
 
 def employee_list(request):
     query = request.GET.get('q', '')
@@ -40,7 +63,6 @@ def map_errors_to_template(error_dict):
 
 def employee_add(request):
     if request.method == 'POST':
-        # Use generated ID if provided or generate a new one to be safe
         ma_nv = request.POST.get('ma_nv') or NhanVien.generate_next_id()
         ho_ten = request.POST.get('ho_ten')
         chuc_vu = request.POST.get('chuc_vu')
@@ -51,9 +73,8 @@ def employee_add(request):
         tai_khoan_nh = request.POST.get('tai_khoan_nh')
         dia_chi = request.POST.get('dia_chi')
         dia_chi_lv = request.POST.get('dia_chi_lv')
-        hinh_anh = request.FILES.get('hinh_anh_file') or request.POST.get('hinh_anh')
+        hinh_anh = request.FILES.get('hinh_anh_file')
 
-        # Create instance in memory
         nhan_vien = NhanVien(
             MaNhanVien=ma_nv,
             HoTen=ho_ten,
@@ -69,13 +90,11 @@ def employee_add(request):
         )
 
         try:
-            # Run all model validators (Age, Regex, etc.)
             nhan_vien.full_clean()
             nhan_vien.save()
             messages.success(request, "Thêm mới nhân viên thành công")
             return redirect('employee_list')
         except ValidationError as e:
-            # Map errors and return to form
             errors = map_errors_to_template(e.message_dict)
             return render(request, 'employee/employee_add.html', {
                 'errors': errors,
@@ -95,7 +114,6 @@ def employee_add(request):
 def employee_edit(request, pk):
     employee = get_object_or_404(NhanVien, pk=pk)
     if request.method == 'POST':
-        # Get new data from POST
         new_ho_ten = request.POST.get('ho_ten')
         new_chuc_vu = request.POST.get('chuc_vu')
         new_gioi_tinh = request.POST.get('gioi_tinh')
@@ -108,25 +126,6 @@ def employee_edit(request, pk):
         new_trang_thai = request.POST.get('trang_thai', employee.TrangThai)
         new_hinh_anh_file = request.FILES.get('hinh_anh_file')
         
-        # Check if anything has changed
-        has_changed = False
-        if new_ho_ten != employee.HoTen: has_changed = True
-        if new_chuc_vu != employee.ChucVu: has_changed = True
-        if new_gioi_tinh != employee.GioiTinh: has_changed = True
-        if new_ngay_sinh != str(employee.Ngaysinh): has_changed = True
-        if new_cccd != employee.CCCD: has_changed = True
-        if new_sdt != employee.SoDienThoai: has_changed = True
-        if new_tai_khoan_nh != employee.TaiKhoanNH: has_changed = True
-        if new_dia_chi != employee.DiaChi: has_changed = True
-        if new_dia_chi_lv != employee.DiaChiLV: has_changed = True
-        if new_trang_thai != employee.TrangThai: has_changed = True
-        if new_hinh_anh_file: has_changed = True
-        
-        if not has_changed:
-            messages.warning(request, "Thông tin nhân viên không có gì thay đổi")
-            return redirect('employee_edit', pk=employee.MaNhanVien)
-            
-        # Apply changes to the object in memory
         employee.HoTen = new_ho_ten
         employee.ChucVu = new_chuc_vu
         employee.GioiTinh = new_gioi_tinh
@@ -142,13 +141,11 @@ def employee_edit(request, pk):
             employee.HinhAnh = new_hinh_anh_file
         
         try:
-            # Run all model validators (Age, Regex, etc.) before saving
             employee.full_clean()
             employee.save()
             messages.success(request, "Cập nhật nhân viên thành công.")
             return redirect('employee_list')
         except ValidationError as e:
-            # Map errors and return to form with the modified employee object
             errors = map_errors_to_template(e.message_dict)
             return render(request, 'employee/employee_edit.html', {
                 'employee': employee,
@@ -162,7 +159,6 @@ def employee_edit(request, pk):
 
 def employee_delete(request, pk):
     employee = get_object_or_404(NhanVien, pk=pk)
-    # Soft delete
     employee.TrangThai = 'Ngừng hoạt động'
     employee.save()
     messages.success(request, "Đã xóa nhân viên thành công.")
