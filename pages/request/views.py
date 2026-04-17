@@ -62,8 +62,10 @@ def update_request_status(request):
             elif status == 'rejected':
                 yc.TrangThai = 'Đã từ chối'
                 if reject_reason:
+                    new_reject_segment = f"[Từ chối vì: {reject_reason}]"
                     current_reason = yc.LyDo or ''
-                    yc.LyDo = f"{current_reason}\n[Từ chối vì: {reject_reason}]".strip()
+                    if new_reject_segment not in current_reason:
+                        yc.LyDo = f"{current_reason}\n{new_reject_segment}".strip()
             yc.save()
             return JsonResponse({'message': 'Success'})
         except YeuCau.DoesNotExist:

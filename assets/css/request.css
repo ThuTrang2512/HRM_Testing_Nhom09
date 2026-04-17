@@ -55,7 +55,7 @@ body {
 }
 
 .brand-name {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -69,7 +69,7 @@ body {
 }
 
 .hello-text {
-    font-size: 23px;
+    font-size: 25px;
     font-style: italic;
     font-weight: 500;
     color: #1f2937;
@@ -102,7 +102,7 @@ body {
 .nav-link {
     color: #ffffff;
     text-decoration: none;
-    font-size: 23px;
+    font-size: 25px;
     font-weight: 600;
     padding: 16px 0;
     position: relative;
@@ -137,6 +137,8 @@ body {
 
 .request-panel {
     width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
 }
 
 .toolbar-row {
@@ -155,7 +157,7 @@ body {
     background: #ffffff;
     padding: 0 12px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     color: #4b2e1f;
     outline: none;
 }
@@ -170,7 +172,7 @@ body {
     left: 11px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 12px;
+    font-size: 14px;
     color: #a8a8a8;
 }
 
@@ -182,7 +184,7 @@ body {
     background: #ffffff;
     padding: 0 12px 0 30px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     outline: none;
 }
 
@@ -198,7 +200,7 @@ body {
     background: #70452F;
     color: #ffffff;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
@@ -213,7 +215,7 @@ body {
 }
 
 .action-btn i {
-    font-size: 11px;
+    font-size: 13px;
 }
 
 .filter-tabs {
@@ -230,7 +232,7 @@ body {
     background: #efefef;
     color: #222222;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
 }
@@ -249,7 +251,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
-    min-width: 980px;
+    min-width: 800px;
 }
 
 .request-table thead tr {
@@ -258,7 +260,7 @@ body {
 
 .request-table th {
     color: #ffffff;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     padding: 12px 8px;
     text-align: center;
@@ -266,7 +268,7 @@ body {
 }
 
 .request-table td {
-    font-size: 12px;
+    font-size: 14px;
     color: #333333;
     padding: 14px 8px;
     text-align: center;
@@ -281,7 +283,7 @@ body {
 }
 
 .request-table th:nth-child(1),
-.request-table td:nth-child(1) { width: 4%; }
+.request-table td:nth-child(1) { width: 5%; }
 
 .request-table th:nth-child(2),
 .request-table td:nth-child(2) { width: 10%; }
@@ -290,13 +292,25 @@ body {
 .request-table td:nth-child(3) { width: 10%; }
 
 .request-table th:nth-child(4),
-.request-table td:nth-child(4) { width: 16%; }
+.request-table td:nth-child(4) { 
+    width: 15%; 
+    text-align: left;
+    padding-left: 16px;
+}
 
 .request-table th:nth-child(5),
-.request-table td:nth-child(5) { width: 11%; }
+.request-table td:nth-child(5) { 
+    width: 11%; 
+    text-align: left;
+    padding-left: 10px;
+}
 
 .request-table th:nth-child(6),
-.request-table td:nth-child(6) { width: 15%; }
+.request-table td:nth-child(6) { 
+    width: 11%; 
+    text-align: left;
+    padding-left: 10px;
+}
 
 .request-table th:nth-child(7),
 .request-table td:nth-child(7) { width: 11%; }
@@ -305,7 +319,7 @@ body {
 .request-table td:nth-child(8) { width: 11%; }
 
 .request-table th:nth-child(9),
-.request-table td:nth-child(9) { width: 12%; }
+.request-table td:nth-child(9) { width: 13%; }
 
 .status-pending {
     color: #d79a00;
@@ -330,7 +344,7 @@ body {
     background: #7b543b;
     color: #ffffff;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     padding: 0 12px;
@@ -343,7 +357,7 @@ body {
 .empty-state {
     padding: 24px 10px;
     text-align: center;
-    font-size: 13px;
+    font-size: 15px;
     color: #666666;
 }
 
@@ -363,7 +377,7 @@ body {
 
 /* popup chi tiết */
 .request-detail-modal {
-    width: 360px;
+    width: 400px;
     max-width: calc(100% - 24px);
     background: #ffffff;
     border-radius: 6px;
@@ -382,7 +396,7 @@ body {
 
 .request-detail-header h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
 }
 
@@ -390,14 +404,14 @@ body {
     border: none;
     background: transparent;
     color: #ffffff;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
     font-weight: 700;
     line-height: 1;
 }
 
 .request-detail-body {
-    padding: 0 0 10px;
+    padding: 0 0 20px;
     background: #ffffff;
 }
 
@@ -429,14 +443,14 @@ body {
 }
 
 .request-user-name {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
     color: #222;
     line-height: 1.2;
 }
 
 .request-user-code {
-    font-size: 12px;
+    font-size: 14px;
     color: #999;
     line-height: 1.2;
 }
@@ -451,12 +465,12 @@ body {
     align-items: center;
     min-height: 34px;
     margin-bottom: 8px;
-    font-size: 13px;
+    font-size: 15px;
+    padding: 0 10px;
 }
 
 .request-detail-row.highlight {
     background: #f1ece8;
-    padding: 0 10px;
 }
 
 .request-detail-label {
@@ -485,7 +499,7 @@ body {
     border: none;
     border-radius: 5px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
     display: inline-flex;
@@ -542,7 +556,7 @@ body {
 
 .reject-modal-header h3 {
     margin: 0;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
 }
 
@@ -559,7 +573,7 @@ body {
     outline: none;
     padding: 10px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     color: #444;
 }
 
@@ -574,7 +588,7 @@ body {
 
 .reject-error-text {
     margin-top: 6px;
-    font-size: 10px;
+    font-size: 12px;
     color: #ff6b6b;
     display: none;
     font-style: italic;
@@ -604,9 +618,8 @@ body {
 /* message */
 .message-popup-wrap {
     position: fixed;
-    left: 50%;
+    right: 32px;
     bottom: 32px;
-    transform: translateX(-50%);
     z-index: 2100;
     pointer-events: none;
 }
@@ -633,19 +646,19 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 18px;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     color: #333333;
 }
 
 .message-popup-box.success #messagePopupIcon {
     color: #36c56b;
-    font-size: 30px;
+    font-size: 32px;
 }
 
 .message-popup-box.error #messagePopupIcon {
     color: #ff5c5c;
-    font-size: 30px;
+    font-size: 32px;
 }
 
 
@@ -694,7 +707,7 @@ body {
 }
 
 .nav-dropdown-icon {
-    font-size: 14px;
+    font-size: 16px;
     opacity: 0.75;
 }
 
@@ -726,7 +739,7 @@ body {
 .nav-dropdown-hover-menu a {
     display: block;
     padding: 12px 20px;
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 600;
     color: #4B2E1F;
     text-decoration: none;

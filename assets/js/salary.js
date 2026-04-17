@@ -478,7 +478,7 @@ function fillEditSalaryDetail(payroll) {
     };
 
     salaryCodePreview.textContent = `Mã lương: ${currentSalaryDraft.id}`;
-    salaryEmployeePreview.textContent = `Mã NV: ${currentSalaryDraft.employeeId} - ${currentSalaryDraft.employeeName}`;
+    salaryEmployeePreview.textContent = `Mã NV: ${currentSalaryDraft.employeeId}`;
     salaryMonthPreview.textContent = `Tháng: ${currentSalaryDraft.month}`;
 
     // Khóa các trường không được phép sửa trong chế độ Chỉnh sửa
@@ -731,7 +731,7 @@ function fillSalaryDetail(data) {
     };
 
     salaryCodePreview.textContent = `Mã lương: ${salaryCode}`;
-    salaryEmployeePreview.textContent = `Mã NV: ${data.employeeId} - ${data.employeeName}`;
+    salaryEmployeePreview.textContent = `Mã NV: ${data.employeeId}`;
     salaryMonthPreview.textContent = `Tháng: ${data.month}`;
 
     // Mở khóa các trường cho phép sửa trong chế độ tính lương mới
