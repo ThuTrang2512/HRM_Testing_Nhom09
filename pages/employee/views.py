@@ -145,7 +145,7 @@ def employee_edit(request, pk):
             # Run all model validators (Age, Regex, etc.) before saving
             employee.full_clean()
             employee.save()
-            messages.success(request, "Cập nhật nhân viên thành công.")
+            messages.success(request, "Cập nhật thông tin nhân viên thành công")
             return redirect('employee_list')
         except ValidationError as e:
             # Map errors and return to form with the modified employee object
