@@ -95,7 +95,7 @@ function buildFilteredRequests() {
 function renderEmptyState() {
     requestTableBody.innerHTML = `
         <tr>
-            <td colspan="7" class="empty-state">Không có dữ liệu phù hợp.</td>
+            <td colspan="9" class="empty-state">Không có yêu cầu phù hợp.</td>
         </tr>
     `;
 }
@@ -183,6 +183,39 @@ function createDetailRow(label, value, highlight = false) {
     `;
 }
 
+function formatReason(reason) {
+    if (!reason) return "-";
+    
+    // Chuẩn hóa xuống dòng và khoảng trắng
+    let text = reason.replace(/[\n\r]+/g, "\n").trim();
+    let lines = text.split("\n").map(s => s.trim()).filter(s => s !== "");
+    
+    let segments = [];
+    lines.forEach(line => {
+        // Tìm các cụm [Từ chối vì: ...]
+        const rejectMatches = line.match(/\[Từ chối vì: .*?\]/g) || [];
+        let baseText = line;
+        
+        // Loại bỏ các cụm này khỏi dòng để lấy text gốc (ví dụ: "Bị ốm")
+        rejectMatches.forEach(m => {
+            baseText = baseText.replace(m, "").trim();
+        });
+        
+        if (baseText) segments.push(baseText);
+        rejectMatches.forEach(m => segments.push(m));
+    });
+    
+    // Chỉ giữ lại các phần duy nhất
+    const uniqueSegments = [];
+    segments.forEach(s => {
+        if (!uniqueSegments.includes(s)) {
+            uniqueSegments.push(s);
+        }
+    });
+    
+    return uniqueSegments.join("<br>");
+}
+
 function fillLeaveRequestDetail(request) {
     requestDetailFields.innerHTML = `
         ${createDetailRow("Mã nhân viên:", request.employeeId)}
@@ -190,7 +223,7 @@ function fillLeaveRequestDetail(request) {
         ${createDetailRow("Ca nghỉ:", request.shiftName || "N/A")}
         ${createDetailRow("Ngày bắt đầu:", request.startDate, true)}
         ${createDetailRow("Ngày kết thúc:", request.endDate)}
-        ${createDetailRow("Lý do:", request.reason, true)}
+        ${createDetailRow("Lý do:", formatReason(request.reason), true)}
         ${createDetailRow("Ngày đăng ký:", request.requestDate)}
     `;
 }
@@ -199,10 +232,11 @@ function fillShiftRequestDetail(request) {
     requestDetailFields.innerHTML = `
         ${createDetailRow("Mã nhân viên:", request.employeeId)}
         ${createDetailRow("Loại yêu cầu:", "Đăng ký ca", true)}
-        ${createDetailRow("Ngày làm:", request.workDate)}
-        ${createDetailRow("Giờ bắt đầu:", request.startTime, true)}
-        ${createDetailRow("Giờ kết thúc:", request.endTime)}
-        ${createDetailRow("Ngày đăng ký:", request.requestDate, true)}
+        ${createDetailRow("Ca làm:", request.shiftName || "N/A")}
+        ${createDetailRow("Ngày làm:", request.workDate, true)}
+        ${createDetailRow("Giờ bắt đầu:", request.startTime)}
+        ${createDetailRow("Giờ kết thúc:", request.endTime, true)}
+        ${createDetailRow("Ngày đăng ký:", request.requestDate)}
     `;
 }
 
@@ -210,7 +244,6 @@ function fillRequestDetail(request) {
     currentRequestId = request.id;
 
     detailEmployeeName.textContent = request.employeeName;
-    detailEmployeeCodeText.textContent = `Mã nhân viên - ${request.employeeId}`;
 
     if (request.type === "Nghỉ phép") {
         fillLeaveRequestDetail(request);
@@ -220,20 +253,27 @@ function fillRequestDetail(request) {
 
     const isPending = request.status === "pending";
 
-    btnApproveRequest.style.display = "inline-flex";
-    btnRejectRequest.style.display = "inline-flex";
-    btnCloseRequestDetail.style.display = "none";
+    const detailActions = document.querySelector(".request-detail-actions");
 
     if (isPending) {
+        detailActions.style.display = "flex"; // Hiện footer
+        btnApproveRequest.style.display = "inline-flex";
+        btnRejectRequest.style.display = "inline-flex";
+        btnCloseRequestDetail.style.display = "none";
+        
         btnApproveRequest.disabled = false;
         btnRejectRequest.disabled = false;
-
         btnApproveRequest.classList.remove("disabled-btn");
         btnRejectRequest.classList.remove("disabled-btn");
     } else {
+        detailActions.style.display = "none"; // Ẩn hoàn toàn footer nếu đã duyệt/từ chối
+        
+        btnApproveRequest.style.display = "none";
+        btnRejectRequest.style.display = "none";
+        btnCloseRequestDetail.style.display = "none";
+        
         btnApproveRequest.disabled = true;
         btnRejectRequest.disabled = true;
-
         btnApproveRequest.classList.add("disabled-btn");
         btnRejectRequest.classList.add("disabled-btn");
     }
