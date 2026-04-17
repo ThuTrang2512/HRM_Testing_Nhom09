@@ -29,8 +29,14 @@ import os
 def favicon_view(request):
     return HttpResponse(status=204)
 
+from django.contrib.auth import logout
+
+def root_redirect(request):
+    logout(request)
+    return HttpResponseRedirect('/pages/login.html')
+
 urlpatterns = [
-    path('', lambda r: HttpResponseRedirect('/pages/dashboard.html')),
+    path('', root_redirect),
     path('admin/', admin.site.urls),
     path('favicon.ico', favicon_view),
     
