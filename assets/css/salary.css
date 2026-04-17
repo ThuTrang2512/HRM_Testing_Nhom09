@@ -1227,3 +1227,68 @@ body {
     font-size: 11px;
     font-weight: 700;
 }
+
+/* ===== DROPDOWN MENU GIỐNG DASHBOARD ===== */
+.nav-dropdown,
+.nav-dropdown-hover {
+    position: relative;
+}
+
+.nav-link-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.nav-dropdown-icon {
+    font-size: 14px;
+    opacity: 0.75;
+}
+
+.nav-dropdown-menu,
+.nav-dropdown-hover-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 260px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 999;
+    overflow: hidden;
+}
+
+.nav-dropdown.open .nav-dropdown-menu {
+    display: block;
+}
+
+.nav-dropdown-hover:hover .nav-dropdown-hover-menu {
+    display: block;
+}
+
+.nav-dropdown-menu a,
+.nav-dropdown-hover-menu a {
+    display: block;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #4B2E1F;
+    text-decoration: none;
+    background: #ffffff;
+    transition: background 0.15s ease;
+    white-space: nowrap;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-hover-menu a:hover {
+    background: #f5ede8;
+}
+
+.nav-dropdown-menu a + a,
+.nav-dropdown-hover-menu a + a {
+    border-top: 1px solid #f3f4f6;
+}

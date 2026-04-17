@@ -38,6 +38,7 @@ urlpatterns = [
     path('contract/', include('pages.contract.urls')),
     path('salary/', include('pages.salary.urls')),
     path('requests/', include('pages.request.urls')),
+    path('report/', include('pages.report.urls')),
     
     # Shortcuts
     path('salary', lambda r: HttpResponseRedirect('/pages/salary/salary.html')),
