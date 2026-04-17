@@ -38,18 +38,20 @@ class NhanVien(models.Model):
     HoTen = models.CharField(
         max_length=100, 
         validators=[RegexValidator(regex=r'^[a-zA-ZÀ-ỹ\s]+$', message="Họ tên chỉ được chứa chữ cái và khoảng trắng.")],
-        verbose_name="Họ tên"
+        verbose_name="Họ tên",
+        error_messages={'required': 'Họ tên không được để trống. Vui lòng nhập thông tin'}
     )
-    GioiTinh = models.CharField(max_length=10, choices=GENDER_CHOICES, verbose_name="Giới tính")
-    Ngaysinh = models.DateField(validators=[validate_min_age], verbose_name="Ngày sinh")
-    TaiKhoanNH = models.CharField(max_length=100, verbose_name="Tài khoản ngân hàng")
+    GioiTinh = models.CharField(max_length=10, choices=GENDER_CHOICES, verbose_name="Giới tính", error_messages={'required': 'Giới tính không được để trống. Vui lòng nhập thông tin'})
+    Ngaysinh = models.DateField(validators=[validate_min_age], verbose_name="Ngày sinh", error_messages={'required': 'Ngày sinh không được để trống. Vui lòng nhập thông tin'})
+    TaiKhoanNH = models.CharField(max_length=100, verbose_name="Tài khoản ngân hàng", error_messages={'required': 'Tài khoản ngân hàng không được để trống. Vui lòng nhập thông tin'})
     SoDienThoai = models.CharField(
         max_length=10, 
         unique=True,
         validators=[RegexValidator(regex=r'^0\d{9}$', message="Số điện thoại phải có 10 chữ số và bắt đầu bằng số 0.")],
         verbose_name="Số điện thoại",
         error_messages={
-            'unique': "Số điện thoại này đã tồn tại trong hệ thống."
+            'unique': "Số điện thoại này đã tồn tại trong hệ thống.",
+            'required': 'Số điện thoại không được để trống. Vui lòng nhập thông tin'
         }
     )
     CCCD = models.CharField(
@@ -58,12 +60,13 @@ class NhanVien(models.Model):
         validators=[RegexValidator(regex=r'^\d{12}$', message="CCCD phải có đúng 12 chữ số.")],
         verbose_name="CCCD/CMND",
         error_messages={
-            'unique': "Số CCCD này đã tồn tại trong hệ thống."
+            'unique': "Số CCCD này đã tồn tại trong hệ thống.",
+            'required': 'CCCD không được để trống. Vui lòng nhập thông tin'
         }
     )
-    DiaChiLV = models.CharField(max_length=255, verbose_name="Địa chỉ làm việc")
-    DiaChi = models.CharField(max_length=255, verbose_name="Địa chỉ thường trú")
-    ChucVu = models.CharField(max_length=50, choices=POSITION_CHOICES, verbose_name="Chức vụ")
+    DiaChiLV = models.CharField(max_length=255, verbose_name="Địa chỉ làm việc", error_messages={'required': 'Địa chỉ làm việc không được để trống. Vui lòng nhập thông tin'})
+    DiaChi = models.CharField(max_length=255, verbose_name="Địa chỉ", error_messages={'required': 'Địa chỉ không được để trống. Vui lòng nhập thông tin'})
+    ChucVu = models.CharField(max_length=50, choices=POSITION_CHOICES, verbose_name="Chức vụ", error_messages={'required': 'Chức vụ không được để trống. Vui lòng nhập thông tin'})
     TrangThai = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Đang làm việc', verbose_name="Trạng thái")
     HinhAnh = models.ImageField(upload_to='employees/', null=True, blank=True, verbose_name="Hình ảnh")
     

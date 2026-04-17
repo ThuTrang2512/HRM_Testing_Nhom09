@@ -171,7 +171,7 @@
                 </a>
             </div>
 
-            <form id="employeeEditForm" method="POST" enctype="multipart/form-data" class="flex flex-col">
+            <form id="employeeEditForm" method="POST" enctype="multipart/form-data" novalidate class="flex flex-col">
                 {% csrf_token %}
                 <div class="w-full flex md:flex-row flex-col gap-8 items-start">
                     <div class="w-[280px] flex-shrink-0">
@@ -208,18 +208,14 @@
                                 <input type="text" name="ma_nv" value="{{ employee.MaNhanVien }}" readonly
                                     class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary placeholder:text-gray-400 bg-gray-100 cursor-not-allowed"
                                     placeholder="NV001">
-                                {% if errors.ma_nv %}
-                                <span class="text-red-500 text-[16px] mt-1 font-medium">{{ errors.ma_nv }}</span>
-                                {% endif %}
+                                <span class="text-red-500 text-[16px] mt-1 font-medium error-message" id="error_ma_nv">{{ errors.ma_nv|default:'' }}</span>
                             </div>
                             <div class="flex flex-col gap-1">
                                 <label class="font-bold text-brand-text text-[20px]">Họ tên <span
                                         class="text-red-500">*</span></label>
                                 <input type="text" name="ho_ten" value="{{ employee.HoTen }}" required
                                     class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary placeholder:text-gray-400">
-                                {% if errors.ho_ten %}
-                                <span class="text-red-500 text-[16px] mt-1 font-medium">{{ errors.ho_ten }}</span>
-                                {% endif %}
+                                <span class="text-red-500 text-[16px] mt-1 font-medium error-message" id="error_ho_ten">{{ errors.ho_ten|default:'' }}</span>
                             </div>
                             <div class="flex flex-col gap-1">
                                 <label class="font-bold text-brand-text text-[20px]">Giới tính <span
@@ -230,9 +226,7 @@
                                     <option value="Nữ" {% if employee.GioiTinh == "Nữ" %}selected{% endif %}>Nữ</option>
                                     <option value="Khác" {% if employee.GioiTinh == "Khác" %}selected{% endif %}>Khác</option>
                                 </select>
-                                {% if errors.gioi_tinh %}
-                                <span class="text-red-500 text-[16px] mt-1 font-medium">{{ errors.gioi_tinh }}</span>
-                                {% endif %}
+                                <span class="text-red-500 text-[16px] mt-1 font-medium error-message" id="error_gioi_tinh">{{ errors.gioi_tinh|default:'' }}</span>
                             </div>
                             <div class="flex flex-col gap-1">
                                 <label class="font-bold text-brand-text text-[20px]">Ngày sinh <span
@@ -240,9 +234,7 @@
                                 <input type="date" name="ngay_sinh" required
                                     value="{{ employee.Ngaysinh|date:'Y-m-d' }}"
                                     class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary text-gray-700">
-                                {% if errors.ngay_sinh %}
-                                <span class="text-red-500 text-[16px] mt-1 font-medium">{{ errors.ngay_sinh }}</span>
-                                {% endif %}
+                                <span class="text-red-500 text-[16px] mt-1 font-medium error-message" id="error_ngay_sinh">{{ errors.ngay_sinh|default:'' }}</span>
                             </div>
                             <div class="flex flex-col gap-1">
                                 <label class="font-bold text-brand-text text-[20px]">CCCD <span
@@ -250,18 +242,14 @@
                                 <input type="text" name="cccd" value="{{ employee.CCCD }}" required
                                     class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary placeholder:text-gray-400"
                                     placeholder="Nhập CCCD">
-                                {% if errors.cccd %}
-                                <span class="text-red-500 text-[16px] mt-1 font-medium">{{ errors.cccd }}</span>
-                                {% endif %}
+                                <span class="text-red-500 text-[16px] mt-1 font-medium error-message" id="error_cccd">{{ errors.cccd|default:'' }}</span>
                             </div>
                             <div class="flex flex-col gap-1">
                                 <label class="font-bold text-brand-text text-[20px]">Số điện thoại <span
                                         class="text-red-500">*</span></label>
                                 <input type="text" name="sdt" value="{{ employee.SoDienThoai }}" required
                                     class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary placeholder:text-gray-400">
-                                {% if errors.sdt %}
-                                <span class="text-red-500 text-[16px] mt-1 font-medium">{{ errors.sdt }}</span>
-                                {% endif %}
+                                <span class="text-red-500 text-[16px] mt-1 font-medium error-message" id="error_sdt">{{ errors.sdt|default:'' }}</span>
                             </div>
                             <div class="flex flex-col gap-1">
                                 <label class="font-bold text-brand-text text-[20px]">Tài khoản ngân hàng <span
@@ -269,9 +257,7 @@
                                 <input type="text" name="tai_khoan_nh" value="{{ employee.TaiKhoanNH }}" required
                                     class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary placeholder:text-gray-400"
                                     placeholder="Nhập tài khoản ngân hàng">
-                                {% if errors.tai_khoan_nh %}
-                                <span class="text-red-500 text-[16px] mt-1 font-medium">{{ errors.tai_khoan_nh }}</span>
-                                {% endif %}
+                                <span class="text-red-500 text-[16px] mt-1 font-medium error-message" id="error_tai_khoan_nh">{{ errors.tai_khoan_nh|default:'' }}</span>
                             </div>
                             <div class="flex flex-col gap-1">
                                 <label class="font-bold text-brand-text text-[20px]">Chức vụ <span
@@ -284,19 +270,15 @@
                                     <option value="Quản lý" {% if employee.ChucVu == "Quản lý" %}selected{% endif %}>Quản lý</option>
                                     <option value="Thu ngân" {% if employee.ChucVu == "Thu ngân" %}selected{% endif %}>Thu ngân</option>
                                 </select>
-                                {% if errors.chuc_vu %}
-                                <span class="text-red-500 text-[16px] mt-1 font-medium">{{ errors.chuc_vu }}</span>
-                                {% endif %}
+                                <span class="text-red-500 text-[16px] mt-1 font-medium error-message" id="error_chuc_vu">{{ errors.chuc_vu|default:'' }}</span>
                             </div>
                             <div class="flex flex-col gap-1 md:col-span-2">
-                                <label class="font-bold text-brand-text text-[20px]">Địa chỉ thường trú <span
+                                <label class="font-bold text-brand-text text-[20px]">Địa chỉ <span
                                         class="text-red-500">*</span></label>
                                 <textarea name="dia_chi" required rows="2"
                                     class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary placeholder:text-gray-400 resize-none"
                                     placeholder="Nhập địa chỉ">{{ employee.DiaChi }}</textarea>
-                                {% if errors.dia_chi %}
-                                <span class="text-red-500 text-[16px] mt-1 font-medium">{{ errors.dia_chi }}</span>
-                                {% endif %}
+                                <span class="text-red-500 text-[16px] mt-1 font-medium error-message" id="error_dia_chi">{{ errors.dia_chi|default:'' }}</span>
                             </div>
                             <div class="flex flex-col gap-1 md:col-span-2">
                                 <label class="font-bold text-brand-text text-[20px]">Địa chỉ làm việc <span
@@ -304,9 +286,7 @@
                                 <textarea name="dia_chi_lv" required rows="2"
                                     class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-brand-primary placeholder:text-gray-400 resize-none"
                                     placeholder="Nhập địa chỉ">{{ employee.DiaChiLV }}</textarea>
-                                {% if errors.dia_chi_lv %}
-                                <span class="text-red-500 text-[16px] mt-1 font-medium">{{ errors.dia_chi_lv }}</span>
-                                {% endif %}
+                                <span class="text-red-500 text-[16px] mt-1 font-medium error-message" id="error_dia_chi_lv">{{ errors.dia_chi_lv|default:'' }}</span>
                             </div>
                         </div>
 
@@ -418,6 +398,54 @@
                 closeModal(id);
             }
         }
+
+        // Form Validation Logic
+        document.getElementById('employeeEditForm').addEventListener('submit', function(e) {
+            let isValid = true;
+            const requiredFields = this.querySelectorAll('[required]');
+            
+            requiredFields.forEach(field => {
+                const errorSpan = field.parentElement.querySelector('.error-message');
+                if (!field.value.trim()) {
+                    isValid = false;
+                    if (errorSpan) {
+                        const label = field.parentElement.querySelector('label');
+                        let fieldName = label ? label.textContent.replace('*', '').trim() : 'Thông tin này';
+                        errorSpan.textContent = `${fieldName} không được để trống. Vui lòng nhập thông tin`;
+                        errorSpan.classList.remove('hidden');
+                    }
+                    field.classList.add('border-red-500');
+                } else {
+                    // Clear error if not empty
+                    if (errorSpan && errorSpan.textContent.includes('không được để trống')) {
+                        errorSpan.textContent = '';
+                        errorSpan.classList.add('hidden');
+                    }
+                    field.classList.remove('border-red-500');
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                // Scroll to first error
+                const firstError = this.querySelector('.border-red-500');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+
+        // Clear error on input
+        document.querySelectorAll('#employeeEditForm input, #employeeEditForm select, #employeeEditForm textarea').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('border-red-500');
+                const errorSpan = this.parentElement.querySelector('.error-message');
+                if (errorSpan && errorSpan.textContent.includes('không được để trống')) {
+                    errorSpan.textContent = '';
+                    errorSpan.classList.add('hidden');
+                }
+            });
+        });
     </script>
 
     <!-- Modal: Xác nhận Hủy -->
@@ -444,31 +472,33 @@
 
     <!-- Notifications Section -->
     {% if messages %}
+    {% for message in messages %}
+    {% if forloop.first %}
     <div id="successBanner"
-        class="fixed bottom-6 right-6 z-[200] bg-white rounded-xl pl-6 pr-12 py-4 shadow-[0_10px_40px_rgba(0,0,0,0.15)] border-l-4 min-w-[380px] flex items-center transform transition-all duration-500 translate-y-0 opacity-100 animate-slide-up {% if 'success' in messages.0.tags %}border-green-500{% elif 'warning' in messages.0.tags %}border-yellow-500{% else %}border-blue-500{% endif %}">
-        {% for message in messages %}
-        {% if forloop.first %}
-        <div class="flex items-start gap-4">
-            <div class="p-2 rounded-full {% if 'success' in messages.0.tags %}bg-green-100{% elif 'warning' in messages.0.tags %}bg-yellow-100{% else %}bg-blue-100{% endif %}">
-                {% if 'success' in messages.0.tags %}
-                <i class="fa-regular fa-circle-check text-green-600 text-[24px]"></i>
-                {% elif 'warning' in messages.0.tags %}
-                <i class="fa-solid fa-triangle-exclamation text-yellow-600 text-[24px]"></i>
+        class="fixed bottom-6 right-6 z-[200] rounded-lg pl-6 pr-12 py-3.5 shadow-xl min-w-[350px] flex items-center transform transition-all duration-500 translate-y-0 opacity-100 animate-slide-up 
+        {% if 'error' in message.tags %}bg-[#EF4444]{% elif 'warning' in message.tags %}bg-[#F59E0B]{% else %}bg-[#10B981]{% endif %}">
+        <div class="flex items-center gap-3">
+            <div class="flex items-center justify-center">
+                {% if 'error' in message.tags %}
+                <i class="fa-solid fa-xmark text-white text-[20px]"></i>
+                {% elif 'warning' in message.tags %}
+                <i class="fa-solid fa-triangle-exclamation text-white text-[20px]"></i>
                 {% else %}
-                <i class="fa-solid fa-circle-info text-blue-600 text-[24px]"></i>
+                <i class="fa-solid fa-check text-white text-[20px]"></i>
                 {% endif %}
             </div>
             <div class="flex flex-col justify-center">
-                <span class="text-gray-900 font-bold text-[19px] leading-tight">{{ message }}</span>
+                <span class="text-white font-semibold text-[18px]">{{ message }}</span>
             </div>
         </div>
-        {% endif %}
-        {% endfor %}
         <button onclick="dismissNotification()"
-            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center transition-colors">
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition-colors">
             <i class="fa-solid fa-xmark text-[18px]"></i>
         </button>
     </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
 
     <style>
         @keyframes slide-up {
