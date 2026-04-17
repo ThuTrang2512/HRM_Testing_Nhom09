@@ -178,22 +178,27 @@
         <div class="flex justify-between items-center mb-10 gap-6 flex-wrap relative">
             <div class="flex items-center gap-4 flex-1 min-w-[300px] relative">
                 {% if messages %}
+                {% for message in messages %}
+                {% if forloop.first %}
                 <div id="successBanner"
-                    class="fixed bottom-6 right-6 z-50 bg-[#95F2C8] rounded-xl pl-6 pr-12 py-4 shadow-2xl min-w-[380px] flex items-center transform transition-all duration-500 translate-y-0 opacity-100 animate-slide-up">
-                    {% for message in messages %}
-                    {% if forloop.first %}
-                    <div class="flex items-start gap-4">
-                        <div class="bg-white/40 p-2 rounded-full">
-                            <i class="fa-regular fa-circle-check text-green-900 text-[24px]"></i>
+                    class="fixed bottom-6 right-6 z-50 rounded-lg pl-6 pr-12 py-3.5 shadow-xl min-w-[350px] flex items-center transform transition-all duration-500 translate-y-0 opacity-100 animate-slide-up 
+                    {% if 'error' in message.tags %}bg-[#EF4444]{% elif 'warning' in message.tags %}bg-[#F59E0B]{% else %}bg-[#10B981]{% endif %}">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-center">
+                            {% if 'error' in message.tags %}
+                            <i class="fa-solid fa-xmark text-white text-[20px]"></i>
+                            {% elif 'warning' in message.tags %}
+                            <i class="fa-solid fa-triangle-exclamation text-white text-[20px]"></i>
+                            {% else %}
+                            <i class="fa-solid fa-check text-white text-[20px]"></i>
+                            {% endif %}
                         </div>
                         <div class="flex flex-col justify-center">
-                            <span class="text-gray-900 font-bold text-[19px] leading-tight">{{ message }}</span>
+                            <span class="text-white font-semibold text-[18px]">{{ message }}</span>
                         </div>
                     </div>
-                    {% endif %}
-                    {% endfor %}
                     <button onclick="dismissNotification()"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-900 bg-white/20 hover:bg-white/40 w-8 h-8 rounded-full flex items-center justify-center transition-colors">
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition-colors">
                         <i class="fa-solid fa-xmark text-[18px]"></i>
                     </button>
                 </div>
@@ -236,6 +241,8 @@
                     // Auto-dismiss after 5 seconds
                     setTimeout(dismissNotification, 5000);
                 </script>
+                {% endif %}
+                {% endfor %}
                 {% endif %}
 
                 <form method="GET" action="{% url 'employee_list' %}"

@@ -3,35 +3,82 @@ let attendanceData = [];
 
 async function fetchSalaryData() {
     try {
+        console.log("Đang tải dữ liệu từ /salary/api/data/...");
         const response = await fetch('/salary/api/data/');
         const data = await response.json();
-        payrolls = data.payrolls;
-        attendanceData = data.attendanceData;
+        console.log("Dữ liệu nhận được từ DB:", data);
+        payrolls = data.payrolls || [];
+        attendanceData = data.attendanceData || [];
         renderTable();
     } catch (error) {
         console.error("Lỗi khi tải dữ liệu từ máy chủ:", error);
+        tableBody.innerHTML = `<tr><td colspan="12" style="color:red">Lỗi kết nối máy chủ: ${error.message}</td></tr>`;
     }
 }
 
-function setDefaultFilterDate() {
-    const today = new Date();
-    const year = String(today.getFullYear());
-    
-    // Mặc định ô Tháng là "Tháng" (giá trị rỗng)
-    if (monthSelect) monthSelect.value = "";
-    // Mặc định ô Năm là năm hiện tại
-    if (yearSelect) yearSelect.value = year;
+async function syncSalaryAction(payload) {
+    try {
+        const response = await fetch('/salary/api/action/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        return result.success;
+    } catch (error) {
+        console.error("Lỗi khi đồng bộ dữ liệu:", error);
+        return false;
+    }
+}
+
+function saveFilters() {
+    const filters = {
+        month: monthSelect?.value || "",
+        year: yearSelect?.value || "",
+        tab: currentFilter
+    };
+    localStorage.setItem("salary_filters", JSON.stringify(filters));
+}
+
+function loadFilters() {
+    const saved = localStorage.getItem("salary_filters");
+    if (saved) {
+        try {
+            const filters = JSON.parse(saved);
+            if (monthSelect) monthSelect.value = filters.month || "";
+            if (yearSelect) yearSelect.value = filters.year || "";
+            if (filters.tab) {
+                currentFilter = filters.tab;
+                // Update UI active tab
+                filterTabs.forEach(tab => {
+                    if (tab.dataset.status === currentFilter) {
+                        tab.classList.add("active");
+                    } else {
+                        tab.classList.remove("active");
+                    }
+                });
+            }
+        } catch (e) {
+            console.error("Lỗi khi tải bộ lọc:", e);
+        }
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    setDefaultFilterDate();
+    // Không ép buộc lọc theo tháng hiện tại ngay lập tức để người dùng thấy được dữ liệu cũ nếu có
+    if (monthSelect) monthSelect.value = "";
+    if (yearSelect) yearSelect.value = "2026"; // Mặc định năm 2026
+
+    loadFilters();
     fetchSalaryData();
 });
 
 let selectedCalcEmployeeId = null;
 let currentSalaryDraft = null;
 let editingPayrollId = null;
-let currentFilter = "pending";
+let currentFilter = "all";
 let pendingDeleteId = null;
 let selectedExportFormat = "";
 
@@ -112,9 +159,11 @@ function getCalcMonthText() {
 }
 
 function getExportMonthText() {
-    if (!exportMonth.value) return "";
+    if (!exportMonth || !exportMonth.value) return "";
     const [year, month] = exportMonth.value.split("-");
-    return `${month}/${year}`;
+    const result = `${month}/${year}`;
+    console.log("Export filter month:", result);
+    return result;
 }
 
 function getAttendanceRecord(employeeId, monthText) {
@@ -159,21 +208,26 @@ function getNetSalary(item) {
 }
 
 function buildFilteredData() {
-    const keyword = searchInput.value.trim().toLowerCase();
+    const keyword = (searchInput?.value || "").trim().toLowerCase();
     const selectedMonth = getSelectedMonthText();
 
-    return payrolls.filter((item) => {
+    console.log("Đang lọc với Month/Year:", selectedMonth, "Trạng thái:", currentFilter);
+
+    const filtered = payrolls.filter((item) => {
         if (item.status === "deleted") return false;
 
-        const matchStatus = item.status === currentFilter;
+        const matchStatus = currentFilter === "all" || item.status === currentFilter;
         const matchMonth = !selectedMonth || item.month === selectedMonth;
         const matchKeyword =
             !keyword ||
-            item.id.toLowerCase().includes(keyword) ||
-            item.employeeId.toLowerCase().includes(keyword);
+            (item.id && item.id.toLowerCase().includes(keyword)) ||
+            (item.employeeId && item.employeeId.toLowerCase().includes(keyword));
 
         return matchStatus && matchMonth && matchKeyword;
     });
+
+    console.log("Kết quả lọc:", filtered.length, "bản ghi");
+    return filtered;
 }
 
 function shouldShowActionColumn() {
@@ -220,7 +274,7 @@ function renderStatus(status) {
     if (status === "rejected") return `<span class="status-rejected-text">Đã từ chối</span>`;
     return `
         <div class="status-symbols">
-            <span class="status-check">✓</span>
+            <span class="status-check">✔</span>
             <span class="status-cross">✕</span>
         </div>
     `;
@@ -229,7 +283,7 @@ function renderStatus(status) {
 function renderPendingStatus(payrollId) {
     return `
         <div class="status-symbols">
-            <span class="status-check action-approve" title="Duyệt" onclick="handleApproveClick('${payrollId}')">✓</span>
+            <span class="status-check action-approve" title="Duyệt" onclick="handleApproveClick('${payrollId}')">✔</span>
             <span class="status-cross action-reject" title="Từ chối" onclick="handleRejectClick('${payrollId}')">✕</span>
         </div>
     `;
@@ -424,10 +478,10 @@ function fillEditSalaryDetail(payroll) {
     };
 
     salaryCodePreview.textContent = `Mã lương: ${currentSalaryDraft.id}`;
-    salaryEmployeePreview.textContent = `Mã NV: ${currentSalaryDraft.employeeId} - ${currentSalaryDraft.employeeName}`;
+    salaryEmployeePreview.textContent = `Mã NV: ${currentSalaryDraft.employeeId}`;
     salaryMonthPreview.textContent = `Tháng: ${currentSalaryDraft.month}`;
-    
-    // Khóa các trường không được phép sửa trong chế độ Chỉnh sửa 
+
+    // Khóa các trường không được phép sửa trong chế độ Chỉnh sửa
     detailBaseSalary.readOnly = true;
     detailHourlyRate.readOnly = true;
     detailWorkedHours.readOnly = true;
@@ -468,21 +522,41 @@ function handleEditClick(payrollId) {
     openSalaryDetailPopup();
 }
 
-function handleApproveClick(payrollId) {
+async function handleApproveClick(payrollId) {
     try {
-        approvePayroll(payrollId);
-        renderTable();
-        showMessagePopup(`Đã duyệt bảng lương ${payrollId}`, "success");
+        const success = await syncSalaryAction({
+            action: 'UPDATE_STATUS',
+            id: payrollId,
+            status: 'approved'
+        });
+
+        if (success) {
+            approvePayroll(payrollId);
+            renderTable();
+            showMessagePopup(`Đã duyệt bảng lương ${payrollId}`, "success");
+        } else {
+            showMessagePopup("Lỗi đồng bộ dữ liệu.<br>Vui lòng thử lại !!!", "error");
+        }
     } catch {
         showMessagePopup("Kết nối dữ liệu.<br>Vui lòng thử lại !!!", "error");
     }
 }
 
-function handleRejectClick(payrollId) {
+async function handleRejectClick(payrollId) {
     try {
-        rejectPayroll(payrollId);
-        renderTable();
-        showMessagePopup(`Đã từ chối bảng lương ${payrollId}`, "success");
+        const success = await syncSalaryAction({
+            action: 'UPDATE_STATUS',
+            id: payrollId,
+            status: 'rejected'
+        });
+
+        if (success) {
+            rejectPayroll(payrollId);
+            renderTable();
+            showMessagePopup(`Đã từ chối bảng lương ${payrollId}`, "success");
+        } else {
+            showMessagePopup("Lỗi đồng bộ dữ liệu.<br>Vui lòng thử lại !!!", "error");
+        }
     } catch {
         showMessagePopup("Kết nối dữ liệu.<br>Vui lòng thử lại !!!", "error");
     }
@@ -548,6 +622,7 @@ function openCalcSalaryModal() {
     `;
     btnStartCalc.disabled = true;
 }
+
 function closeSalaryDetailPopup() {
     salaryDetailModal.classList.remove("show");
     currentSalaryDraft = null;
@@ -605,7 +680,7 @@ function renderCalcTable() {
     calcTableBody.innerHTML = data.map((item) => `
         <tr class="calc-row ${selectedCalcEmployeeId === item.employeeId ? "selected" : ""} ${item.isCalculated ? "calculated-row" : ""}">
             <td>
-                <input 
+                <input
                     type="radio"
                     name="calcEmployeeSelect"
                     value="${item.employeeId}"
@@ -656,9 +731,9 @@ function fillSalaryDetail(data) {
     };
 
     salaryCodePreview.textContent = `Mã lương: ${salaryCode}`;
-    salaryEmployeePreview.textContent = `Mã NV: ${data.employeeId} - ${data.employeeName}`;
+    salaryEmployeePreview.textContent = `Mã NV: ${data.employeeId}`;
     salaryMonthPreview.textContent = `Tháng: ${data.month}`;
-    
+
     // Mở khóa các trường cho phép sửa trong chế độ tính lương mới
     detailBaseSalary.readOnly = false;
     detailHourlyRate.readOnly = false;
@@ -707,12 +782,16 @@ function renderExportTable() {
     if (!exportTableBody) return;
 
     const selectedMonth = getExportMonthText();
+    console.log("Rendering export table for month:", selectedMonth);
+    console.log("Total payrolls available:", payrolls.length);
 
     const approvedList = payrolls.filter((item) => {
         const matchStatus = item.status === "approved";
         const matchMonth = !selectedMonth || item.month === selectedMonth;
         return matchStatus && matchMonth;
     });
+
+    console.log("Approved records found:", approvedList.length);
 
     if (checkAllExport) checkAllExport.checked = false;
 
@@ -741,15 +820,24 @@ function renderExportTable() {
     `).join("");
 }
 
-btnConfirmDelete.addEventListener("click", () => {
+btnConfirmDelete.addEventListener("click", async () => {
     if (!pendingDeleteId) return;
 
     try {
         const deletedId = pendingDeleteId;
-        softDeletePayroll(deletedId);
-        closeDeletePopup();
-        renderTable();
-        showMessagePopup(`Xóa bảng lương ${deletedId} thành công`, "success");
+        const success = await syncSalaryAction({
+            action: 'DELETE',
+            id: deletedId
+        });
+
+        if (success) {
+            softDeletePayroll(deletedId);
+            closeDeletePopup();
+            renderTable();
+            showMessagePopup(`Xóa bảng lương ${deletedId} thành công`, "success");
+        } else {
+            showMessagePopup("Lỗi đồng bộ dữ liệu.<br>Vui lòng thử lại !!!", "error");
+        }
     } catch {
         closeDeletePopup();
         showMessagePopup("Kết nối dữ liệu.<br>Vui lòng thử lại !!!", "error");
@@ -767,6 +855,7 @@ filterTabs.forEach((tab) => {
         filterTabs.forEach((item) => item.classList.remove("active"));
         tab.classList.add("active");
         currentFilter = tab.dataset.status;
+        saveFilters(); // Save when tab changes
         renderTable();
     });
 });
@@ -778,11 +867,17 @@ searchInput.addEventListener("keydown", (event) => {
 });
 
 if (monthSelect) {
-    monthSelect.addEventListener("change", renderTable);
+    monthSelect.addEventListener("change", () => {
+        saveFilters();
+        renderTable();
+    });
 }
 
 if (yearSelect) {
-    yearSelect.addEventListener("change", renderTable);
+    yearSelect.addEventListener("change", () => {
+        saveFilters();
+        renderTable();
+    });
 }
 
 if (btnExportSalary && salaryPage && exportPage && exportTableBody) {
@@ -881,7 +976,7 @@ detailBaseSalary.addEventListener("input", updateSalaryTotalPreview);
 detailHourlyRate.addEventListener("input", updateSalaryTotalPreview);
 detailWorkedHours.addEventListener("input", updateSalaryTotalPreview);
 
-btnSaveSalary.addEventListener("click", () => {
+btnSaveSalary.addEventListener("click", async () => {
     try {
         const validation = validateSalaryInputs(detailBonus.value, detailPenalty.value);
 
@@ -901,29 +996,44 @@ btnSaveSalary.addEventListener("click", () => {
                 currentSalaryDraft.workedHours
             );
 
-            updatePayroll(editingPayrollId, {
-                totalSalary: baseAmount,
+            const success = await syncSalaryAction({
+                action: 'UPDATE',
+                id: editingPayrollId,
                 bonus: currentSalaryDraft.bonus,
-                penalty: currentSalaryDraft.penalty
+                penalty: currentSalaryDraft.penalty,
+                totalSalary: currentSalaryDraft.netSalary
             });
 
-            closeSalaryDetailPopup();
-            renderTable();
-            showMessagePopup("Chỉnh sửa bảng lương thành công", "success");
+            if (success) {
+                await fetchSalaryData(); // Refetch to ensure sync with DB
+                closeSalaryDetailPopup();
+                showMessagePopup("Chỉnh sửa bảng lương thành công", "success");
+            } else {
+                showMessagePopup("Lỗi đồng bộ dữ liệu.<br>Vui lòng thử lại !!!", "error");
+            }
             return;
         }
 
-        createPayrollFromDraft();
-        const successMonth = currentSalaryDraft.month;
+        const successSync = await syncSalaryAction({
+            action: 'CREATE',
+            ...currentSalaryDraft,
+            totalSalary: currentSalaryDraft.netSalary
+        });
 
-        closeSalaryDetailPopup();
-        renderTable();
+        if (successSync) {
+            await fetchSalaryData(); // Refetch to ensure new record is persistent
+            const successMonth = currentSalaryDraft.month;
 
-        if (salaryCalcModal.classList.contains("show")) {
-            renderCalcTable();
+            closeSalaryDetailPopup();
+
+            if (salaryCalcModal.classList.contains("show")) {
+                renderCalcTable();
+            }
+
+            showMessagePopup(`Tính lương tháng ${successMonth} thành công`, "success");
+        } else {
+            showMessagePopup("Lỗi đồng bộ dữ liệu.<br>Vui lòng thử lại !!!", "error");
         }
-
-        showMessagePopup(`Tính lương tháng ${successMonth} thành công`, "success");
     } catch (error) {
         if (error.message === "DUPLICATED_EMPLOYEE_MONTH") {
             showMessagePopup("Bảng lương nhân viên này trong tháng đã tồn tại", "error");
@@ -990,5 +1100,102 @@ window.handleDeleteClick = handleDeleteClick;
 window.handleApproveClick = handleApproveClick;
 window.handleRejectClick = handleRejectClick;
 window.handleEditClick = handleEditClick;
+
+
+function initCustomMonthPicker() {
+    const picker = document.getElementById("exportMonthPicker");
+    const display = document.getElementById("exportMonthDisplay");
+    const dropdown = document.getElementById("exportMonthDropdown");
+    const label = document.getElementById("exportMonthLabel");
+    const hiddenInput = document.getElementById("exportMonth");
+    const displayYear = document.getElementById("displayYear");
+    const prevYear = document.getElementById("prevYear");
+    const nextYear = document.getElementById("nextYear");
+    const monthItems = document.querySelectorAll(".picker-month");
+    const clearBtn = document.getElementById("clearPicker");
+    const todayBtn = document.getElementById("todayPicker");
+
+    if (!picker || !display || !dropdown) return;
+
+    let currentYear = 2026;
+    let selectedMonth = "04";
+
+    function updateLabel() {
+        label.textContent = `Tháng ${selectedMonth} ${currentYear}`;
+        hiddenInput.value = `${currentYear}-${selectedMonth}`;
+        renderExportTable();
+    }
+
+    display.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("show");
+        display.classList.toggle("active");
+    });
+
+    prevYear.addEventListener("click", (e) => {
+        e.stopPropagation();
+        currentYear--;
+        displayYear.textContent = currentYear;
+        updateLabel();
+    });
+
+    nextYear.addEventListener("click", (e) => {
+        e.stopPropagation();
+        currentYear++;
+        displayYear.textContent = currentYear;
+        updateLabel();
+    });
+
+    monthItems.forEach((item) => {
+        item.addEventListener("click", (e) => {
+            e.stopPropagation();
+            selectedMonth = item.dataset.month;
+            monthItems.forEach((m) => m.classList.remove("active"));
+            item.classList.add("active");
+            updateLabel();
+            dropdown.classList.remove("show");
+            display.classList.remove("active");
+        });
+    });
+
+    if (clearBtn) {
+        clearBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            selectedMonth = "";
+            hiddenInput.value = "";
+            label.textContent = "Chọn tháng";
+            monthItems.forEach((m) => m.classList.remove("active"));
+            renderExportTable();
+            dropdown.classList.remove("show");
+            display.classList.remove("active");
+        });
+    }
+
+    if (todayBtn) {
+        todayBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const now = new Date();
+            currentYear = now.getFullYear();
+            selectedMonth = String(now.getMonth() + 1).padStart(2, "0");
+            displayYear.textContent = currentYear;
+
+            monthItems.forEach((m) => {
+                if (m.dataset.month === selectedMonth) m.classList.add("active");
+                else m.classList.remove("active");
+            });
+
+            updateLabel();
+            dropdown.classList.remove("show");
+            display.classList.remove("active");
+        });
+    }
+
+    document.addEventListener("click", () => {
+        dropdown.classList.remove("show");
+        display.classList.remove("active");
+    });
+}
+
+initCustomMonthPicker();
 
 renderTable();

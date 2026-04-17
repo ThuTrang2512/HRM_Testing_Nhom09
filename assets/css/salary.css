@@ -156,19 +156,190 @@ body {
 }
 
 .month-input {
-    height: 40px;
-    border: 1px solid #cfcfcf;
-    border-radius: 6px;
+    height: 44px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
     background: #ffffff;
-    padding: 0 12px;
+    padding: 0 16px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
+    font-size: 16px;
     color: #4b2e1f;
     outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.month-input:hover {
+    border-color: #9ca3af;
+}
+
+.month-input:focus {
+    border-color: #7b543b;
+    box-shadow: 0 0 0 3px rgba(123, 84, 59, 0.1);
 }
 
 .month-filter-group .month-input {
     width: 120px;
+}
+
+/* Custom Month Picker Styling */
+.custom-month-picker {
+    position: relative;
+    width: 240px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.picker-display {
+    height: 44px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 17px;
+    color: #4b2e1f;
+    transition: all 0.2s ease;
+}
+
+.picker-display:hover {
+    border-color: #9ca3af;
+}
+
+.picker-display.active {
+    border-color: #7b543b;
+    box-shadow: 0 0 0 3px rgba(123, 84, 59, 0.1);
+}
+
+.picker-display i {
+    color: #6b7280;
+    font-size: 18px;
+}
+
+.picker-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 280px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+    padding: 16px;
+    display: none;
+    animation: slideDown 0.2s ease-out;
+}
+
+.picker-dropdown.show {
+    display: block;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.picker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.picker-year {
+    font-weight: 700;
+    font-size: 18px;
+    color: #4b2e1f;
+}
+
+.picker-nav {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7b543b;
+    transition: background 0.2s;
+}
+
+.picker-nav:hover {
+    background: #fdf2f2;
+}
+
+.picker-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.picker-month {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #4b2e1f;
+    transition: all 0.2s;
+}
+
+.picker-month:hover {
+    background: #f3f4f6;
+    color: #7b543b;
+}
+
+.picker-month.active {
+    background: #7b543b;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.picker-footer {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.picker-btn {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.picker-btn:hover {
+    background: #eff6ff;
+}
+
+#clearPicker {
+    color: #ef4444;
+}
+
+#clearPicker:hover {
+    background: #fef2f2;
 }
 
 .search-box {
@@ -183,7 +354,7 @@ body {
     left: 11px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 13px;
+    font-size: 15px;
     color: #a8a8a8;
 }
 
@@ -195,7 +366,7 @@ body {
     background: #ffffff;
     padding: 0 12px 0 32px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
+    font-size: 15px;
     outline: none;
 }
 
@@ -211,7 +382,7 @@ body {
     background: #70452F;
     color: #ffffff;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
@@ -228,7 +399,7 @@ body {
 }
 
 .action-btn i {
-    font-size: 11px;
+    font-size: 13px;
 }
 
 .filter-tabs {
@@ -245,7 +416,7 @@ body {
     background: #efefef;
     color: #222222;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
 }
@@ -275,7 +446,7 @@ body {
 
 .salary-table th {
     color: #ffffff;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     padding: 12px 8px;
     text-align: center;
@@ -283,7 +454,7 @@ body {
 }
 
 .salary-table td {
-    font-size: 12px;
+    font-size: 14px;
     color: #333333;
     padding: 14px 8px;
     text-align: center;
@@ -292,53 +463,104 @@ body {
     border-bottom: 1px solid #e8e2dd;
     vertical-align: middle;
 }
+
 .salary-table tbody tr:nth-child(even) td {
     background: #ece6e1;
 }
 
 /* 13 cột */
 .salary-table th:nth-child(1),
-.salary-table td:nth-child(1) { width: 3.5%; }   /* STT */
+.salary-table td:nth-child(1) {
+    width: 3.5%;
+}
+
+/* STT */
 
 .salary-table th:nth-child(2),
-.salary-table td:nth-child(2) { width: 7%; }     /* Mã lương */
+.salary-table td:nth-child(2) {
+    width: 7%;
+}
+
+/* Mã lương */
 
 .salary-table th:nth-child(3),
-.salary-table td:nth-child(3) { width: 6.5%; }   /* Mã NV */
+.salary-table td:nth-child(3) {
+    width: 6.5%;
+}
+
+/* Mã NV */
 
 .salary-table th:nth-child(4),
 .salary-table td:nth-child(4) {
     width: 13%;
     white-space: normal;
     line-height: 1.35;
-}                                                  /* Tên nhân viên */
+}
+
+/* Tên nhân viên */
 
 .salary-table th:nth-child(5),
-.salary-table td:nth-child(5) { width: 7%; }      /* Tháng */
+.salary-table td:nth-child(5) {
+    width: 7%;
+}
+
+/* Tháng */
 
 .salary-table th:nth-child(6),
-.salary-table td:nth-child(6) { width: 8%; }      /* Lương cơ bản */
+.salary-table td:nth-child(6) {
+    width: 8%;
+}
+
+/* Lương cơ bản */
 
 .salary-table th:nth-child(7),
-.salary-table td:nth-child(7) { width: 8%; }      /* Lương theo giờ */
+.salary-table td:nth-child(7) {
+    width: 8%;
+}
+
+/* Lương theo giờ */
 
 .salary-table th:nth-child(8),
-.salary-table td:nth-child(8) { width: 6.5%; }    /* Số giờ làm */
+.salary-table td:nth-child(8) {
+    width: 6.5%;
+}
+
+/* Số giờ làm */
 
 .salary-table th:nth-child(9),
-.salary-table td:nth-child(9) { width: 7%; }      /* Thưởng */
+.salary-table td:nth-child(9) {
+    width: 7%;
+}
+
+/* Thưởng */
 
 .salary-table th:nth-child(10),
-.salary-table td:nth-child(10) { width: 6.5%; }   /* Phạt */
+.salary-table td:nth-child(10) {
+    width: 6.5%;
+}
+
+/* Phạt */
 
 .salary-table th:nth-child(11),
-.salary-table td:nth-child(11) { width: 8.5%; }   /* Lương thực lãnh */
+.salary-table td:nth-child(11) {
+    width: 8.5%;
+}
+
+/* Lương thực lãnh */
 
 .salary-table th:nth-child(12),
-.salary-table td:nth-child(12) { width: 5%; }     /* Hành động */
+.salary-table td:nth-child(12) {
+    width: 5%;
+}
+
+/* Hành động */
 
 .salary-table th:nth-child(13),
-.salary-table td:nth-child(13) { width: 5%; }     /* Trạng thái */
+.salary-table td:nth-child(13) {
+    width: 5%;
+}
+
+/* Trạng thái */
 
 .action-group {
     display: flex;
@@ -348,7 +570,7 @@ body {
 }
 
 .action-icon {
-    font-size: 18px;
+    font-size: 20px;
     color: #111111;
     cursor: pointer;
     line-height: 1;
@@ -369,20 +591,20 @@ body {
 
 .status-check {
     color: #555555;
-    font-size: 17px;
+    font-size: 19px;
     font-weight: 700;
 }
 
 .status-cross {
     color: #ff0000;
-    font-size: 17px;
+    font-size: 19px;
     font-weight: 700;
 }
 
 .empty-state {
     padding: 24px 10px;
     text-align: center;
-    font-size: 13px;
+    font-size: 15px;
     color: #666666;
 }
 
@@ -425,21 +647,21 @@ body {
 
 .empty-pending-icon {
     color: #ff1f1f;
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 700;
     line-height: 1;
     margin-bottom: 10px;
 }
 
 .empty-pending-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     color: #7b543b;
     margin-bottom: 6px;
 }
 
 .empty-pending-subtitle {
-    font-size: 12px;
+    font-size: 14px;
     color: #9b9b9b;
 }
 
@@ -484,12 +706,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .delete-popup-title {
     margin: 0 0 10px;
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 700;
     color: #a86b58;
     letter-spacing: 0.5px;
@@ -497,7 +719,7 @@ body {
 
 .delete-popup-text {
     margin: 0 0 24px;
-    font-size: 14px;
+    font-size: 16px;
     color: #777777;
     line-height: 1.6;
 }
@@ -514,7 +736,7 @@ body {
     border: none;
     border-radius: 6px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -570,7 +792,7 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 18px;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     color: #333333;
 }
@@ -581,7 +803,7 @@ body {
 
 .message-popup-box.success #messagePopupIcon {
     color: #36c56b;
-    font-size: 30px;
+    font-size: 32px;
 }
 
 .message-popup-box.error {
@@ -592,7 +814,7 @@ body {
 .message-popup-box.error .message-popup-content {
     justify-content: center;
     text-align: center;
-    font-size: 18px;
+    font-size: 20px;
     line-height: 1.5;
 }
 
@@ -607,11 +829,11 @@ body {
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
 }
 
 .calc-modal-header {
-    background: #7b543b;
+    background: #70452F;
     color: #fff;
     display: flex;
     align-items: center;
@@ -621,7 +843,7 @@ body {
 
 .calc-modal-header h3 {
     margin: 0;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
 }
 
@@ -629,7 +851,7 @@ body {
     border: none;
     background: transparent;
     color: #fff;
-    font-size: 22px;
+    font-size: 24px;
     cursor: pointer;
     font-weight: 700;
 }
@@ -646,7 +868,7 @@ body {
 }
 
 .calc-month-row label {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     color: #333;
 }
@@ -668,7 +890,7 @@ body {
 .calc-table th,
 .calc-table td {
     padding: 10px 8px;
-    font-size: 13px;
+    font-size: 15px;
     text-align: center;
     border-bottom: 1px solid #ececec;
 }
@@ -679,7 +901,7 @@ body {
 
 .calc-modal-actions {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     gap: 12px;
     padding: 0 18px 18px;
 }
@@ -690,7 +912,7 @@ body {
     border: none;
     border-radius: 6px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
     cursor: pointer;
 }
@@ -701,7 +923,7 @@ body {
 }
 
 .calc-btn-confirm {
-    background: #7b543b;
+    background: #70452F;
     color: #fff;
 }
 
@@ -719,19 +941,19 @@ body {
 
 .calc-empty-icon {
     color: red;
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 700;
     margin-bottom: 6px;
 }
 
 .calc-empty-title {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
     margin-bottom: 4px;
 }
 
 .calc-empty-subtitle {
-    font-size: 11px;
+    font-size: 13px;
     color: #999;
 }
 
@@ -741,7 +963,7 @@ body {
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
     padding-bottom: 16px;
 }
 
@@ -762,13 +984,14 @@ body {
 
 .salary-detail-title-wrap h3 {
     margin: 0;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
+    color: #70452F;
 }
 
 .salary-code-text {
-    font-size: 13px;
-    color: #8b6a55;
+    font-size: 15px;
+    color: #70452F;
     font-weight: 600;
 }
 
@@ -788,7 +1011,7 @@ body {
     color: #fff;
     border-radius: 6px;
     padding: 8px 12px;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
 }
 
@@ -806,7 +1029,7 @@ body {
 }
 
 .salary-field label {
-    font-size: 12px;
+    font-size: 14px;
     color: #555;
     font-weight: 600;
 }
@@ -817,13 +1040,33 @@ body {
     border-radius: 4px;
     padding: 0 10px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
+    font-size: 15px;
     outline: none;
     background: #f8f8f8;
 }
 
 .salary-field input[type="number"] {
     background: #fff;
+    padding-right: 46px; /* Để chừa chỗ cho chữ VNĐ/Giờ */
+}
+
+.input-with-unit {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-unit input {
+    width: 100%;
+}
+
+.input-with-unit .unit {
+    position: absolute;
+    right: 12px;
+    font-size: 15px;
+    color: #555;
+    pointer-events: none;
+    font-weight: 600;
 }
 
 .salary-total-box {
@@ -835,7 +1078,7 @@ body {
 }
 
 .salary-total-label {
-    font-size: 11px;
+    font-size: 13px;
     color: #8b6a55;
     font-weight: 700;
     margin-bottom: 4px;
@@ -843,7 +1086,7 @@ body {
 }
 
 .salary-total-value {
-    font-size: 26px;
+    font-size: 28px;
     color: #4f6d52;
     font-weight: 800;
 }
@@ -917,7 +1160,7 @@ body {
 }
 
 .nav-dropdown-icon {
-    font-size: 14px;
+    font-size: 16px;
     opacity: 0.75;
 }
 
@@ -963,8 +1206,8 @@ body {
     background: #f5ede8;
 }
 
-.nav-dropdown-menu a + a,
-.nav-dropdown-hover-menu a + a {
+.nav-dropdown-menu a+a,
+.nav-dropdown-hover-menu a+a {
     border-top: 1px solid #f3f4f6;
 }
 
@@ -977,7 +1220,7 @@ body {
 
 .export-title {
     margin: 0 0 10px 0;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     color: #222;
 }
@@ -1002,9 +1245,9 @@ body {
 }
 
 .export-table thead th {
-    background: #8b5a3c;
+    background: #70452F;
     color: white;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     padding: 8px 8px;
     text-align: center;
@@ -1012,7 +1255,7 @@ body {
 
 .export-table tbody td {
     padding: 10px 8px;
-    font-size: 12px;
+    font-size: 14px;
     color: #444;
     text-align: center;
     border-bottom: 1px solid #ece7e3;
@@ -1059,7 +1302,7 @@ body {
 .export-btn {
     border: none;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     font-family: inherit;
@@ -1068,7 +1311,7 @@ body {
 .main-btn {
     min-width: 76px;
     height: 28px;
-    background: #8b5a3c;
+    background: #70452F;
     color: white;
     padding: 0 12px;
 }
@@ -1077,13 +1320,13 @@ body {
     min-width: 76px;
     height: 22px;
     background: white;
-    color: #8b5a3c;
-    border: 1px solid #8b5a3c;
+    color: #70452F;
+    border: 1px solid #70452F;
     padding: 0 12px;
 }
 
 .caret {
-    font-size: 10px;
+    font-size: 12px;
     margin-left: 4px;
 }
 
@@ -1112,7 +1355,7 @@ body {
     left: 0;
     width: 100%;
     background: #ffffff;
-    border: 1px solid #8b5a3c;
+    border: 1px solid #70452F;
     border-radius: 6px;
     overflow: hidden;
     z-index: 1000;
@@ -1130,7 +1373,7 @@ body {
     background: #ffffff;
     color: #4b2e1f;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
     border-bottom: 1px solid #d9c7bb;
@@ -1163,14 +1406,14 @@ body {
 
 .export-empty-icon {
     color: #ff1f1f;
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 700;
     line-height: 1;
     margin-bottom: 8px;
 }
 
 .export-empty-title {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
     color: #7b543b;
     margin-bottom: 4px;
@@ -1178,7 +1421,7 @@ body {
 }
 
 .export-empty-subtitle {
-    font-size: 11px;
+    font-size: 13px;
     color: #b0a7a2;
     text-align: center;
 }
@@ -1214,7 +1457,7 @@ body {
     border-radius: 999px;
     background: #e5e7eb;
     color: #666;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
 }
 
@@ -1224,71 +1467,6 @@ body {
     border-radius: 999px;
     background: #e8f5e9;
     color: #1b8f3a;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
 }
-
-/* ===== DROPDOWN MENU GIỐNG DASHBOARD ===== */
-.nav-dropdown,
-.nav-dropdown-hover {
-    position: relative;
-}
-
-.nav-link-dropdown {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
-
-.nav-dropdown-icon {
-    font-size: 14px;
-    opacity: 0.75;
-}
-
-.nav-dropdown-menu,
-.nav-dropdown-hover-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 260px;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    z-index: 999;
-    overflow: hidden;
-}
-
-.nav-dropdown.open .nav-dropdown-menu {
-    display: block;
-}
-
-.nav-dropdown-hover:hover .nav-dropdown-hover-menu {
-    display: block;
-}
-
-.nav-dropdown-menu a,
-.nav-dropdown-hover-menu a {
-    display: block;
-    padding: 12px 20px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #4B2E1F;
-    text-decoration: none;
-    background: #ffffff;
-    transition: background 0.15s ease;
-    white-space: nowrap;
-}
-
-.nav-dropdown-menu a:hover,
-.nav-dropdown-hover-menu a:hover {
-    background: #f5ede8;
-}
-
-.nav-dropdown-menu a + a,
-.nav-dropdown-hover-menu a + a {
-    border-top: 1px solid #f3f4f6;
-}

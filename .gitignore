@@ -1,0 +1,25 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+bin/
+lib/
+include/
+setuptools*.zip
+pip-log.txt
+pip-delete-this-directory.txt
+library.ipynb
+.lock-wscript
+.DS_Store
+.idea/
+.vscode/
+
+# Django-specific
+db.sqlite3
+media/
+static_cdn/
+staticfiles/
+
+venv/

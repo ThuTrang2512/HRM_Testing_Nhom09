@@ -4,7 +4,7 @@ from pages.attendance.models import ChamCong
 from pages.contract.models import HopDongLaoDong_CT
 
 def get_salary_data(request):
-    bang_luongs = BangLuong.objects.all()
+    bang_luongs = BangLuong.objects.select_related('MaNhanVien').all()
     
     payrolls = []
     
@@ -17,6 +17,7 @@ def get_salary_data(request):
     for bl in bang_luongs:
         month_str = bl.ThoiGian.strftime("%m/%Y") if bl.ThoiGian else ""
         employee_id = bl.MaNhanVien.MaNhanVien if bl.MaNhanVien else ""
+        employee_name = bl.MaNhanVien.HoTen if bl.MaNhanVien else ""
         
         payrolls.append({
             "id": bl.MaLuong,
