@@ -5,11 +5,18 @@
 body {
     font-family: 'Montserrat', sans-serif;
     font-size: 23px;
-    color: rgba(75, 46, 31, 0.87); /* Mã màu #4B2E1F với opacity 87% */
+    color: rgba(75, 46, 31, 0.87);
+    /* Mã màu #4B2E1F với opacity 87% */
 }
 
 /* Quy định chữ dạng tiêu đề */
-h1, h2, h3, h4, h5, h6, .heading-text {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.heading-text {
     font-family: 'Nunito', sans-serif;
     color: rgba(75, 46, 31, 0.87);
     font-weight: 700;
@@ -24,6 +31,9 @@ h2 {
     font-size: 26px;
 }
 
-h3, h4, h5, h6 {
+h3,
+h4,
+h5,
+h6 {
     font-size: 25px;
 }

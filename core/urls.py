@@ -20,9 +20,10 @@ mimetypes.add_type("text/css", ".css", True)
 
 from django.contrib import admin
 from django.urls import path, re_path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.static import serve
-from django.conf import settings
 import os
 
 def favicon_view(request):
@@ -34,8 +35,11 @@ urlpatterns = [
     path('favicon.ico', favicon_view),
     
     # Modules
+    path('employee/', include('pages.employee.urls')),
+    path('contract/', include('pages.contract.urls')),
     path('salary/', include('pages.salary.urls')),
     path('requests/', include('pages.request.urls')),
+    path('report/', include('pages.report.urls')),
     
     # Shortcuts
     path('salary', lambda r: HttpResponseRedirect('/pages/salary/salary.html')),
@@ -48,3 +52,6 @@ urlpatterns = [
     # Catch-all from develop branch
     re_path(r'^(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR, 'show_indexes': True}),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
