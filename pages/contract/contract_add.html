@@ -57,6 +57,50 @@
             background-color: #d6b5a3;
             border-radius: 2px 2px 0 0;
         }
+
+        /* Dropdown nav styles */
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            min-width: 200px;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .nav-dropdown.open .nav-dropdown-menu {
+            display: block;
+        }
+
+        .nav-dropdown-menu a {
+            display: block;
+            padding: 12px 20px !important;
+            font-size: 15px !important;
+            font-weight: 600 !important;
+            color: #4B2E1F !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            white-space: nowrap !important;
+            text-decoration: none !important;
+            transition: background 0.15s;
+            border-top: 1px solid #f3f4f6;
+            text-align: center;
+        }
+
+        .nav-dropdown-menu a:hover {
+            background: #f5ede8;
+            color: #8C5A41 !important;
+        }
     </style>
 </head>
 
@@ -80,13 +124,33 @@
 
     <!-- Navigation -->
     <nav class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold">
-        <a href="../dashboard.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Tổng quan</a>
-        <a href="../employee/employee_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Nhân viên</a>
-        <a href="contract_list.html" class="nav-item active py-[16px] transition-colors hover:text-[#d6b5a3]">Hợp đồng</a>
-        <a href="../schedule/schedule_list.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Lịch làm việc</a>
-        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
-        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Bảng lương</a>
-        <a href="#" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Báo cáo</a>
+        <a href="/pages/dashboard.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Tổng quan</a>
+        <a href="/employee/" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Nhân viên</a>
+        <a href="/pages/contract/contract_list.html" class="nav-item active py-[16px] transition-colors hover:text-[#d6b5a3]">Hợp đồng</a>
+        <!-- Lịch làm việc Dropdown -->
+        <div class="relative group cursor-pointer text-white">
+            <div class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] flex items-center gap-2">
+                Lịch làm việc
+                <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
+            </div>
+            <!-- Dropdown menu -->
+            <div class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
+                <a href="/pages/schedule/schedule_list.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-[#78594A] transition-colors font-medium border-b border-gray-50">Tạo lịch làm việc</a>
+                <a href="/pages/schedule/schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-[#78594A] transition-colors font-medium">Gửi thông báo lịch làm việc</a>
+            </div>
+        </div>
+        <a href="/pages/request/request.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
+        <a href="/pages/salary/salary.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Bảng lương</a>
+        <div class="nav-dropdown nav-item py-[16px]" id="baoCaoDropdown">
+            <span class="cursor-pointer hover:text-[#d6b5a3] transition-colors select-none flex items-center gap-2" onclick="toggleDropdown(event)">
+                Báo cáo
+                <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
+            </span>
+            <div class="nav-dropdown-menu" id="baoCaoMenu">
+                <a href="/report/salary/">Báo cáo lương</a>
+                <a href="/report/attendance/">Báo cáo chấm công</a>
+            </div>
+        </div>
     </nav>
 
     <!-- Main Content -->
@@ -116,6 +180,7 @@
                     <div class="flex flex-col relative">
                         <label class="font-bold text-[#8C6F60] mb-2">Tên nhân viên <span class="text-red-500">*</span></label>
                         <input type="text" id="employeeName" list="employeeList" class="bg-white border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-700 focus:outline-none focus:border-brand-primary placeholder-gray-400" placeholder="Nhập hoặc chọn tên nhân viên">
+                        <span id="error-employeeName" class="text-red-500 text-[13px] mt-1 hidden font-medium"></span>
                         <datalist id="employeeList">
                             <!-- JS sẽ render option ở đây -->
                         </datalist>
@@ -132,6 +197,7 @@
                         <div class="pointer-events-none absolute inset-y-0 right-0 top-[32px] flex items-center px-4 text-gray-800">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </div>
+                        <span id="error-contractType" class="text-red-500 text-[13px] mt-1 hidden font-medium"></span>
                     </div>
                     <div class="flex flex-col relative">
                         <label class="font-bold text-[#8C6F60] mb-2">Mức lương</label>
@@ -143,6 +209,7 @@
                     <div class="flex flex-col">
                         <label class="font-bold text-[#8C6F60] mb-2">Ngày bắt đầu <span class="text-red-500">*</span></label>
                         <input type="date" id="startDate" class="w-full bg-white border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-700 focus:outline-none focus:border-brand-primary">
+                        <span id="error-startDate" class="text-red-500 text-[13px] mt-1 hidden font-medium"></span>
                     </div>
 
                     <!-- Row 3 -->
@@ -152,6 +219,7 @@
                             <input type="text" id="baseSalary" placeholder="Nhập lương cơ bản" class="w-full bg-white border border-gray-200 rounded-[8px] px-4 py-[10px] pr-14 text-gray-700 focus:outline-none focus:border-brand-primary">
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">VND</span>
                         </div>
+                        <span id="error-baseSalary" class="text-red-500 text-[13px] mt-1 hidden font-medium"></span>
                     </div>
                     <div class="flex flex-col relative">
                         <label class="font-bold text-[#8C6F60] mb-2">Lương theo giờ</label>
@@ -163,12 +231,14 @@
                     <div class="flex flex-col">
                         <label class="font-bold text-[#8C6F60] mb-2">Ngày kết thúc <span class="text-red-500">*</span></label>
                         <input type="date" id="endDate" class="w-full bg-white border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-700 focus:outline-none focus:border-brand-primary">
+                        <span id="error-endDate" class="text-red-500 text-[13px] mt-1 hidden font-medium"></span>
                     </div>
 
                     <!-- Row 4 -->
                     <div class="flex flex-col">
                         <label class="font-bold text-[#8C6F60] mb-2">Số giờ làm tối thiểu <span class="text-red-500">*</span></label>
                         <input type="text" id="minHour" value="174" class="bg-white border border-gray-200 rounded-[8px] px-4 py-[10px] text-gray-700 focus:outline-none focus:border-brand-primary">
+                        <span id="error-minHour" class="text-red-500 text-[13px] mt-1 hidden font-medium"></span>
                     </div>
                     <div class="flex flex-col relative">
                         <label class="font-bold text-[#8C6F60] mb-2">Chế độ thưởng</label>
@@ -219,23 +289,43 @@
     </div>
 
     <div id="confirmModal" class="fixed inset-0 bg-black/40 z-[100] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center">
-        <div class="bg-white rounded-[20px] shadow-2xl p-8 max-w-[420px] w-[90%] flex flex-col items-center transform scale-95 opacity-0 transition-all duration-300" id="confirmModalContent">
-            <div class="w-16 h-16 bg-[#F59E0B] rounded-full flex items-center justify-center mb-4">
-                <i class="fa-solid fa-triangle-exclamation text-white text-[32px]"></i>
+        <div class="bg-white rounded-[20px] shadow-2xl p-8 max-w-[480px] w-[95%] flex flex-col items-center transform scale-95 opacity-0 transition-all duration-300" id="confirmModalContent">
+            <div class="w-16 h-16 bg-[#5c4133] rounded-full flex items-center justify-center mb-4 shadow-sm">
+                <i class="fa-solid fa-question text-white text-[32px]"></i>
             </div>
-            <h3 class="text-[#8B6E60] font-bold text-[22px] uppercase mb-2 tracking-wide">XÁC NHẬN</h3>
-            <p class="text-gray-500 text-[18px] text-center mb-8">Bạn có chắc chắn muốn hủy thao tác không?</p>
-            <div class="flex gap-4">
-                <button id="cancelConfirmBtn" class="bg-[#E4E6E8] text-gray-700 font-bold px-8 py-2 rounded-md hover:bg-gray-300 transition text-[18px] min-w-[120px]">
-                    Hủy
+            <h3 class="text-[#5c4133] font-bold text-[26px] mb-2 uppercase tracking-wide">XÁC NHẬN HỦY</h3>
+            <p class="text-[#6b7280] text-[18px] text-center mb-10 leading-relaxed px-2">
+                Hệ thống sẽ không lưu các thay đổi hiện tại.<br>
+                Bạn có chắc chắn muốn hủy không?
+            </p>
+
+            <div class="flex gap-4 w-full justify-center">
+                <button id="cancelConfirmBtn" class="flex-1 bg-[#E5E7EB] text-[#4B5563] font-bold py-3 rounded-xl hover:bg-gray-300 transition text-[18px]">
+                    Không
                 </button>
-                <button id="confirmCancelBtn" class="bg-[#6B4B3E] text-white font-bold px-8 py-2 rounded-md hover:bg-[#5c4133] transition text-[18px] min-w-[120px]">
-                    Xác nhận
+                <button id="confirmCancelBtn" class="flex-1 bg-[#5c4133] text-white font-bold py-3 rounded-xl hover:bg-[#4a3429] transition text-[18px]">
+                    Đồng ý
                 </button>
             </div>
         </div>
     </div>
 
+
+
+    <script>
+        function toggleDropdown(e) {
+            if (e) e.stopPropagation();
+            const dd = document.getElementById('baoCaoDropdown');
+            if (dd) dd.classList.toggle('open');
+        }
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+            const dd = document.getElementById('baoCaoDropdown');
+            if (dd && !dd.contains(e.target)) {
+                dd.classList.remove('open');
+            }
+        });
+    </script>
     <script src="../../assets/js/contract_add.js"></script>
 </body>
 

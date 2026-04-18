@@ -165,7 +165,8 @@ def employee_delete(request, pk):
     return redirect('employee_list')
 
 def get_employee_data(request):
-    employees = NhanVien.objects.all()
+    # Chỉ lấy danh sách nhân viên đang làm việc để phục vụ việc chọn nhân viên cho hợp đồng
+    employees = NhanVien.objects.filter(TrangThai='Đang làm việc')
     emp_list = []
     for emp in employees:
         emp_list.append({

@@ -90,8 +90,71 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     };
 
+    const setInlineError = (inputId, message) => {
+        const input = document.getElementById(inputId);
+        const errorSpan = document.getElementById(`error-${inputId}`);
+        if (input) {
+            input.classList.add('border-red-500');
+            input.classList.remove('border-gray-200');
+        }
+        if (errorSpan) {
+            errorSpan.textContent = message;
+            errorSpan.classList.remove('hidden');
+        }
+    };
+
+    const clearInlineError = (inputId) => {
+        const input = document.getElementById(inputId);
+        const errorSpan = document.getElementById(`error-${inputId}`);
+        if (input) {
+            input.classList.remove('border-red-500');
+            input.classList.add('border-gray-200');
+        }
+        if (errorSpan) {
+            errorSpan.classList.add('hidden');
+            errorSpan.textContent = '';
+        }
+    };
+
+    const clearAllErrors = () => {
+        ['employeeName', 'contractType', 'startDate', 'endDate', 'baseSalary', 'minHour'].forEach(clearInlineError);
+    };
+
+    // Add real-time validation to clear errors as user types
+    ['employeeName', 'contractType', 'startDate', 'endDate', 'baseSalary', 'minHour'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => clearInlineError(id));
+            if (el.tagName === 'SELECT') {
+                el.addEventListener('change', () => clearInlineError(id));
+            }
+        }
+    });
+
     form.addEventListener('submit', (event) => {
         event.preventDefault();
+        clearAllErrors();
+
+        let hasError = false;
+        const requiredFields = [
+            { id: 'employeeName', label: 'Tên nhân viên' },
+            { id: 'contractType', label: 'Loại hợp đồng' },
+            { id: 'startDate', label: 'Ngày bắt đầu' },
+            { id: 'endDate', label: 'Ngày kết thúc' },
+            { id: 'baseSalary', label: 'Lương cơ bản' },
+            { id: 'minHour', label: 'Số giờ làm tối thiểu' }
+        ];
+
+        requiredFields.forEach(field => {
+            const el = document.getElementById(field.id);
+            if (!el || !el.value.trim()) {
+                setInlineError(field.id, `${field.label} không được để trống. Vui lòng nhập thông tin`);
+                hasError = true;
+            }
+        });
+
+        if (hasError) return;
+
         const newContract = {
             id: contractIdInput.value,
             employeeId: employeeIdInput.value.trim(),
@@ -102,19 +165,16 @@ document.addEventListener('DOMContentLoaded', () => {
             startDate: startDateInput.value,
             endDate: endDateInput.value,
             salary: salaryInput.value.trim(),
-            note: '',
+            note: document.getElementById('note').value.trim(),
         };
 
-        if (!newContract.employeeId || !newContract.employeeName || !newContract.startDate || !newContract.endDate || !newContract.salary) {
-            showError('Vui lòng nhập đầy đủ thông tin.');
-            return;
+        // Kiểm tra ngày bắt đầu không được lớn hơn ngày kết thúc
+        if (new Date(startDateInput.value) > new Date(endDateInput.value)) {
+            setInlineError('startDate', 'Ngày bắt đầu không được lớn hơn ngày kết thúc.');
+            hasError = true;
         }
 
-        // Kiểm tra ngày bắt đầu không được lớn hơn ngày kết thúc (so sánh chuỗi YYYY-MM-DD là an toàn hoặc Date)
-        if (new Date(startDateInput.value) > new Date(endDateInput.value)) {
-            showError('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
-            return;
-        }
+        if (hasError) return;
 
         const formatToVN = (isoString) => {
             if (!isoString) return '';

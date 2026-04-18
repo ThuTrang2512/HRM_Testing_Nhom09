@@ -7,7 +7,10 @@ from .models import HopDongLaoDong, HopDongLaoDong_CT
 from pages.employee.models import NhanVien
 
 def get_contract_data(request):
-    contracts = HopDongLaoDong.objects.select_related('MaNhanVien', 'hopdonglaodong_ct').all().order_by('MaHopDong')
+    # Chỉ lấy hợp đồng của những nhân viên đang ở trạng thái 'Đang làm việc'
+    contracts = HopDongLaoDong.objects.select_related('MaNhanVien', 'hopdonglaodong_ct')\
+        .filter(MaNhanVien__TrangThai='Đang làm việc')\
+        .order_by('MaHopDong')
     contract_list = []
     
     for c in contracts:

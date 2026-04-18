@@ -53,7 +53,7 @@
             <a href="/pages/salary/salary.html" class="nav-link active">Bảng lương</a>
 
             <div class="nav-dropdown" id="baoCaoDropdown">
-                <div class="nav-link nav-link-dropdown" onclick="toggleDropdown()">
+                <div class="nav-link nav-link-dropdown" onclick="toggleDropdown(event)">
                     <span>Báo cáo</span>
                     <i class="fa-solid fa-chevron-down nav-dropdown-icon"></i>
                 </div>
@@ -397,9 +397,10 @@
     </div>
 
     <script>
-        function toggleDropdown() {
+        function toggleDropdown(e) {
+            if (e) e.stopPropagation();
             const dd = document.getElementById("baoCaoDropdown");
-            dd.classList.toggle("open");
+            if (dd) dd.classList.toggle("open");
         }
 
         document.addEventListener("click", function (e) {

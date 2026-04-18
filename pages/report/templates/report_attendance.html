@@ -63,29 +63,33 @@
     </header>
 
     <!-- Nav -->
-    <nav class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold">
-        <a href="{% url 'dashboard' %}" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Tổng quan</a>
-        <a href="../employee/employee_list.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Nhân viên</a>
-        <a href="../contract/contract_list.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Hợp đồng</a>
+    <nav class="bg-[#4B2E1F]/[0.87] px-8 py-0 flex flex-wrap justify-center gap-x-12 gap-y-2 text-white text-[23px] font-semibold no-print">
+        <a href="/pages/dashboard.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Tổng quan</a>
+        <a href="/employee/" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Nhân viên</a>
+        <a href="/pages/contract/contract_list.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Hợp đồng</a>
         <!-- Lịch làm việc Dropdown -->
-        <div class="relative group cursor-pointer">
+        <div class="relative group cursor-pointer text-white">
             <div class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] flex items-center gap-2">
                 Lịch làm việc
                 <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
             </div>
             <!-- Dropdown menu -->
-            <div class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
-                <a href="../schedule/schedule_list.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium border-b border-gray-50">Tạo lịch làm việc</a>
-                <a href="../schedule/schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium">Gửi thông báo lịch làm việc</a>
+            <div class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100 font-medium">
+                <a href="/pages/schedule/schedule_list.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-[#78594A] transition-colors font-medium border-b border-gray-50">Tạo lịch làm việc</a>
+                <a href="/pages/schedule/schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-[#78594A] transition-colors font-medium">Gửi thông báo lịch làm việc</a>
             </div>
         </div>
-        <a href="../request/request.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Yêu cầu</a>
-        <a href="../salary/salary.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Bảng lương</a>
+        <a href="/pages/request/request.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Yêu cầu</a>
+        <a href="/pages/salary/salary.html" class="nav-item py-[16px] hover:text-[#d6b5a3] transition-colors">Bảng lương</a>
+        <!-- Báo cáo dropdown -->
         <div class="nav-dropdown nav-item active py-[16px]" id="baoCaoDropdown">
-            <span class="cursor-pointer select-none" onclick="toggleDropdown()">Báo cáo</span>
-            <div class="nav-dropdown-menu">
-                <a href="{% url 'report:report_salary' %}">Báo cáo lương</a>
-                <a href="{% url 'report:report_attendance' %}" class="active-report">Báo cáo chấm công</a>
+            <span class="cursor-pointer select-none flex items-center gap-2" onclick="toggleDropdown(event)">
+                Báo cáo
+                <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
+            </span>
+            <div class="nav-dropdown-menu" id="baoCaoMenu">
+                <a href="/report/salary/">Báo cáo lương</a>
+                <a href="/report/attendance/" class="active-report">Báo cáo chấm công</a>
             </div>
         </div>
     </nav>
@@ -264,7 +268,11 @@
 
     <script>
         // Nav dropdown
-        function toggleDropdown() { document.getElementById('baoCaoDropdown').classList.toggle('open'); }
+        function toggleDropdown(e) {
+            if (e) e.stopPropagation();
+            const dd = document.getElementById('baoCaoDropdown');
+            if (dd) dd.classList.toggle('open');
+        }
         document.addEventListener('click', e => {
             const dd = document.getElementById('baoCaoDropdown');
             if (dd && !dd.contains(e.target)) dd.classList.remove('open');

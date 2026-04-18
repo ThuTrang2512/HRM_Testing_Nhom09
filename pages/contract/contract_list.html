@@ -221,21 +221,24 @@
         <a href="/employee/" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Nhân viên</a>
         <a href="/pages/contract/contract_list.html" class="nav-item active py-[16px] transition-colors hover:text-[#d6b5a3]">Hợp đồng</a>
         <!-- Lịch làm việc Dropdown -->
-        <div class="relative group cursor-pointer">
+        <div class="relative group cursor-pointer text-white">
             <div class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3] flex items-center gap-2">
                 Lịch làm việc
                 <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
             </div>
             <!-- Dropdown menu -->
             <div class="absolute left-1/2 -translate-x-1/2 mt-0 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden text-[16px] text-gray-800 border border-gray-100">
-                <a href="/pages/schedule/schedule_list.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium border-b border-gray-50">Tạo lịch làm việc</a>
-                <a href="/pages/schedule/schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-brand-text transition-colors font-medium">Gửi thông báo lịch làm việc</a>
+                <a href="/pages/schedule/schedule_list.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-[#78594A] transition-colors font-medium border-b border-gray-50">Tạo lịch làm việc</a>
+                <a href="/pages/schedule/schedule_notification.html" class="block px-5 py-3.5 hover:bg-[#f9f5f3] hover:text-[#78594A] transition-colors font-medium">Gửi thông báo lịch làm việc</a>
             </div>
         </div>
         <a href="/pages/request/request.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
         <a href="/pages/salary/salary.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Bảng lương</a>
         <div class="nav-dropdown nav-item py-[16px]" id="baoCaoDropdown">
-            <span class="cursor-pointer hover:text-[#d6b5a3] transition-colors select-none" onclick="toggleDropdown()">Báo cáo</span>
+            <span class="cursor-pointer hover:text-[#d6b5a3] transition-colors select-none flex items-center gap-2" onclick="toggleDropdown(event)">
+                Báo cáo
+                <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
+            </span>
             <div class="nav-dropdown-menu" id="baoCaoMenu">
                 <a href="/report/salary/">Báo cáo lương</a>
                 <a href="/report/attendance/">Báo cáo chấm công</a>
@@ -245,22 +248,33 @@
 
     <!-- Main Content -->
     <main class="flex-grow p-8 max-w-[1600px] w-full mx-auto">
-        <div class="flex items-center justify-center gap-4 mb-6 px-4">
-            <div class="relative max-w-[750px] flex-1">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                    <i class="fa-solid fa-magnifying-glass text-[18px]"></i>
+        <!-- Toolbar (Search & Add) -->
+        <div class="flex justify-between items-center mb-10 gap-6 flex-wrap relative">
+            <div class="flex items-center gap-4 flex-1 min-w-[300px] relative">
+                <div class="relative shadow-sm rounded-lg border border-gray-200 bg-white flex items-center overflow-hidden w-full">
+                    <div class="pl-5 text-gray-400">
+                        <i class="fa-solid fa-magnifying-glass text-[20px]"></i>
+                    </div>
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm theo tên nhân viên..." 
+                        class="w-full py-[10px] px-4 text-[18px] outline-none placeholder-gray-400 text-brand-dark border-none">
                 </div>
-                <input type="text" id="searchInput" placeholder="Nhập tên nhân viên" class="w-full rounded-md border border-[#d2c5bc] bg-white py-3 pl-12 pr-4 text-[20px] text-[#4B2E1F] outline-none shadow-sm focus:border-[#78594A]">
+                <button id="searchBtn"
+                    class="bg-brand-primary text-white h-[46px] min-w-[180px] px-6 rounded-lg font-bold text-[18px] shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap">
+                    Tìm kiếm
+                </button>
             </div>
-            <button class="bg-[#78594A] text-white px-6 py-3 rounded-md font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="searchBtn">Tìm kiếm</button>
-            <button class="bg-[#78594A] text-white px-6 py-3 rounded-md font-semibold text-[20px] shadow-sm hover:bg-[#5c4133] transition whitespace-nowrap" id="addContractBtn">+ Thêm</button>
+
+            <button id="addContractBtn"
+                class="bg-brand-primary text-white h-[46px] flex items-center justify-center min-w-[180px] px-6 rounded-lg font-bold text-[18px] shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap uppercase">
+                + Thêm
+            </button>
         </div>
 
         <div class="bg-white rounded-md shadow-sm border border-[#e5ddd4] overflow-hidden">
             <div class="overflow-x-auto table-container">
                 <table class="w-full min-w-[1100px] text-center text-[#4B2E1F]">
                     <thead>
-                        <tr class="bg-[#78594A] text-white text-[22px]">
+                        <tr class="bg-[#78594A] text-white text-[18px]">
                             <th class="py-4 px-3">STT</th>
                             <th class="py-4 px-4">Mã hợp đồng</th>
                             <th class="py-4 px-4">Mã nhân viên</th>
@@ -270,7 +284,7 @@
                             <th class="py-4 px-4">Hành động</th>
                         </tr>
                     </thead>
-                    <tbody class="text-[20px]" id="contractTableBody">
+                    <tbody class="text-[16px]" id="contractTableBody">
                         <!-- Các dòng hợp đồng sẽ được render bằng JS, ví dụ mẫu: -->
                         <!--
                         <tr>
@@ -295,15 +309,21 @@
 
         <!-- Delete Confirmation Modal -->
         <div id="deleteConfirmModal" class="fixed inset-0 bg-black/40 z-[80] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center">
-            <div id="deleteConfirmContent" class="bg-white rounded-lg shadow-2xl w-full max-w-[440px] p-8 mx-4 flex flex-col items-center transform scale-95 opacity-0 transition-all duration-300">
-                <div class="w-16 h-16 bg-[#F05243] rounded-full flex items-center justify-center mb-4">
+            <div id="deleteConfirmContent" class="bg-white rounded-[20px] shadow-2xl w-full max-w-[480px] p-8 mx-4 flex flex-col items-center transform scale-95 opacity-0 transition-all duration-300">
+                <div class="w-16 h-16 bg-[#F05243] rounded-full flex items-center justify-center mb-4 shadow-sm">
                     <i class="fa-solid fa-triangle-exclamation text-white text-[28px]"></i>
                 </div>
-                <h3 class="text-[#4B2E1F] font-bold text-[22px] uppercase mb-2 tracking-wide">XÁC NHẬN XÓA</h3>
-                <p class="text-[#4B2E1F]/[0.85] text-[18px] text-center mb-8">Bạn có chắc chắn muốn xóa hợp đồng này?</p>
+                <h3 class="text-[#4B2E1F] font-bold text-[26px] mb-2 uppercase tracking-wide">XÁC NHẬN XÓA</h3>
+                <p class="text-gray-500 text-[18px] text-center mb-8 leading-relaxed whitespace-nowrap px-2">
+                    Bạn có chắc chắn muốn xóa hợp đồng này?
+                </p>
                 <div class="flex items-center gap-4 w-full justify-center">
-                    <button id="cancelDeleteBtn" class="bg-[#E5E5E5] text-[#4B2E1F] font-bold px-8 py-3 rounded-md hover:bg-[#d9d5d1] transition text-[18px] min-w-[120px]">Không</button>
-                    <button id="confirmDeleteBtn" class="bg-[#4B2E1F] text-white font-bold px-8 py-3 rounded-md hover:bg-[#3a271f] transition text-[18px] min-w-[120px]">Đồng ý</button>
+                    <button id="cancelDeleteBtn" class="flex-1 bg-[#E5E7EB] text-[#4B5563] font-bold py-3 rounded-xl hover:bg-gray-300 transition text-[18px]">
+                        Không
+                    </button>
+                    <button id="confirmDeleteBtn" class="flex-1 bg-[#5c4133] text-white font-bold py-3 rounded-xl hover:bg-[#4a3429] transition text-[18px]">
+                        Đồng ý
+                    </button>
                 </div>
             </div>
         </div>
@@ -421,9 +441,10 @@
     </div>
 
     <script>
-        function toggleDropdown() {
+        function toggleDropdown(e) {
+            if (e) e.stopPropagation();
             const dd = document.getElementById('baoCaoDropdown');
-            dd.classList.toggle('open');
+            if (dd) dd.classList.toggle('open');
         }
         // Close dropdown when clicking outside
         document.addEventListener('click', function (e) {
