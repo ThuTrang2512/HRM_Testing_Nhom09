@@ -26,6 +26,7 @@ def get_salary_data(request):
             "totalSalary": float(bl.TongThucLanh) if bl.TongThucLanh is not None else 0.0,
             "bonus": float(bl.TongThuong) if bl.TongThuong is not None else 0.0,
             "penalty": float(bl.TongPhat) if bl.TongPhat is not None else 0.0,
+            "workedHours": float(bl.SoGioLam) if hasattr(bl, 'SoGioLam') and bl.SoGioLam is not None else 0.0,
             "status": status_map.get(bl.TrangThai, 'pending')
         })
         
@@ -51,7 +52,7 @@ def get_salary_data(request):
             }
             
         if cc.SoGioLam and cc.TrangThai in ['Đúng giờ', 'Trễ']:
-            attendance_data_dict[key]["workedHours"] += float(cc.SoGioLam)
+            attendance_data_dict[key]["workedHours"] = round(attendance_data_dict[key]["workedHours"] + float(cc.SoGioLam), 2)
 
     # Attach base salaries from contracts
     hd_cts = HopDongLaoDong_CT.objects.select_related('MaHopDong__MaNhanVien').all()
@@ -103,7 +104,7 @@ def sync_salary_action(request):
                         ThoiGian=thoi_gian,
                         LuongCoBan=Decimal(data.get('baseSalary', 0)),
                         LuongTheoGio=Decimal(data.get('hourlyRate', 0)),
-                        SoGioLam=int(float(data.get('workedHours', 0))),
+                        SoGioLam=Decimal(float(data.get('workedHours', 0))),
                         TongThuong=Decimal(data.get('bonus', 0)),
                         TongPhat=Decimal(data.get('penalty', 0)),
                         TongThucLanh=Decimal(data.get('totalSalary', 0)),

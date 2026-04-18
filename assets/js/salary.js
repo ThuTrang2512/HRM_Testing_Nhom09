@@ -339,7 +339,7 @@ function renderTable() {
         const attendance = getAttendanceRecord(item.employeeId, item.month);
         const baseSalary = attendance?.baseSalary || 0;
         const hourlyRate = attendance?.hourlyRate || 0;
-        const workedHours = attendance?.workedHours || 0;
+        const workedHours = parseFloat(Number(attendance?.workedHours || 0).toFixed(2));
 
         if (showAction) {
             return `
@@ -471,7 +471,7 @@ function fillEditSalaryDetail(payroll) {
         month: payroll.month,
         baseSalary: attendance?.baseSalary || 0,
         hourlyRate: attendance?.hourlyRate || 0,
-        workedHours: attendance?.workedHours || 0,
+        workedHours: parseFloat(Number(attendance?.workedHours || 0).toFixed(2)),
         bonus: payroll.bonus,
         penalty: payroll.penalty,
         isEditMode: true
@@ -488,7 +488,7 @@ function fillEditSalaryDetail(payroll) {
 
     detailBaseSalary.value = currentSalaryDraft.baseSalary;
     detailHourlyRate.value = currentSalaryDraft.hourlyRate;
-    detailWorkedHours.value = currentSalaryDraft.workedHours;
+    detailWorkedHours.value = parseFloat(Number(currentSalaryDraft.workedHours).toFixed(2));
     detailBonus.value = currentSalaryDraft.bonus;
     detailPenalty.value = currentSalaryDraft.penalty;
 
@@ -689,7 +689,7 @@ function renderCalcTable() {
                 >
             </td>
             <td>${item.employeeId}</td>
-            <td>${item.workedHours}</td>
+            <td>${parseFloat(Number(item.workedHours || 0).toFixed(2))}</td>
             <td>
                 ${item.isCalculated
                     ? `<span class="calc-done-badge">Đã tính lương</span>`
@@ -723,7 +723,7 @@ function fillSalaryDetail(data) {
         month: data.month,
         baseSalary: data.baseSalary,
         hourlyRate: data.hourlyRate,
-        workedHours: data.workedHours,
+        workedHours: parseFloat(Number(data.workedHours || 0).toFixed(2)),
         bonus: 0,
         penalty: 0,
         totalSalary: baseAmount,
@@ -741,7 +741,7 @@ function fillSalaryDetail(data) {
 
     detailBaseSalary.value = data.baseSalary;
     detailHourlyRate.value = data.hourlyRate;
-    detailWorkedHours.value = data.workedHours;
+    detailWorkedHours.value = parseFloat(Number(data.workedHours).toFixed(2));
     detailBonus.value = 0;
     detailPenalty.value = 0;
 

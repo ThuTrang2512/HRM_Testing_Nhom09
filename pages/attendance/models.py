@@ -28,19 +28,56 @@ class ChamCong(models.Model):
     def save(self, *args, **kwargs):
         # Automated SoGioLam Calculation
         if self.GioVao and self.GioRa:
-            # Convert time to datetime to subtract
-            from datetime import datetime, date
+            from datetime import datetime, date, time, timedelta
+            from decimal import Decimal
             d_today = date.today()
             dt_vao = datetime.combine(d_today, self.GioVao)
             dt_ra = datetime.combine(d_today, self.GioRa)
             
-            # If Ra < Vao, assume cross midnight (though not likely for these shifts)
-            if dt_ra < dt_vao:
-                from datetime import timedelta
-                dt_ra += timedelta(days=1)
+            ca_lam = None
+            if self.MaLich:
+                ca_lam = self.MaLich.CaLam
                 
-            diff = dt_ra - dt_vao
-            self.SoGioLam = Decimal(diff.total_seconds() / 3600).quantize(Decimal('0.00'))
+            shift_start = None
+            shift_end = None
+            
+            if ca_lam:
+                ca_lam_lower = ca_lam.lower()
+                if 'sáng' in ca_lam_lower or 'sang' in ca_lam_lower:
+                    shift_start = time(6, 0)
+                    shift_end = time(12, 0)
+                elif 'chiều' in ca_lam_lower or 'chieu' in ca_lam_lower:
+                    shift_start = time(12, 0)
+                    shift_end = time(17, 0)
+                elif 'tối' in ca_lam_lower or 'toi' in ca_lam_lower or 't\u1ed1i' in ca_lam_lower:
+                    shift_start = time(17, 0)
+                    shift_end = time(22, 0)
+            
+            # Nếu không nhận diện được qua tên, thử lấy trực tiếp từ Lịch
+            if not shift_start and self.MaLich:
+                if self.MaLich.GioBatDau and self.MaLich.GioKetThuc:
+                    shift_start = self.MaLich.GioBatDau
+                    shift_end = self.MaLich.GioKetThuc
+
+            if shift_start and shift_end:
+                dt_shift_start = datetime.combine(d_today, shift_start)
+                
+                if dt_ra < dt_vao:
+                    dt_ra += timedelta(days=1)
+                
+                # Check-in sớm hơn ca -> tính từ đầu ca. Trễ hơn -> tính từ lúc check-in
+                actual_start = max(dt_vao, dt_shift_start)
+                actual_end = dt_ra
+                
+                diff = actual_end - actual_start
+                minutes = max(0, diff.total_seconds() / 60)
+                
+                self.SoGioLam = Decimal(minutes / 60.0).quantize(Decimal('0.00'))
+            else:
+                if dt_ra < dt_vao:
+                    dt_ra += timedelta(days=1)
+                diff = dt_ra - dt_vao
+                self.SoGioLam = Decimal(diff.total_seconds() / 3600).quantize(Decimal('0.00'))
         
         super(ChamCong, self).save(*args, **kwargs)
 

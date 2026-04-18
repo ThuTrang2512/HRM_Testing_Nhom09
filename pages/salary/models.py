@@ -19,7 +19,7 @@ class BangLuong(models.Model):
     ThoiGian = models.DateField(default=date.today, verbose_name="Tháng/Năm")
     LuongCoBan = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Lương cơ bản")
     LuongTheoGio = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Lương theo giờ")
-    SoGioLam = models.IntegerField(verbose_name="Số giờ làm")
+    SoGioLam = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Số giờ làm")
     TongThuong = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Tổng thưởng")
     TongPhat = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Tổng phạt")
     TongThucLanh = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Tổng thực lãnh")
