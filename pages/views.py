@@ -49,17 +49,16 @@ def dashboard(request):
     # 4. Grouped Roles Bar (Vertical Bar) - Last 3 months (Feb, Mar, Apr 2026)
     month_labels = ["Tháng 2", "Tháng 3", "Tháng 4"]
     roles_datasets = []
-    colors = {'Giữ xe': '#d34a6e', 'Pha chế': '#f5a198', 'Phục vụ': '#61c9e4'}
-    for role in ['Giữ xe', 'Pha chế', 'Phục vụ']:
+    colors_palette = ['#d34a6e', '#f5a198', '#61c9e4', '#a380fa', '#6bcfce', '#fcd34d', '#fb923c']
+    for idx, role in enumerate(roles_labels):
         data_points = []
         for m in [2, 3, 4]:
-            hours = BangLuong.objects.filter(ThoiGian__month=m, ThoiGian__year=current_year, MaNhanVien__ChucVu=role).aggregate(Sum('SoGioLam'))['SoGioLam__sum'] or 0
-            # Adding some variance if zero for demonstration if needed, but here we use real
+            hours = ChamCong.objects.filter(MaLich__NgayLam__month=m, MaLich__NgayLam__year=current_year, MaNhanVien__ChucVu=role).aggregate(Sum('SoGioLam'))['SoGioLam__sum'] or 0
             data_points.append(float(hours))
         roles_datasets.append({
             'label': role,
             'data': data_points,
-            'color': colors.get(role, '#9ca3af')
+            'color': colors_palette[idx % len(colors_palette)]
         })
 
     context = {

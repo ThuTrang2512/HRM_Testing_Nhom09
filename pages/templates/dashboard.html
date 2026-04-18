@@ -23,7 +23,7 @@
                 <i class="fa-solid fa-user-group text-gray-800 text-2xl"></i>
             </div>
             <div>
-                <div class="text-[44px] font-bold text-gray-900 mb-1 leading-none">{{ total_employees }}</div>
+                <div class="text-[44px] font-bold text-gray-900 mb-1 leading-none">{{ total_emp }}</div>
                 <div class="text-[16px] text-gray-400 font-medium mt-2">
                     <span class="text-green-500">+2</span> từ tháng trước
                 </div>
@@ -37,10 +37,10 @@
                 <i class="fa-solid fa-clipboard-list text-gray-800 text-2xl"></i>
             </div>
             <div>
-                <div class="text-[44px] font-bold text-gray-900 mb-1 leading-none">{{ pending_requests }}</div>
+                <div class="text-[44px] font-bold text-gray-900 mb-1 leading-none">{{ pending_req }}</div>
                 <div class="text-[16px] text-gray-400 font-medium flex gap-3 mt-2">
-                    <span><span class="text-red-400">2</span> nghỉ phép</span>
-                    <span><span class="text-gray-400">3</span> đăng ký ca</span>
+                    <span><span class="text-red-400">{{ pending_leave }}</span> nghỉ phép</span>
+                    <span><span class="text-gray-400">{{ pending_shift }}</span> đăng ký ca</span>
                 </div>
             </div>
         </div>
@@ -52,9 +52,9 @@
                 <i class="fa-solid fa-user-clock text-gray-800 text-2xl"></i>
             </div>
             <div>
-                <div class="text-[44px] font-bold text-gray-900 mb-1 leading-none">5/5</div>
+                <div class="text-[44px] font-bold text-gray-900 mb-1 leading-none">{{ today_attendance }}/{{ total_emp }}</div>
                 <div class="text-[16px] text-gray-400 font-medium mt-2">
-                    <span class="text-green-500">100%</span> đã chấm công
+                    <span class="text-green-500">{{ attendance_rate }}%</span> đã chấm công
                 </div>
             </div>
         </div>
@@ -92,8 +92,8 @@
 
 
             <!-- "ĐI LẠC COFFEE" -->
-            <div class="absolute top-[135px] right-[25%] text-left z-10">
-                <div class="text-[20px] text-[#785438] font-bold tracking-[0.02em] leading-[1.6]">ĐI LẠC<br>COFFEE
+            <div class="absolute top-[100px] right-[25%] text-left z-10">
+                <div class="text-[20px] text-[#785438] font-bold tracking-[0.02em] leading-[1.6]">ĐI LẠC COFFEE
                 </div>
             </div>
 
@@ -115,12 +115,11 @@
         <div class="bg-white p-6 md:p-10 rounded-xl card-shadow border border-gray-50 flex flex-col relative h-[500px]">
             <!-- Custom HTML legend -->
             <div class="flex gap-[30px] mb-6 justify-center text-[16px] font-medium text-gray-500">
-                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-[#a380fa] mr-2 rounded-[2px]"></span>2025
+                {% for item in salary_by_year %}
+                <div class="flex items-center">
+                    <span class="w-3.5 h-3.5 mr-2 rounded-[2px]" style="background-color: {% if forloop.counter0 == 0 %}#a380fa{% elif forloop.counter0 == 1 %}#f5a198{% else %}#6bcfce{% endif %}"></span>{{ item.year }}
                 </div>
-                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-[#f5a198] mr-2 rounded-[2px]"></span>2024
-                </div>
-                <div class="flex items-center"><span class="w-3.5 h-3.5 bg-[#6bcfce] mr-2 rounded-[2px]"></span>2023
-                </div>
+                {% endfor %}
             </div>
             <!-- Rotated Y-axis label -->
             <div class="absolute left-4 top-1/2 -translate-y-1/2 -rotate-90 text-[15px] font-bold text-gray-700 tracking-wide"
@@ -134,15 +133,20 @@
         </div>
 
         <!-- Chart 4: Grouped Bar Chart -->
-        <div class="bg-white p-6 md:p-8 rounded-xl card-shadow border border-gray-50 flex flex-col h-[500px]">
-            <div class="flex gap-[45px] mb-10 justify-center text-[16px] font-medium text-gray-500">
-                <div class="flex items-center"><span class="w-[12px] h-[12px] bg-[#d34a6e] mr-2"></span>Giữ xe</div>
-                <div class="flex items-center"><span class="w-[12px] h-[12px] bg-[#f5a198] mr-2"></span>Pha chế
-                </div>
-                <div class="flex items-center"><span class="w-[12px] h-[12px] bg-[#61c9e4] mr-2"></span>Phục vụ
-                </div>
+        <div class="bg-white p-6 md:p-8 rounded-xl card-shadow border border-gray-50 flex flex-col relative h-[500px]">
+            <!-- Rotated Y-axis label -->
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 -rotate-90 text-[15px] font-bold text-gray-700 tracking-wide"
+                style="white-space: nowrap;">
+                Tổng số giờ làm
             </div>
-            <div class="flex-grow relative pl-2 pb-6">
+            <div class="flex gap-[45px] mb-10 justify-center text-[16px] font-medium text-gray-500 ml-6">
+                {% for ds in roles_datasets %}
+                <div class="flex items-center">
+                    <span class="w-[12px] h-[12px] mr-2" style="background-color: {{ ds.color }}"></span>{{ ds.label }}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="flex-grow relative ml-auto w-[90%] pb-6">
                 <canvas id="chartRolesBar"></canvas>
             </div>
         </div>
@@ -152,24 +156,24 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // Data from backend
-    const chartHoursLabels = {{ chart_hours_labels| safe }};
-    const chartHoursValues = {{ chart_hours_values| safe }};
-    const rolesLabels = {{ roles_labels| safe }};
-    const rolesCounts = {{ roles_counts| safe }};
-    const salaryByYear = {{ salary_by_year| safe }};
-    const monthLabels = {{ month_labels| safe }};
+    const chartHoursLabels = {{ chart_hours_labels|safe }};
+    const chartHoursValues = {{ chart_hours_values|safe }};
+    const rolesLabels = {{ roles_labels|safe }};
+    const rolesCounts = {{ roles_counts|safe }};
+    const salaryByYear = {{ salary_by_year|safe }};
+    const monthLabels = {{ month_labels|safe }};
     const rolesDatasets = [
         {% for ds in roles_datasets %}
-    {
-        label: "{{ ds.label }}",
-            data: { { ds.data | safe } },
-        backgroundColor: "{{ ds.color }}",
-        } {% if not forloop.last %}, {% endif %}
-    {% endfor %}
-    ]; -->
+        {
+            label: "{{ ds.label }}",
+            data: {{ ds.data|safe }},
+            backgroundColor: "{{ ds.color }}",
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
 </script>
 <script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}
