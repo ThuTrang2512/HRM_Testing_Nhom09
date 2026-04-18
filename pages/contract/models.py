@@ -12,6 +12,7 @@ class HopDongLaoDong(models.Model):
     STATUS_CHOICES = [
         ('Còn hạn', 'Còn hạn'),
         ('Hết hạn', 'Hết hạn'),
+        ('Sắp hiệu lực', 'Sắp hiệu lực'),
         ('Sắp đến hạn', 'Sắp đến hạn'),
     ]
 
@@ -48,11 +49,16 @@ class HopDongLaoDong(models.Model):
         today = date.today()
         if self.NgayBatDau and self.NgayKetThuc:
             if today < self.NgayBatDau:
-                self.TrangThai = 'Sắp đến hạn'
-            elif self.NgayBatDau <= today <= self.NgayKetThuc:
-                self.TrangThai = 'Còn hạn'
-            else:
+                self.TrangThai = 'Sắp hiệu lực'
+            elif today > self.NgayKetThuc:
                 self.TrangThai = 'Hết hạn'
+            else:
+                # Active contract: Check if it's near expiration (30 days)
+                delta = (self.NgayKetThuc - today).days
+                if delta <= 30:
+                    self.TrangThai = 'Sắp đến hạn'
+                else:
+                    self.TrangThai = 'Còn hạn'
         super(HopDongLaoDong, self).save(*args, **kwargs)
 
     def __str__(self):

@@ -43,14 +43,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const getStatusStyle = (status) => {
         if (!status) return 'bg-gray-100 text-gray-800';
         const lower = status.toLowerCase();
-        if (lower === 'còn hạn') return 'bg-green-100 text-green-800';
-        if (lower === 'hết hiệu lực') return 'bg-red-100 text-red-800';
-        if (lower === 'sắp hiệu lực') return 'bg-yellow-100 text-yellow-800';
-        return 'bg-gray-100 text-gray-800';
+        if (lower === 'còn hạn') return 'bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium';
+        if (lower === 'hết hạn') return 'bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium';
+        if (lower === 'sắp hiệu lực' || lower === 'sắp đến hạn') return 'bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium';
+        return 'bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium';
     };
 
     const getContractStatus = (startDateStr, endDateStr) => {
         const now = new Date();
+        now.setHours(0, 0, 0, 0); // Normalize time for comparison
         let startDate, endDate;
         
         if (startDateStr && startDateStr.includes('-')) {
@@ -62,11 +63,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const [endDay, endMonth, endYear] = endDateStr.split('/');
             endDate = new Date(`${endYear}-${endMonth.padStart(2, '0')}-${endDay.padStart(2, '0')}`);
         } else {
-            return 'Còn hạn'; // safe fallback
+            return 'Còn hạn';
         }
 
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(0, 0, 0, 0);
+
         if (now < startDate) return 'Sắp hiệu lực';
-        if (now > endDate) return 'Hết hiệu lực';
+        if (now > endDate) return 'Hết hạn';
+        
+        // Active: check if within 30 days of expiration
+        const diffTime = endDate - now;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays <= 30) return 'Sắp đến hạn';
+        
         return 'Còn hạn';
     };
 

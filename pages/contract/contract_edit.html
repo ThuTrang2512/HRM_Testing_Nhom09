@@ -201,11 +201,12 @@
                         <span id="error-contractType" class="text-red-500 text-[13px] mt-1 hidden font-medium"></span>
                     </div>
                     <div class="flex flex-col relative">
-                        <label class="font-bold text-[#8C6F60] mb-2">Mức lương</label>
+                        <label class="font-bold text-[#8C6F60] mb-2">Lương theo giờ <span class="text-red-500">*</span></label>
                         <div class="relative">
-                            <input type="text" id="salary" placeholder="Nhập mức lương" class="w-full bg-white border border-gray-200 rounded-[8px] px-4 py-[10px] pr-14 text-gray-700 focus:outline-none focus:border-brand-primary">
+                            <input type="text" id="hourSalary" value="0" class="w-full bg-white border border-gray-200 rounded-[8px] px-4 py-[10px] pr-14 text-gray-700 focus:outline-none focus:border-brand-primary">
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">VND</span>
                         </div>
+                        <span id="error-hourSalary" class="text-red-500 text-[13px] mt-1 hidden font-medium"></span>
                     </div>
                     <div class="flex flex-col">
                         <label class="font-bold text-[#8C6F60] mb-2">Ngày bắt đầu <span class="text-red-500">*</span></label>
@@ -215,7 +216,7 @@
 
                     <!-- Row 3 -->
                     <div class="flex flex-col relative">
-                        <label class="font-bold text-[#8C6F60] mb-2">Lương cơ bản <span class="text-red-500">*</span></label>
+                        <label class="font-bold text-[#8C6F60] mb-2">Lương cơ bản</label>
                         <div class="relative">
                             <input type="text" id="baseSalary" placeholder="Nhập lương cơ bản" class="w-full bg-white border border-gray-200 rounded-[8px] px-4 py-[10px] pr-14 text-gray-700 focus:outline-none focus:border-brand-primary">
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">VND</span>
@@ -223,9 +224,9 @@
                         <span id="error-baseSalary" class="text-red-500 text-[13px] mt-1 hidden font-medium"></span>
                     </div>
                     <div class="flex flex-col relative">
-                        <label class="font-bold text-[#8C6F60] mb-2">Lương theo giờ</label>
+                        <label class="font-bold text-[#8C6F60] mb-2">Mức lương</label>
                         <div class="relative">
-                            <input type="text" id="hourSalary" value="0" class="w-full bg-white border border-gray-200 rounded-[8px] px-4 py-[10px] pr-14 text-gray-700 focus:outline-none focus:border-brand-primary">
+                            <input type="text" id="salary" placeholder="Nhập mức lương" class="w-full bg-white border border-gray-200 rounded-[8px] px-4 py-[10px] pr-14 text-gray-700 focus:outline-none focus:border-brand-primary">
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">VND</span>
                         </div>
                     </div>
@@ -324,7 +325,7 @@
             }
         });
     </script>
-    <script src="../../assets/js/contract_edit.js"></script>
+    <script src="../../assets/js/contract_edit.js?v=1.1"></script>
 </body>
 
 </html>

@@ -117,11 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const clearAllErrors = () => {
-        ['employeeName', 'contractType', 'startDate', 'endDate', 'baseSalary', 'minHour'].forEach(clearInlineError);
+        ['employeeName', 'contractType', 'startDate', 'endDate', 'hourSalary', 'minHour'].forEach(clearInlineError);
     };
 
     // Add real-time validation to clear errors as user types
-    ['employeeName', 'contractType', 'startDate', 'endDate', 'baseSalary', 'minHour'].forEach(id => {
+    ['employeeName', 'contractType', 'startDate', 'endDate', 'hourSalary', 'minHour'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.addEventListener('input', () => clearInlineError(id));
@@ -141,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'contractType', label: 'Loại hợp đồng' },
             { id: 'startDate', label: 'Ngày bắt đầu' },
             { id: 'endDate', label: 'Ngày kết thúc' },
-            { id: 'baseSalary', label: 'Lương cơ bản' },
             { id: 'minHour', label: 'Số giờ làm tối thiểu' }
         ];
 
@@ -152,6 +151,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 hasError = true;
             }
         });
+
+        // Bắt buộc nhập Lương theo giờ nếu là Part-time
+        if (contractTypeInput.value === 'Part-time') {
+            const hourSal = document.getElementById('hourSalary');
+            if (!hourSal || !hourSal.value.trim() || hourSal.value === '0') {
+                setInlineError('hourSalary', 'Lương theo giờ không được để trống khi làm Part-time');
+                hasError = true;
+            }
+        }
 
         if (hasError) return;
 
@@ -233,10 +241,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Các input liên quan
-    const baseSalaryInput = document.querySelector('input[placeholder="Nhập lương cơ bản"]');
-    const hourSalaryInput = document.querySelector('input[placeholder="Nhập lương theo giờ"]') || document.querySelector('input[value="0"]');
-    const minHourInput = document.querySelector('input[value="174"]');
-    const bonusInput = document.querySelector('input[placeholder="Nhập tiền thưởng"]');
+    const baseSalaryInput = document.getElementById('baseSalary');
+    const hourSalaryInput = document.getElementById('hourSalary');
+    const minHourInput = document.getElementById('minHour');
+    const bonusInput = document.getElementById('bonus');
 
     // Hàm tính lại lương theo giờ (cho Full-time)
     function updateHourSalary() {
@@ -292,11 +300,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Khi thay đổi lương theo giờ hoặc số giờ tối thiểu (Part-time)
+    // Khi thay đổi lương theo giờ hoặc số giờ tối thiểu (Part-time & Full-time)
     if (hourSalaryInput) {
         hourSalaryInput.addEventListener('input', function() {
             if (contractTypeInput.value === 'Part-time') {
                 updatePartTimeSalary();
+            } else if (contractTypeInput.value === 'Full-time') {
+                // Nếu là Full-time, tính ngược lại lương cơ bản từ lương theo giờ
+                let hourSal = parseFloat(hourSalaryInput.value.replace(/[^\d]/g, '')) || 0;
+                let minH = parseFloat(minHourInput.value.replace(/[^\d]/g, '')) || 174;
+                let bonus = parseFloat(bonusInput.value.replace(/[^\d]/g, '')) || 0;
+                
+                let baseSal = Math.round(hourSal * minH);
+                baseSalaryInput.value = baseSal.toLocaleString('vi-VN');
+                
+                let totalSalary = baseSal + bonus;
+                salaryInput.value = totalSalary ? totalSalary.toLocaleString('vi-VN') : '';
             }
         });
     }
