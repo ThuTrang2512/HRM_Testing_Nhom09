@@ -57,8 +57,8 @@ class BaoCao_CT(models.Model):
     NgayKhongPhep = models.IntegerField(verbose_name="Ngày không phép")
     
     # Các liên kết ngoài
-    MaLuong = models.ForeignKey('salary.BangLuong', on_delete=models.CASCADE, verbose_name="Mã lương")
-    MaChamCong = models.ForeignKey('attendance.ChamCong', on_delete=models.CASCADE, verbose_name="Mã chấm công")
+    MaLuong = models.ForeignKey('salary.BangLuong', on_delete=models.CASCADE, null=True, blank=True, verbose_name="Mã lương")
+    MaChamCong = models.ForeignKey('attendance.ChamCong', on_delete=models.CASCADE, null=True, blank=True, verbose_name="Mã chấm công")
     MaBaoCao = models.ForeignKey(BaoCao, on_delete=models.CASCADE, verbose_name="Mã báo cáo")
     MaNhanVien = models.ForeignKey('employee.NhanVien', on_delete=models.CASCADE, verbose_name="Nhân viên")
 

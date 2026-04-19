@@ -414,20 +414,10 @@
         {% endfor %}
         ];
         
-        // Fallback sample data if no data from backend AND no search is performed
-        const urlParams = new URLSearchParams(window.location.search);
-        const hasFilter = Array.from(urlParams.entries()).some(([k, v]) => {
-            if (!v || v === 'Tất cả' || v === 'Chu kỳ làm việc' || v === '') return false;
-            return true;
-        });
-        if (mockData.length === 0 && !hasFilter) {
-            mockData.push(
-                { maLuong: 'BL001', maNhanVien: 'NV001', hoTen: 'Nguyễn Văn A', chucVu: 'Pha chế', thoiGian: '04/2026', luongCoBan: 5000000, luongTheoGio: 25000, soGioLam: 160, tongThuong: 200000, tongPhat: 50000, tongThanhToan: 9150000 },
-                { maLuong: 'BL002', maNhanVien: 'NV002', hoTen: 'Trần Thị B', chucVu: 'Phục vụ', thoiGian: '04/2026', luongCoBan: 4500000, luongTheoGio: 20000, soGioLam: 158, tongThuong: 100000, tongPhat: 0, tongThanhToan: 7760000 }
-            );
-        }
-
         function renderRows() {
+            if (mockData.length === 0) {
+                return `<tr><td colspan="11" class="text-center py-10 text-gray-500 font-medium">Không có dữ liệu phù hợp.</td></tr>`;
+            }
             return mockData.map((r, i) => `
                 <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-[#fdf6f2]'} border-b border-gray-100 hover:bg-amber-50 transition">
                     <td class="px-3 py-2 text-xs text-center whitespace-nowrap">${r.maLuong}</td>

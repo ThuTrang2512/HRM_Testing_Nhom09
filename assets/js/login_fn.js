@@ -92,7 +92,7 @@ function handleLogin(event) {
         if (data.success) {
             // Đúng, chuyển tới trang chủ (dashboard.html)
             loginAttempts = 0; 
-            window.location.href = 'dashboard.html';
+            window.location.href = '/dashboard';
         } else {
             // Tăng số lần nhập sai
             loginAttempts++;
