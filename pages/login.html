@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <!-- Định dạng dành riêng cho trang login -->
     <link rel="stylesheet" href="../assets/css/login_fn.css">
 </head>
+
 <body>
 
     <!-- MÀN HÌNH CHỜ (Splash Screen) -->
@@ -21,7 +23,7 @@
             <!-- FontAwesome biểu tượng cốc cà phê -->
             <h1 class="heading-text title-logo">ĐI LẠC COFFEE <i class="fa-solid fa-mug-hot"></i></h1>
             <p>Hệ thống Quản lý Nhân sự</p>
-            
+
             <div class="click-to-continue">
                 <i class="fa-solid fa-lock"></i> Nhấn vào màn hình để tiếp tục
             </div>
@@ -33,34 +35,38 @@
         <div class="login-card">
             <!-- Cột trái chứa hình ảnh nền -->
             <div class="login-left"></div>
-            
+
             <!-- Cột phải chứa form đăng nhập -->
             <div class="login-right">
                 <div class="login-header">
                     <h2 class="heading-text">Hệ thống Quản lý Nhân sự</h2>
                     <p class="subtitle"><i class="fa-solid fa-mug-hot"></i> ĐI LẠC COFFEE</p>
                 </div>
-                
+
                 <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
                     <div class="input-group">
                         <label for="username">Tên đăng nhập</label>
                         <input type="text" id="username" placeholder="Vui lòng nhập tên đăng nhập">
-                        <small class="error-text" id="username-error" style="display: none;">Tên đăng nhập không được để trống. Vui lòng nhập lại.</small>
+                        <small class="error-text" id="username-error" style="display: none;">Tên đăng nhập không được để
+                            trống. Vui lòng nhập lại.</small>
                     </div>
-                    
+
                     <div class="input-group">
                         <label for="password">Mật khẩu</label>
                         <div class="password-wrapper">
                             <input type="password" id="password" placeholder="Vui lòng nhập mật khẩu">
                             <i class="fa-regular fa-eye" id="togglePassword" onclick="togglePasswordVisibility()"></i>
                         </div>
-                        <small class="error-text" id="password-error" style="display: none;">Mật khẩu không được để trống. Vui lòng nhập lại.</small>
-                        <small class="hint" id="password-hint">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ và số</small>
-                        <small class="error-text" id="login-error" style="display: none;">Tên đăng nhập hoặc mật khẩu không hợp lệ. Vui lòng nhập lại.</small>
+                        <small class="error-text" id="password-error" style="display: none;">Mật khẩu không được để
+                            trống. Vui lòng nhập lại.</small>
+                        <small class="hint" id="password-hint">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ và
+                            số</small>
+                        <small class="error-text" id="login-error" style="display: none;">Tên đăng nhập hoặc mật khẩu
+                            không hợp lệ. Vui lòng nhập lại.</small>
                     </div>
-                    
+
                     <button type="submit" class="btn-login">Đăng nhập</button>
-                    
+
                     <div class="forgot-password">
                         <a href="#" onclick="showPhoneModal(event)">Quên mật khẩu?</a>
                     </div>
@@ -68,20 +74,22 @@
             </div>
         </div>
     </div>
-    
+
     <!-- MODAL NHẬP SỐ ĐIỆN THOẠI -->
     <div id="phone-modal" class="modal-overlay hidden-modal" onclick="closeModals()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
             <div class="modal-icon"><i class="fa-solid fa-phone"></i></div>
             <h3 class="modal-title">Quên mật khẩu</h3>
-            <p class="modal-subtitle" style="margin-bottom: 20px;">Vui lòng nhập số điện thoại của bạn để nhận mã xác thực OTP</p>
-            
+            <p class="modal-subtitle" style="margin-bottom: 20px;">Vui lòng nhập số điện thoại của bạn để nhận mã xác
+                thực OTP</p>
+
             <form id="phoneForm" onsubmit="submitPhone(event)">
                 <div class="input-group" style="margin-bottom: 15px; text-align: left;">
                     <label style="font-size: 13px;">Số điện thoại</label>
                     <input type="text" id="phone-number" placeholder="Nhập số điện thoại của bạn">
-                    <small class="error-text" id="phone-error" style="display: none;">Số điện thoại không được để trống. Vui lòng nhập lại.</small>
+                    <small class="error-text" id="phone-error" style="display: none;">Số điện thoại không được để trống.
+                        Vui lòng nhập lại.</small>
                 </div>
                 <div class="modal-btn-group">
                     <button type="button" class="btn-cancel" onclick="closeModals()">Hủy</button>
@@ -97,18 +105,22 @@
             <button class="modal-close" onclick="goBackToPhone()"><i class="fa-solid fa-xmark"></i></button>
             <div class="modal-icon"><i class="fa-solid fa-shield-halved"></i></div>
             <h3 class="modal-title">Xác thực OTP</h3>
-            <p class="modal-subtitle">Vui lòng nhập mã OTP đã được gửi đến số điện thoại <strong id="otp-phone-display">083*****26</strong></p>
-            
+            <p class="modal-subtitle">Vui lòng nhập mã OTP đã được gửi đến số điện thoại <strong
+                    id="otp-phone-display">083*****26</strong></p>
+
             <form id="otpForm" onsubmit="submitOtp(event)">
                 <div class="otp-inputs">
-                    <input type="text" maxlength="1" id="otp-1" onkeyup="moveToNextOTP(this, event, 1)" onpaste="handleOtpPaste(event)">
+                    <input type="text" maxlength="1" id="otp-1" onkeyup="moveToNextOTP(this, event, 1)"
+                        onpaste="handleOtpPaste(event)">
                     <input type="text" maxlength="1" id="otp-2" onkeyup="moveToNextOTP(this, event, 2)">
                     <input type="text" maxlength="1" id="otp-3" onkeyup="moveToNextOTP(this, event, 3)">
                     <input type="text" maxlength="1" id="otp-4" onkeyup="moveToNextOTP(this, event, 4)">
                     <input type="text" maxlength="1" id="otp-5" onkeyup="moveToNextOTP(this, event, 5)">
                     <input type="text" maxlength="1" id="otp-6" onkeyup="moveToNextOTP(this, event, 6)">
                 </div>
-                <small class="error-text" id="otp-error" style="display: none; margin-top: -15px; margin-bottom: 15px;">Mã OTP không được để trống. Vui lòng nhập lại.</small>
+                <small class="error-text" id="otp-error"
+                    style="display: none; margin-top: -15px; margin-bottom: 15px;">Mã OTP không được để trống. Vui lòng
+                    nhập lại.</small>
                 <div class="modal-btn-group">
                     <button type="button" class="btn-cancel" onclick="goBackToPhone()">Hủy</button>
                     <button type="submit" class="btn-login">Xác nhận</button>
@@ -127,17 +139,19 @@
             <div class="modal-icon"><i class="fa-solid fa-key"></i></div>
             <h3 class="modal-title">Đặt lại mật khẩu</h3>
             <p class="modal-subtitle">Vui lòng nhập mật khẩu mới để hoàn tất quá trình khôi phục tài khoản</p>
-            
+
             <form id="resetForm" onsubmit="submitNewPassword(event)" style="text-align: left;">
                 <div class="input-group" style="margin-bottom: 20px;">
                     <label>Mật khẩu mới</label>
                     <input type="password" id="newPassword" placeholder="Vui lòng nhập mật khẩu mới">
-                    <small class="error-text" id="newPassword-error" style="display: none;">Mật khẩu mới không được để trống. Vui lòng nhập lại.</small>
+                    <small class="error-text" id="newPassword-error" style="display: none;">Mật khẩu mới không được để
+                        trống. Vui lòng nhập lại.</small>
                 </div>
                 <div class="input-group" style="margin-bottom: 25px;">
                     <label>Nhập lại mật khẩu mới</label>
                     <input type="password" id="confirmNewPassword" placeholder="Vui lòng xác nhận lại mật khẩu mới">
-                    <small class="error-text" id="confirmNewPassword-error" style="display: none;">Nhập lại mật khẩu không được để trống. Vui lòng nhập lại.</small>
+                    <small class="error-text" id="confirmNewPassword-error" style="display: none;">Nhập lại mật khẩu
+                        không được để trống. Vui lòng nhập lại.</small>
                 </div>
                 <div class="modal-btn-group">
                     <button type="button" class="btn-cancel" onclick="goBackToOtp()">Hủy</button>
@@ -153,4 +167,5 @@
     <!-- Script xử lý chuyển màn hình và xem mật khẩu -->
     <script src="../assets/js/login_fn.js"></script>
 </body>
+
 </html>

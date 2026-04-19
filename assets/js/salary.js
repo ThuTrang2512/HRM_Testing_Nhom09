@@ -442,19 +442,30 @@ function rejectPayroll(payrollId) {
 function validateSalaryInputs(bonusValue, penaltyValue) {
     const bonus = Number(bonusValue);
     const penalty = Number(penaltyValue);
+    let isValid = true;
+    
+    const bonusError = document.getElementById("bonusError");
+    const penaltyError = document.getElementById("penaltyError");
 
     if (bonusValue === "" || Number.isNaN(bonus) || bonus < 0) {
         detailBonus.classList.add("input-error");
-        return { valid: false, message: "Tiền thưởng không hợp lệ, vui lòng nhập lại." };
+        if (bonusError) bonusError.style.display = "block";
+        isValid = false;
+    } else {
+        detailBonus.classList.remove("input-error");
+        if (bonusError) bonusError.style.display = "none";
     }
 
     if (penaltyValue === "" || Number.isNaN(penalty) || penalty < 0) {
         detailPenalty.classList.add("input-error");
-        return { valid: false, message: "Tiền phạt không hợp lệ, vui lòng nhập lại." };
+        if (penaltyError) penaltyError.style.display = "block";
+        isValid = false;
+    } else {
+        detailPenalty.classList.remove("input-error");
+        if (penaltyError) penaltyError.style.display = "none";
     }
 
-    detailBonus.classList.remove("input-error");
-    detailPenalty.classList.remove("input-error");
+    if (!isValid) return { valid: false, message: "Vui lòng nhập số tiền hợp lệ (>= 0)." };
 
     return { valid: true, bonus, penalty };
 }
@@ -629,6 +640,10 @@ function closeSalaryDetailPopup() {
     editingPayrollId = null;
     detailBonus.classList.remove("input-error");
     detailPenalty.classList.remove("input-error");
+    const bonusError = document.getElementById("bonusError");
+    if (bonusError) bonusError.style.display = "none";
+    const penaltyError = document.getElementById("penaltyError");
+    if (penaltyError) penaltyError.style.display = "none";
 }
 
 function openSalaryDetailPopup() {
@@ -970,8 +985,14 @@ salaryDetailModal.addEventListener("click", (event) => {
     if (event.target === salaryDetailModal) closeSalaryDetailPopup();
 });
 
-detailBonus.addEventListener("input", updateSalaryTotalPreview);
-detailPenalty.addEventListener("input", updateSalaryTotalPreview);
+detailBonus.addEventListener("input", () => {
+    validateSalaryInputs(detailBonus.value, detailPenalty.value);
+    updateSalaryTotalPreview();
+});
+detailPenalty.addEventListener("input", () => {
+    validateSalaryInputs(detailBonus.value, detailPenalty.value);
+    updateSalaryTotalPreview();
+});
 detailBaseSalary.addEventListener("input", updateSalaryTotalPreview);
 detailHourlyRate.addEventListener("input", updateSalaryTotalPreview);
 detailWorkedHours.addEventListener("input", updateSalaryTotalPreview);
