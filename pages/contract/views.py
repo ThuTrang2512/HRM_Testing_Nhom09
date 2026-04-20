@@ -60,7 +60,15 @@ def sync_contract_action(request):
             action = data.get('action')
             
             if action == 'CREATE':
-                nhan_vien = NhanVien.objects.get(MaNhanVien=data.get('employeeId'))
+                emp_id = data.get('employeeId')
+                # Kiểm tra nhân viên này đã có hợp đồng chưa
+                if HopDongLaoDong.objects.filter(MaNhanVien_id=emp_id).exists():
+                    return JsonResponse({
+                        'success': False, 
+                        'error': f'Nhân viên đã có hợp đồng, vui lòng chọn nhân viên khác'
+                    }, status=400)
+
+                nhan_vien = NhanVien.objects.get(MaNhanVien=emp_id)
                 start_date = datetime.strptime(data.get('startDate'), "%d/%m/%Y").date()
                 end_date = datetime.strptime(data.get('endDate'), "%d/%m/%Y").date()
                 
@@ -87,8 +95,17 @@ def sync_contract_action(request):
             
             elif action == 'UPDATE':
                 contract_id = data.get('id')
+                emp_id = data.get('employeeId')
+                
+                # Kiểm tra xem nhân viên mới được đổi sang có hợp đồng ở chỗ khác chưa
+                if HopDongLaoDong.objects.filter(MaNhanVien_id=emp_id).exclude(MaHopDong=contract_id).exists():
+                    return JsonResponse({
+                        'success': False, 
+                        'error': f'Nhân viên đã có hợp đồng, vui lòng chọn nhân viên khác'
+                    }, status=400)
+
                 hd = HopDongLaoDong.objects.get(MaHopDong=contract_id)
-                nhan_vien = NhanVien.objects.get(MaNhanVien=data.get('employeeId'))
+                nhan_vien = NhanVien.objects.get(MaNhanVien=emp_id)
                 
                 start_date = datetime.strptime(data.get('startDate'), "%d/%m/%Y").date()
                 end_date = datetime.strptime(data.get('endDate'), "%d/%m/%Y").date()

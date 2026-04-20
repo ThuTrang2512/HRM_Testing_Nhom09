@@ -44,12 +44,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }).catch(err => console.error("Lỗi khi tải dữ liệu API:", err));
 
     employeeNameInput.addEventListener('input', (event) => {
+        clearInlineError('employeeName');
         const value = event.target.value.trim();
         const emp = employeeList.find(e => e.name === value);
         
         employeeIdInput.value = emp ? emp.id : '';
         if (employeeRoleInput && emp) {
             employeeRoleInput.value = emp.role;
+        }
+
+        // Kiểm tra trùng hợp đồng ngay lập tức
+        if (emp) {
+            const existingContract = contracts.find(c => c.employeeId === emp.id);
+            if (existingContract) {
+                setInlineError('employeeName', `Nhân viên đã có hợp đồng, vui lòng chọn nhân viên khác`);
+            }
         }
     });
 
@@ -117,11 +126,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const clearAllErrors = () => {
-        ['employeeName', 'contractType', 'startDate', 'endDate', 'hourSalary', 'minHour'].forEach(clearInlineError);
+        ['contractType', 'startDate', 'endDate', 'hourSalary', 'minHour'].forEach(clearInlineError);
     };
 
-    // Add real-time validation to clear errors as user types
-    ['employeeName', 'contractType', 'startDate', 'endDate', 'hourSalary', 'minHour'].forEach(id => {
+    // Xóa lỗi khi người dùng bắt đầu nhập lại
+    ['contractType', 'startDate', 'endDate', 'hourSalary', 'minHour'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.addEventListener('input', () => clearInlineError(id));
@@ -152,11 +161,44 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Kiểm tra nhân viên đã có hợp đồng chưa
+        if (employeeIdInput.value) {
+            const existingContract = contracts.find(c => c.employeeId === employeeIdInput.value);
+            if (existingContract) {
+                setInlineError('employeeName', `Nhân viên đã có hợp đồng, vui lòng chọn nhân viên khác`);
+                hasError = true;
+            }
+        }
+
         // Bắt buộc nhập Lương theo giờ nếu là Part-time
         if (contractTypeInput.value === 'Part-time') {
             const hourSal = document.getElementById('hourSalary');
-            if (!hourSal || !hourSal.value.trim() || hourSal.value === '0') {
-                setInlineError('hourSalary', 'Lương theo giờ không được để trống khi làm Part-time');
+            const hVal = parseFloat(hourSal.value.replace(/[^\d]/g, '')) || 0;
+            if (hVal <= 0) {
+                setInlineError('hourSalary', 'Lương theo giờ phải lớn hơn 0');
+                hasError = true;
+            }
+        }
+
+        // Kiểm tra lương cơ bản cho Full-time (nếu cần thiết, dựa trên logic business)
+        if (contractTypeInput.value === 'Full-time') {
+            const bSal = parseFloat(baseSalaryInput.value.replace(/[^\d]/g, '')) || 0;
+            if (bSal <= 0) {
+                setInlineError('baseSalary', 'Lương cơ bản phải lớn hơn 0');
+                hasError = true;
+            }
+        }
+
+        const minHVal = parseFloat(minHourInput.value.replace(/[^\d]/g, '')) || 0;
+        if (minHVal <= 0) {
+            setInlineError('minHour', 'Số giờ làm tối thiểu phải lớn hơn 0');
+            hasError = true;
+        }
+
+        // Kiểm tra ngày bắt đầu không được lớn hơn ngày kết thúc
+        if (startDateInput.value && endDateInput.value) {
+            if (new Date(startDateInput.value) > new Date(endDateInput.value)) {
+                setInlineError('startDate', 'Ngày bắt đầu không được lớn hơn ngày kết thúc.');
                 hasError = true;
             }
         }
@@ -252,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let minHour = parseFloat(minHourInput.value.replace(/[^\d]/g, '')) || 174;
         let bonus = parseFloat(bonusInput.value.replace(/[^\d]/g, '')) || 0;
         let totalSalary = baseSalary + bonus;
-        salaryInput.value = totalSalary ? totalSalary.toLocaleString('vi-VN') : '';
+        salaryInput.value = (totalSalary !== null && totalSalary !== undefined) ? totalSalary.toLocaleString('vi-VN') : '';
         // Lương theo giờ chỉ lấy lương cơ bản chia số giờ tối thiểu
         if (minHour > 0) {
             hourSalaryInput.value = Math.round(baseSalary / minHour).toLocaleString('vi-VN');
@@ -267,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let hourSalary = parseFloat(hourSalaryInput.value.replace(/[^\d]/g, '')) || 0;
         let bonus = parseFloat(bonusInput.value.replace(/[^\d]/g, '')) || 0;
         let totalSalary = (minHour * hourSalary) + bonus;
-        salaryInput.value = totalSalary ? totalSalary.toLocaleString('vi-VN') : '';
+        salaryInput.value = (totalSalary !== null && totalSalary !== undefined) ? totalSalary.toLocaleString('vi-VN') : '';
     }
 
     // Khi chọn loại hợp đồng
@@ -315,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 baseSalaryInput.value = baseSal.toLocaleString('vi-VN');
                 
                 let totalSalary = baseSal + bonus;
-                salaryInput.value = totalSalary ? totalSalary.toLocaleString('vi-VN') : '';
+                salaryInput.value = (totalSalary !== null && totalSalary !== undefined) ? totalSalary.toLocaleString('vi-VN') : '';
             }
         });
     }
@@ -330,13 +372,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Khi thay đổi mức lương thì cập nhật lại lương cơ bản nếu là full-time
+    // Khi thay đổi mức lương thì cập nhật lại lương cơ bản hoặc lương theo giờ
     salaryInput.addEventListener('input', function() {
+        let val = parseFloat(salaryInput.value.replace(/[^\d]/g, '')) || 0;
+        let bonus = parseFloat(bonusInput.value.replace(/[^\d]/g, '')) || 0;
+        let minH = parseFloat(minHourInput.value.replace(/[^\d]/g, '')) || 174;
+
         if (contractTypeInput.value === 'Full-time') {
-            let val = parseFloat(salaryInput.value.replace(/[^\d]/g, '')) || 0;
-            let bonus = parseFloat(bonusInput.value.replace(/[^\d]/g, '')) || 0;
             baseSalaryInput.value = (val - bonus).toLocaleString('vi-VN');
             updateHourSalary();
+        } else if (contractTypeInput.value === 'Part-time') {
+            if (minH > 0) {
+                let hourSal = Math.round((val - bonus) / minH);
+                hourSalaryInput.value = hourSal.toLocaleString('vi-VN');
+            }
         }
     });
 
@@ -353,6 +402,25 @@ document.addEventListener('DOMContentLoaded', () => {
             updateHourSalary();
         } else if (contractTypeInput.value === 'Part-time') {
             updatePartTimeSalary();
+        }
+    });
+
+    // Hàm định dạng số khi nhập
+    function formatNumericInput(input) {
+        input.addEventListener('input', function(e) {
+            let val = this.value.replace(/[^\d]/g, ''); // Chỉ giữ lại số
+            if (val !== '') {
+                this.value = parseInt(val).toLocaleString('vi-VN');
+            } else {
+                this.value = '';
+            }
+        });
+    }
+
+    // Áp dụng định dạng cho tất cả các trường nhập số
+    [salaryInput, baseSalaryInput, hourSalaryInput, minHourInput, bonusInput].forEach(inp => {
+        if (inp) {
+            formatNumericInput(inp);
         }
     });
 });
