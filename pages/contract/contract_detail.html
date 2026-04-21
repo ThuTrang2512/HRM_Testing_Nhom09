@@ -57,6 +57,50 @@
             background-color: #d6b5a3;
             border-radius: 2px 2px 0 0;
         }
+
+        /* Dropdown nav styles */
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            min-width: 210px;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .nav-dropdown.open .nav-dropdown-menu {
+            display: block;
+        }
+
+        .nav-dropdown-menu a {
+            display: block;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #4B2E1F;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .nav-dropdown-menu a:hover {
+            background: #f5ede8;
+        }
+
+        .nav-dropdown-menu a+a {
+            border-top: 1px solid #f3f4f6;
+        }
     </style>
 </head>
 
@@ -71,9 +115,18 @@
             <h1 class="font-bold text-[26px] uppercase tracking-wider text-brand-text m-0">ÐI L?C COFFEE</h1>
         </div>
         <div class="flex items-center gap-4">
-            <span class="text-gray-800 text-[23px]"><span class="italic font-medium">Xin chào, </span><span class="italic font-bold">Ði L?c coffee</span></span>
-            <div class="w-12 h-12 rounded-full flex items-center justify-center text-gray-700 cursor-pointer transition">
-                <i class="fa-regular fa-circle-user text-[40px]"></i>
+            <span class="text-gray-800 text-[23px]"><span class="italic font-medium">Xin chào, </span><span class="italic font-bold">Ði Lạc coffee</span></span>
+            <!-- User Dropdown -->
+            <div class="nav-dropdown" id="userDropdown">
+                <div class="cursor-pointer transition" onclick="toggleUserDropdown(event)">
+                    <i class="fa-regular fa-circle-user text-[40px]"></i>
+                </div>
+                <div class="nav-dropdown-menu" id="userMenu">
+                    <a href="/pages/login.html" class="flex items-center gap-3 text-red-600 font-bold">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Đăng xuất
+                    </a>
+                </div>
             </div>
         </div>
     </header>
@@ -176,12 +229,25 @@
             if (e) e.stopPropagation();
             const dd = document.getElementById('baoCaoDropdown');
             if (dd) dd.classList.toggle('open');
+            const udd = document.getElementById('userDropdown');
+            if (udd) udd.classList.remove('open');
+        }
+        function toggleUserDropdown(e) {
+            if (e) e.stopPropagation();
+            const udd = document.getElementById('userDropdown');
+            if (udd) udd.classList.toggle('open');
+            const dd = document.getElementById('baoCaoDropdown');
+            if (dd) dd.classList.remove('open');
         }
         // Close dropdown when clicking outside
         document.addEventListener('click', function (e) {
             const dd = document.getElementById('baoCaoDropdown');
             if (dd && !dd.contains(e.target)) {
                 dd.classList.remove('open');
+            }
+            const udd = document.getElementById('userDropdown');
+            if (udd && !udd.contains(e.target)) {
+                udd.classList.remove('open');
             }
         });
     </script>
