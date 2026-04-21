@@ -9,6 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Libraries for Exporting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -43,7 +48,33 @@
             text-align:center; min-width:320px;
             opacity:0; transition:opacity .25s ease, transform .25s ease;
         }
-        #toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
+                #toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
+        
+        /* Error Modal */
+        #errorModal { display:none; }
+        #errorModal.open { display:flex; }
+        .error-card { 
+            animation: modalScale 0.3s ease-out;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+        @keyframes modalScale {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .btn-agree {
+            background-color: #70452F;
+            color: white;
+        }
+        .btn-agree:hover {
+            background-color: #5c3927;
+        }
+        .btn-cancel {
+            background-color: #E5E5E5;
+            color: #4B2E1F;
+        }
+        .btn-cancel:hover {
+            background-color: #d8d8d8;
+        }
     </style>
 </head>
 <body class="text-gray-800 font-sans min-h-screen">
@@ -255,8 +286,9 @@
             <div class="flex items-center justify-between px-6 py-5">
                 <div class="flex items-center gap-3">
                     <label class="text-[13px] font-medium text-gray-600">Chọn định dạng xuất:</label>
-                    <select class="border border-gray-300 rounded px-3 py-1.5 text-sm outline-none font-sans w-36">
-                        <option>Excel</option><option>PDF</option><option>CSV</option>
+                    <select id="exportFormatSelect" class="border border-gray-300 rounded px-3 py-1.5 text-sm outline-none font-sans w-36">
+                        <option value="Excel">Excel</option>
+                        <option value="PDF">PDF</option>
                     </select>
                 </div>
                 <div class="flex gap-4">
@@ -276,6 +308,24 @@
             </svg>
         </div>
         <p id="toastMsg" style="font-size:17px;font-weight:700;color:#1a1a1a;margin:0;">Xuất báo cáo thành công</p>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="fixed inset-0 bg-black/40 z-[100] hidden items-center justify-center">
+        <div class="bg-white rounded-[32px] p-10 text-center max-w-[420px] w-full mx-4 error-card">
+            <!-- Error Icon -->
+            <div class="w-16 h-16 rounded-full border-2 border-[#E74C3C] flex items-center justify-center mx-auto mb-8">
+                <span class="text-[#E74C3C] text-3xl font-bold">!</span>
+            </div>
+            
+            <h3 class="text-[24px] font-bold text-[#70452F]/80 uppercase mb-2 tracking-wide">KHÔNG THÀNH CÔNG</h3>
+            <p id="errorModalMsg" class="text-[15px] text-gray-800 font-semibold mb-10">Xuất file thất bại!!</p>
+            
+            <div class="flex gap-10 px-4">
+                <button onclick="closeErrorModal()" class="flex-1 btn-cancel font-bold py-3.5 rounded-xl transition text-[18px]">Không</button>
+                <button onclick="closeErrorModal()" class="flex-1 btn-agree font-bold py-3.5 rounded-xl transition text-[18px]">Đồng ý</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -356,8 +406,83 @@
             }, 2500);
         }
 
-        document.getElementById('btnXuatModal').onclick = () => showToast('Xuất báo cáo thành công');
-        document.getElementById('btnInModal').onclick   = () => showToast('In báo cáo thành công');
+        function showErrorModal(msg) {
+            document.getElementById('errorModalMsg').textContent = msg;
+            document.getElementById('errorModal').classList.add('open');
+            document.getElementById('printModal').classList.remove('open');
+        }
+        function closeErrorModal() {
+            document.getElementById('errorModal').classList.remove('open');
+        }
+
+        // Chức năng xuất Excel thực tế
+        function exportToExcel(data, filename) {
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Attendance");
+            XLSX.writeFile(wb, filename + ".xlsx");
+        }
+
+        // Chức năng xuất PDF thực tế hỗ trợ tiếng Việt
+        function exportToPDF(filename) {
+            const element = document.querySelector('#printModal .bg-white'); 
+            if (!element) {
+                alert("Không tìm thấy nội dung để xuất PDF!");
+                return;
+            }
+
+            const opt = {
+                margin:       10,
+                filename:     filename + '.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+
+            const buttons = element.querySelector('.flex.items-center.justify-between');
+            const closeBtn = element.querySelector('button[onclick="closeModal()"]');
+            if(buttons) buttons.style.opacity = '0';
+            if(closeBtn) closeBtn.style.opacity = '0';
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                if(buttons) buttons.style.opacity = '1';
+                if(closeBtn) closeBtn.style.opacity = '1';
+            }).catch(err => {
+                console.error("PDF Export Error:", err);
+                showErrorModal('Lỗi khi tạo PDF: ' + err.message);
+            });
+        }
+
+        document.getElementById('btnXuatModal').onclick = function() {
+            const select = document.getElementById('exportFormatSelect');
+            const format = select ? select.value : 'Excel';
+            const filename = "Bao_Cao_Cham_Cong_" + new Date().getTime();
+            
+            try {
+                if (format === 'Excel') {
+                    if (typeof XLSX === 'undefined') {
+                        showErrorModal('Thư viện Excel chưa tải xong, vui lòng đợi !!!');
+                        return;
+                    }
+                    exportToExcel(mockData, filename);
+                    showToast('Xuất báo cáo Excel thành công');
+                } else if (format === 'PDF') {
+                    if (typeof html2pdf === 'undefined') {
+                        showErrorModal('Thư viện PDF chưa tải xong, vui lòng đợi !!!');
+                        return;
+                    }
+                    exportToPDF(filename);
+                    showToast('Đang tạo file PDF...');
+                }
+            } catch (e) {
+                console.error("Export Error:", e);
+                showErrorModal('Xuất file thất bại: ' + e.message);
+            }
+        };
+
+        document.getElementById('btnInModal').onclick = () => {
+            window.print();
+        };
 
         function drawAttendanceBarChart() {
             const canvas = document.getElementById('attendanceBarChart');
@@ -471,70 +596,6 @@
             return "#"+RR+GG+BB;
         }
 
-        function drawAttendanceBarChart() {
-            const canvas = document.getElementById('attendanceBarChart');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const dpr = window.devicePixelRatio || 1;
-            canvas.width = 640 * dpr;
-            canvas.height = 220 * dpr;
-            ctx.scale(dpr, dpr);
-
-            // Group data by roles
-            const rolesObj = {};
-            mockData.forEach(r => {
-                rolesObj[r.role] = (rolesObj[r.role] || 0) + parseFloat(totalHours(r.totalHours));
-            });
-            function totalHours(v) { return parseFloat(v) || 0; }
-
-            const data = Object.keys(rolesObj).map(r => ({ label: r, value: rolesObj[r] }));
-            if (data.length === 0) return;
-
-            const padding = { top: 30, right: 30, bottom: 40, left: 40 };
-            const chartWidth = 640 - padding.left - padding.right;
-            const chartHeight = 220 - padding.top - padding.bottom;
-            const maxValue = data.length > 0 ? Math.max(...data.map(item => item.value)) * 1.2 : 100;
-            if (maxValue === 0) return;
-            const colWidth = chartWidth / (data.length || 1);
-            const barWidth = Math.min(60, colWidth * 0.5);
-
-            let startTime = null;
-            function animate(timestamp) {
-                if (!startTime) startTime = timestamp;
-                const progress = Math.min((timestamp - startTime) / 1000, 1);
-                const eased = 1 - Math.pow(1 - progress, 3);
-                ctx.clearRect(0, 0, 640, 220);
-
-                data.forEach((item, index) => {
-                    const x = padding.left + index * colWidth + (colWidth - barWidth) / 2;
-                    const h = (item.value / maxValue) * chartHeight * eased;
-                    const y = padding.top + chartHeight - h;
-
-                    const colors = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
-                    const color = colors[index % colors.length];
-                    
-                    const grad = ctx.createLinearGradient(x, y, x, y + h);
-                    grad.addColorStop(0, color);
-                    grad.addColorStop(1, shadeColor(color, -20));
-                    ctx.fillStyle = grad;
-                    
-                    ctx.beginPath();
-                    if (ctx.roundRect) ctx.roundRect(x, y, barWidth, h, [6,6,0,0]); else ctx.rect(x, y, barWidth, h);
-                    ctx.fill();
-
-                    ctx.fillStyle = '#4B2E1F';
-                    ctx.font = 'bold 11px Montserrat, sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(Math.round(item.value) + 'h', x + barWidth / 2, y - 8);
-                    ctx.fillStyle = '#6b7280';
-                    ctx.font = '500 10px Montserrat, sans-serif';
-                    ctx.fillText(item.label, x + barWidth / 2, padding.top + chartHeight + 20);
-                });
-                if (progress < 1) requestAnimationFrame(animate);
-            }
-            requestAnimationFrame(animate);
-        }
-
         function drawAttendanceDonutChart() {
             const canvas = document.getElementById('attendanceDonutChart');
             if (!canvas) return;
@@ -641,8 +702,6 @@
             document.getElementById('modalBody').innerHTML = renderRows();
             document.getElementById('printModal').classList.add('open');
         };
-        document.getElementById('btnXuatModal').onclick = () => showToast('Xuất báo cáo thành công');
-        document.getElementById('btnInModal').onclick = () => showToast('In báo cáo thành công');
 
         window.addEventListener('load', () => {
             drawAttendanceBarChart();

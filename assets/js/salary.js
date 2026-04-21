@@ -399,10 +399,82 @@ function showMessagePopup(message, type = "success") {
         messagePopupIcon.style.display = "none";
     }
 
-    clearTimeout(showMessagePopup.timer);
     showMessagePopup.timer = setTimeout(() => {
         messagePopupBox.classList.remove("show");
     }, 2500);
+}
+
+function showErrorModal(message) {
+    const modal = document.getElementById("errorModal");
+    const msgEl = document.getElementById("errorModalMsg");
+    if (modal && msgEl) {
+        msgEl.textContent = message;
+        modal.style.display = "flex";
+        setTimeout(() => modal.classList.add("open"), 10);
+    }
+}
+
+function closeErrorModal() {
+    const modal = document.getElementById("errorModal");
+    if (modal) {
+        modal.classList.remove("open");
+        setTimeout(() => modal.style.display = "none", 300);
+    }
+}
+
+// Chức năng xuất Excel thực tế
+function exportToExcel(data, filename) {
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Payroll");
+    XLSX.writeFile(wb, filename + ".xlsx");
+}
+
+// Chức năng xuất PDF thực tế hỗ trợ tiếng Việt
+function exportToPDF(data, filename) {
+    // Tạo một container tạm thời để dựng bảng HTML
+    const container = document.createElement('div');
+    container.style.padding = '20px';
+    container.style.fontFamily = 'Montserrat, sans-serif';
+    
+    container.innerHTML = `
+        <h2 style="text-align: center; color: #4B2E1F; margin-bottom: 30px;">BÁO CÁO LƯƠNG - ĐI LẠC COFFEE</h2>
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead>
+                <tr style="background-color: #4B2E1F; color: white;">
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Mã lương</th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Mã nhân viên</th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Tháng</th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: right;">Lương thực lãnh</th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${data.map(item => `
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item["Mã lương"]}</td>
+                        <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item["Mã nhân viên"]}</td>
+                        <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item["Tháng"]}</td>
+                        <td style="border: 1px solid #ddd; padding: 10px; text-align: right; font-weight: bold;">${parseInt(item["Lương thực lãnh"]).toLocaleString()}đ</td>
+                        <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item["Trạng thái"]}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+        <div style="margin-top: 30px; text-align: right; font-style: italic; font-size: 12px;">
+            Ngày xuất báo cáo: ${new Date().toLocaleDateString('vi-VN')}
+        </div>
+    `;
+
+    const opt = {
+        margin:       10,
+        filename:     filename + '.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(container).save();
 }
 
 function handleDeleteClick(payrollId) {
@@ -1102,7 +1174,29 @@ if (btnDoExport) {
             return;
         }
 
-        showMessagePopup(`Đã chọn xuất ${selectedIds.length} bảng lương dạng ${selectedExportFormat}`, "success");
+        // Chuẩn bị dữ liệu để xuất
+        const exportData = payrolls.filter(p => selectedIds.includes(p.id)).map(p => ({
+            "Mã lương": p.id,
+            "Mã nhân viên": p.employeeId,
+            "Tháng": p.month,
+            "Lương thực lãnh": getNetSalary(p),
+            "Trạng thái": p.status === 'approved' ? 'Đã duyệt' : p.status
+        }));
+
+        const filename = "Bao_Cao_Luong_" + getExportMonthText().replace('/', '_');
+
+        try {
+            if (selectedExportFormat === "Excel") {
+                exportToExcel(exportData, filename);
+                showMessagePopup(`Đã xuất ${selectedIds.length} bản ghi ra file ${selectedExportFormat} thành công`, "success");
+            } else if (selectedExportFormat === "PDF") {
+                exportToPDF(exportData, filename);
+                showMessagePopup(`Đang tạo file PDF cho ${selectedIds.length} bản ghi...`, "success");
+            }
+        } catch (err) {
+            console.error(err);
+            showErrorModal("Có lỗi xảy ra khi xuất file!!");
+        }
     });
 }
 

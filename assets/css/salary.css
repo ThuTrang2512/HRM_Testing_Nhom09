@@ -1470,3 +1470,29 @@ body {
     font-size: 13px;
     font-weight: 700;
 }
+
+/* Error Modal */
+#errorModal { display:none; }
+#errorModal.open { display:flex; }
+.error-card { 
+    animation: modalScale 0.3s ease-out;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+}
+@keyframes modalScale {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+.btn-agree {
+    background-color: #70452F;
+    color: white;
+}
+.btn-agree:hover {
+    background-color: #5c3927;
+}
+.btn-cancel {
+    background-color: #E5E5E5;
+    color: #4B2E1F;
+}
+.btn-cancel:hover {
+    background-color: #d8d8d8;
+}

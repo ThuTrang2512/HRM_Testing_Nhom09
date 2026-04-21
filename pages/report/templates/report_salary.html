@@ -11,6 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Libraries for Exporting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -129,6 +134,32 @@
         #toast.show {
             opacity: 1;
             transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Error Modal */
+        #errorModal { display:none; }
+        #errorModal.open { display:flex; }
+        .error-card { 
+            animation: modalScale 0.3s ease-out;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+        @keyframes modalScale {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .btn-agree {
+            background-color: #70452F;
+            color: white;
+        }
+        .btn-agree:hover {
+            background-color: #5c3927;
+        }
+        .btn-cancel {
+            background-color: #E5E5E5;
+            color: #4B2E1F;
+        }
+        .btn-cancel:hover {
+            background-color: #d8d8d8;
         }
     </style>
 </head>
@@ -363,17 +394,16 @@
             <div class="flex items-center justify-between px-6 py-5">
                 <div class="flex items-center gap-3">
                     <label class="text-[13px] font-medium text-gray-600">Chọn định dạng xuất:</label>
-                    <select class="border border-gray-300 rounded px-3 py-1.5 text-sm outline-none font-sans w-36">
-                        <option>Excel</option>
-                        <option>PDF</option>
-                        <option>CSV</option>
+                    <select id="exportFormatSelect" class="border border-gray-300 rounded px-3 py-1.5 text-sm outline-none font-sans w-36">
+                        <option value="Excel">Excel</option>
+                        <option value="PDF">PDF</option>
                     </select>
                 </div>
                 <div class="flex gap-4">
                     <button id="btnXuatModal"
                         class="bg-[#d6b5a3] hover:bg-[#c9a08c] text-[#4B2E1F] font-semibold px-6 py-2 rounded text-sm transition">Xuất
                         báo cáo</button>
-                    <button id="btnInModal"
+                    <button id="btnInModal" onclick="window.print()"
                         class="bg-[#4B2E1F] hover:bg-[#3a2317] text-white font-semibold px-6 py-2 rounded text-sm transition">In
                         báo cáo</button>
                 </div>
@@ -392,6 +422,24 @@
             </svg>
         </div>
         <p id="toastMsg" style="font-size:17px;font-weight:700;color:#1a1a1a;margin:0;">Xuất báo cáo thành công</p>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="fixed inset-0 bg-black/40 z-[100] hidden items-center justify-center">
+        <div class="bg-white rounded-[32px] p-10 text-center max-w-[420px] w-full mx-4 error-card">
+            <!-- Error Icon -->
+            <div class="w-16 h-16 rounded-full border-2 border-[#E74C3C] flex items-center justify-center mx-auto mb-8">
+                <span class="text-[#E74C3C] text-3xl font-bold">!</span>
+            </div>
+            
+            <h3 class="text-[24px] font-bold text-[#70452F]/80 uppercase mb-2 tracking-wide">KHÔNG THÀNH CÔNG</h3>
+            <p id="errorModalMsg" class="text-[15px] text-gray-800 font-semibold mb-10">Xuất file thất bại!!</p>
+            
+            <div class="flex gap-10 px-4">
+                <button onclick="closeErrorModal()" class="flex-1 btn-cancel font-bold py-3.5 rounded-xl transition text-[18px]">Không</button>
+                <button onclick="closeErrorModal()" class="flex-1 btn-agree font-bold py-3.5 rounded-xl transition text-[18px]">Đồng ý</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -619,8 +667,92 @@
             }, 2500);
         }
 
-        document.getElementById('btnXuatModal').onclick = () => showToast('Xuất báo cáo thành công');
-        document.getElementById('btnInModal').onclick = () => showToast('In báo cáo thành công');
+        function closeErrorModal() {
+            document.getElementById('errorModal').classList.remove('open');
+        }
+
+        // Chức năng xuất Excel thực tế
+        function exportToExcel(data, filename) {
+            const exportData = data.map(r => ({
+                "Ma Luong": r.maLuong,
+                "Ma NV": r.maNhanVien,
+                "Ho Ten": r.hoTen,
+                "Chuc Vu": r.chucVu,
+                "Thoi Gian": r.thoiGian,
+                "Luong CB": r.luongCoBan,
+                "Luong gio": r.luongTheoGio,
+                "Gio lam": r.soGioLam,
+                "Thuong": r.tongThuong,
+                "Phat": r.tongPhat,
+                "Tong": r.tongThanhToan
+            }));
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "SalaryReport");
+            XLSX.writeFile(wb, filename + ".xlsx");
+        }
+
+        // Chức năng xuất PDF thực tế hỗ trợ tiếng Việt
+        function exportToPDF(filename) {
+            const element = document.querySelector('#printModal .bg-white'); 
+            if (!element) {
+                alert("Không tìm thấy nội dung để xuất PDF!");
+                return;
+            }
+
+            const opt = {
+                margin:       [10, 10],
+                filename:     filename + '.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+
+            // Tạm thời ẩn các nút bấm 
+            const buttons = element.querySelector('.flex.items-center.justify-between');
+            const closeBtn = element.querySelector('button[onclick="closeModal()"]');
+            if(buttons) buttons.style.opacity = '0';
+            if(closeBtn) closeBtn.style.opacity = '0';
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                if(buttons) buttons.style.opacity = '1';
+                if(closeBtn) closeBtn.style.opacity = '1';
+            }).catch(err => {
+                console.error("PDF Export Error:", err);
+                showErrorModal('Lỗi khi tạo PDF: ' + err.message);
+            });
+        }
+
+        document.getElementById('btnXuatModal').onclick = function() {
+            const select = document.getElementById('exportFormatSelect');
+            const format = select ? select.value : 'Excel';
+            const filename = "Bao_Cao_Luong_" + new Date().getTime();
+            
+            try {
+                if (format === 'Excel') {
+                    if (typeof XLSX === 'undefined') {
+                        showErrorModal('Thư viện Excel chưa tải xong, vui lòng đợi !!!');
+                        return;
+                    }
+                    exportToExcel(mockData, filename);
+                    showToast('Xuất báo cáo Excel thành công');
+                } else if (format === 'PDF') {
+                    if (typeof html2pdf === 'undefined') {
+                        showErrorModal('Thư viện PDF chưa tải xong, vui lòng đợi !!!');
+                        return;
+                    }
+                    exportToPDF(filename);
+                    showToast('Đang tạo file PDF...');
+                }
+            } catch (e) {
+                console.error("Export Error:", e);
+                showErrorModal('Xuất file thất bại: ' + e.message);
+            }
+        };
+
+        document.getElementById('btnInModal').onclick = () => {
+            window.print();
+        };
 
         // Initial render
         window.addEventListener('load', () => {
