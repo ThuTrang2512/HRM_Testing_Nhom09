@@ -896,7 +896,7 @@ function renderExportTable() {
     if (approvedList.length === 0) {
         exportTableBody.innerHTML = `
             <tr>
-                <td colspan="4" class="export-empty-cell">
+                <td colspan="11" class="export-empty-cell">
                     <div class="export-empty-box">
                         <div class="export-empty-icon">✕</div>
                         <div class="export-empty-title">Không có bảng lương đã duyệt trong tháng này</div>
