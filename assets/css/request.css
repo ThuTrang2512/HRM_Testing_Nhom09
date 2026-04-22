@@ -197,8 +197,9 @@ body {
     height: 36px;
     border: none;
     border-radius: 4px;
-    background: #70452F;
-    color: #ffffff;
+    background: rgba(112, 69, 47, 0.8);
+    /* #70452F at 80% */
+    color: #FFFFFF;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
     font-weight: 700;
@@ -283,43 +284,55 @@ body {
 }
 
 .request-table th:nth-child(1),
-.request-table td:nth-child(1) { width: 5%; }
+.request-table td:nth-child(1) {
+    width: 5%;
+}
 
 .request-table th:nth-child(2),
-.request-table td:nth-child(2) { width: 10%; }
+.request-table td:nth-child(2) {
+    width: 10%;
+}
 
 .request-table th:nth-child(3),
-.request-table td:nth-child(3) { width: 10%; }
+.request-table td:nth-child(3) {
+    width: 10%;
+}
 
 .request-table th:nth-child(4),
-.request-table td:nth-child(4) { 
-    width: 15%; 
+.request-table td:nth-child(4) {
+    width: 15%;
     text-align: left;
     padding-left: 16px;
 }
 
 .request-table th:nth-child(5),
-.request-table td:nth-child(5) { 
-    width: 11%; 
+.request-table td:nth-child(5) {
+    width: 11%;
     text-align: left;
     padding-left: 10px;
 }
 
 .request-table th:nth-child(6),
-.request-table td:nth-child(6) { 
-    width: 11%; 
+.request-table td:nth-child(6) {
+    width: 11%;
     text-align: left;
     padding-left: 10px;
 }
 
 .request-table th:nth-child(7),
-.request-table td:nth-child(7) { width: 11%; }
+.request-table td:nth-child(7) {
+    width: 11%;
+}
 
 .request-table th:nth-child(8),
-.request-table td:nth-child(8) { width: 11%; }
+.request-table td:nth-child(8) {
+    width: 11%;
+}
 
 .request-table th:nth-child(9),
-.request-table td:nth-child(9) { width: 13%; }
+.request-table td:nth-child(9) {
+    width: 13%;
+}
 
 .status-pending {
     color: #d79a00;
@@ -341,8 +354,8 @@ body {
     height: 34px;
     border: none;
     border-radius: 4px;
-    background: #7b543b;
-    color: #ffffff;
+    background: #70452F;
+    color: #FFFFFF;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
     font-weight: 600;
@@ -509,8 +522,8 @@ body {
 }
 
 .approve-btn {
-    background: #39b54a;
-    color: #fff;
+    background: #3BB54A;
+    color: #FFFFFF;
 }
 
 .approve-btn:hover {
@@ -518,8 +531,8 @@ body {
 }
 
 .reject-btn {
-    background: #ef4b43;
-    color: #fff;
+    background: #E53935;
+    color: #FFFFFF;
 }
 
 .reject-btn:hover {
@@ -605,10 +618,15 @@ body {
     padding: 4px 12px 12px;
 }
 
+.reject-modal-actions .reject-btn {
+    background: #DC3545;
+    color: #FFFFFF;
+}
+
 .cancel-brown-btn {
     min-width: 46px;
-    background: #7b543b;
-    color: #fff;
+    background: #70452F;
+    color: #FFFFFF;
 }
 
 .cancel-brown-btn:hover {
@@ -753,7 +771,7 @@ body {
     background: #f5ede8;
 }
 
-.nav-dropdown-menu a + a,
-.nav-dropdown-hover-menu a + a {
+.nav-dropdown-menu a+a,
+.nav-dropdown-hover-menu a+a {
     border-top: 1px solid #f3f4f6;
 }
