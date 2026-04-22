@@ -438,40 +438,51 @@ function exportToPDF(data, filename) {
     container.style.fontFamily = 'Montserrat, sans-serif';
     
     container.innerHTML = `
-        <h2 style="text-align: center; color: #4B2E1F; margin-bottom: 30px;">BÁO CÁO LƯƠNG - ĐI LẠC COFFEE</h2>
-        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+        <h2 style="text-align: center; color: #4B2E1F; margin-bottom: 30px; font-size: 24px; font-weight: bold; text-transform: uppercase;">PHIẾU LƯƠNG NHÂN VIÊN - ĐI LẠC COFFEE</h2>
+        <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
             <thead>
                 <tr style="background-color: #4B2E1F; color: white;">
-                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Mã lương</th>
-                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Mã nhân viên</th>
-                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Tháng</th>
-                    <th style="border: 1px solid #ddd; padding: 12px; text-align: right;">Lương thực lãnh</th>
-                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Trạng thái</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Mã lương</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Mã NV</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Tháng</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Lương CB</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">L.Theo giờ</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Giờ làm</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Thưởng</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Phạt</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Lương thực lãnh</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Trạng thái</th>
                 </tr>
             </thead>
             <tbody>
                 ${data.map(item => `
                     <tr>
-                        <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item["Mã lương"]}</td>
-                        <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item["Mã nhân viên"]}</td>
-                        <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item["Tháng"]}</td>
-                        <td style="border: 1px solid #ddd; padding: 10px; text-align: right; font-weight: bold;">${parseInt(item["Lương thực lãnh"]).toLocaleString()}đ</td>
-                        <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item["Trạng thái"]}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item["Mã lương"]}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item["Mã NV"]}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item["Tháng"]}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${parseInt(item["Lương cơ bản"]).toLocaleString("vi-VN")}đ</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${parseInt(item["Lương theo giờ"]).toLocaleString("vi-VN")}đ</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item["Giờ làm"]}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${parseInt(item["Thưởng"]).toLocaleString("vi-VN")}đ</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${parseInt(item["Phạt"]).toLocaleString("vi-VN")}đ</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; color: #b71c1c;">${parseInt(item["Lương thực lãnh"]).toLocaleString("vi-VN")}đ</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item["Trạng thái"]}</td>
                     </tr>
                 `).join('')}
             </tbody>
         </table>
-        <div style="margin-top: 30px; text-align: right; font-style: italic; font-size: 12px;">
-            Ngày xuất báo cáo: ${new Date().toLocaleDateString('vi-VN')}
+        <div style="margin-top: 30px; text-align: right; font-style: italic; font-size: 13px;">
+            <p>Ngày in phiếu: ${new Date().toLocaleDateString('vi-VN')}</p>
+            <p style="margin-top: 40px; font-weight: bold; margin-right: 20px;">Người duyệt</p>
         </div>
     `;
 
     const opt = {
-        margin:       10,
+        margin:       [10, 10, 10, 10],
         filename:     filename + '.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
     };
 
     html2pdf().set(opt).from(container).save();
@@ -897,14 +908,28 @@ function renderExportTable() {
         return;
     }
 
-    exportTableBody.innerHTML = approvedList.map((item) => `
+    exportTableBody.innerHTML = approvedList.map((item) => {
+        const attendance = getAttendanceRecord(item.employeeId, item.month);
+        const baseSalary = attendance?.baseSalary || 0;
+        const hourlyRate = attendance?.hourlyRate || 0;
+        const workedHours = parseFloat(Number(attendance?.workedHours || 0).toFixed(2));
+        
+        return `
         <tr>
-            <td><input type="checkbox" class="export-check" data-id="${item.id}"></td>
+            <td style="text-align: center;"><input type="checkbox" class="export-check" data-id="${item.id}"></td>
+            <td>${item.id}</td>
             <td>${item.employeeId}</td>
-            <td>${formatCurrency(getNetSalary(item))}</td>
+            <td>${item.month}</td>
+            <td>${formatCurrency(baseSalary)}</td>
+            <td>${formatCurrency(hourlyRate)}</td>
+            <td>${workedHours}</td>
+            <td>${formatCurrency(item.bonus)}</td>
+            <td>${formatCurrency(item.penalty)}</td>
+            <td style="font-weight: 600;">${formatCurrency(getNetSalary(item))}</td>
             <td class="status-approved">Đã duyệt</td>
         </tr>
-    `).join("");
+        `
+    }).join("");
 }
 
 btnConfirmDelete.addEventListener("click", async () => {
@@ -997,7 +1022,91 @@ if (checkAllExport) {
 
 if (btnPrintSalary) {
     btnPrintSalary.addEventListener("click", () => {
-        window.print();
+        const selectedIds = getSelectedExportIds();
+
+        if (!selectedIds.length) {
+            showMessagePopup("Vui lòng chọn ít nhất một nhân viên để in phiếu lương", "error");
+            return;
+        }
+
+        const itemsToPrint = payrolls.filter(p => selectedIds.includes(p.id));
+        
+        const printWindow = window.open('', '_blank');
+        
+        let htmlContent = `
+            <html>
+            <head>
+                <title>In Phiếu Lương</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
+                    .print-container { width: 100%; max-width: 800px; margin: 0 auto; }
+                    h2 { text-align: center; color: #4B2E1F; font-size: 24px; text-transform: uppercase; margin-bottom: 30px; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 40px; font-size: 13px; }
+                    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+                    th { background-color: #4B2E1F; color: white; text-align: center !important; }
+                    .num { text-align: right; }
+                    .center { text-align: center; }
+                    .footer { text-align: right; font-style: italic; margin-top: 30px; }
+                    @media print { 
+                        body { padding: 0; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="print-container">
+                    <h2>PHIẾU LƯƠNG NHÂN VIÊN - ĐI LẠC COFFEE</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Mã lương</th>
+                                <th>Mã NV</th>
+                                <th>Tháng</th>
+                                <th>Lương CB</th>
+                                <th>L.Theo giờ</th>
+                                <th>Giờ làm</th>
+                                <th>Thưởng</th>
+                                <th>Phạt</th>
+                                <th>Lương thực lãnh</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        `;
+
+        itemsToPrint.forEach(item => {
+            const attendance = getAttendanceRecord(item.employeeId, item.month);
+            htmlContent += `
+                            <tr>
+                                <td class="center">${item.id}</td>
+                                <td class="center">${item.employeeId}</td>
+                                <td class="center">${item.month}</td>
+                                <td class="num">${formatCurrency(attendance?.baseSalary || 0)}đ</td>
+                                <td class="num">${formatCurrency(attendance?.hourlyRate || 0)}đ</td>
+                                <td class="center">${parseFloat(Number(attendance?.workedHours || 0).toFixed(2))}</td>
+                                <td class="num">${formatCurrency(item.bonus || 0)}đ</td>
+                                <td class="num">${formatCurrency(item.penalty || 0)}đ</td>
+                                <td class="num" style="font-weight: bold;">${formatCurrency(getNetSalary(item))}đ</td>
+                            </tr>
+            `;
+        });
+        
+        htmlContent += `
+                        </tbody>
+                    </table>
+                    
+                    <div class="footer">
+                        <p>Ngày in: ${new Date().toLocaleDateString('vi-VN')}</p>
+                        <p style="margin-top: 50px; margin-right: 50px; font-weight: bold; font-style: normal;">Ban Quản Lý</p>
+                    </div>
+                </div>
+                <script>
+                    window.onload = function() { window.print(); window.close(); }
+                </script>
+            </body>
+            </html>
+        `;
+
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
     });
 }
 
@@ -1175,13 +1284,21 @@ if (btnDoExport) {
         }
 
         // Chuẩn bị dữ liệu để xuất
-        const exportData = payrolls.filter(p => selectedIds.includes(p.id)).map(p => ({
-            "Mã lương": p.id,
-            "Mã nhân viên": p.employeeId,
-            "Tháng": p.month,
-            "Lương thực lãnh": getNetSalary(p),
-            "Trạng thái": p.status === 'approved' ? 'Đã duyệt' : p.status
-        }));
+        const exportData = payrolls.filter(p => selectedIds.includes(p.id)).map(p => {
+            const attendance = getAttendanceRecord(p.employeeId, p.month);
+            return {
+                "Mã lương": p.id,
+                "Mã NV": p.employeeId,
+                "Tháng": p.month,
+                "Lương cơ bản": attendance?.baseSalary || 0,
+                "Lương theo giờ": attendance?.hourlyRate || 0,
+                "Giờ làm": parseFloat(Number(attendance?.workedHours || 0).toFixed(2)),
+                "Thưởng": p.bonus || 0,
+                "Phạt": p.penalty || 0,
+                "Lương thực lãnh": getNetSalary(p),
+                "Trạng thái": p.status === 'approved' ? 'Đã duyệt' : p.status
+            };
+        });
 
         const filename = "Bao_Cao_Luong_" + getExportMonthText().replace('/', '_');
 
