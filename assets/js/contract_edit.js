@@ -81,6 +81,13 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Lỗi:", err);
     });
 
+    const removeAccents = (str) => {
+        if (!str) return '';
+        return str.normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+    };
+
     employeeNameInput.addEventListener('input', (event) => {
         clearInlineError('employeeName');
         const value = event.target.value.trim();
@@ -100,11 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Real-time filtering for datalist UI (optional but nice)
+        // Real-time filtering for datalist UI (accent-insensitive)
         const employeeDatalist = document.getElementById('employeeList');
         if (employeeDatalist) {
             if (value) {
-                const filtered = employeeList.filter(e => e.name.toLowerCase().includes(value.toLowerCase()));
+                const normValue = removeAccents(value.toLowerCase());
+                const filtered = employeeList.filter(e => removeAccents(e.name.toLowerCase()).includes(normValue));
                 employeeDatalist.innerHTML = filtered.map(e => `<option value="${e.name}" data-id="${e.id}"></option>`).join('');
             } else {
                 employeeDatalist.innerHTML = employeeList.map(e => `<option value="${e.name}" data-id="${e.id}"></option>`).join('');
@@ -318,10 +326,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
 
-        // Kiểm tra ngày bắt đầu không được lớn hơn ngày kết thúc
+        // Kiểm tra ngày bắt đầu không được lớn hơn hoặc bằng ngày kết thúc
         if (startDateInput.value && endDateInput.value) {
-            if (new Date(startDateInput.value) > new Date(endDateInput.value)) {
-                setInlineError('startDate', 'Ngày bắt đầu không được lớn hơn ngày kết thúc.');
+            if (new Date(startDateInput.value) >= new Date(endDateInput.value)) {
+                setInlineError('startDate', 'Ngày bắt đầu không được lớn hơn hoặc bằng ngày kết thúc.');
                 hasError = true;
             }
         }

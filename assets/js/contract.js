@@ -1,6 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     let contracts = [];
 
+    const removeAccents = (str) => {
+        if (!str) return '';
+        return str.normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+    };
+
     const loadContracts = () => {
         fetch('/contract/api/data/')
             .then(res => res.json())
@@ -212,12 +219,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const getFilteredContracts = () => {
-        const keyword = searchInput.value.trim().toLowerCase();
+        const keyword = removeAccents(searchInput.value.trim().toLowerCase());
         if (!keyword) return contracts.filter(c => c.status !== 'deleted');
         return contracts.filter(contract => {
             if (contract.status === 'deleted') return false;
             return [contract.id, contract.employeeId, contract.employeeName, contract.employeeRole, contract.contractType, contract.status]
-                .some(value => value && value.toString().toLowerCase().includes(keyword));
+                .some(value => value && removeAccents(value.toString().toLowerCase()).includes(keyword));
         });
     };
 
@@ -290,8 +297,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (searchInput) {
-        searchInput.addEventListener('keyup', () => {
-            renderTable();
+        searchInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                renderTable();
+            }
         });
     }
 

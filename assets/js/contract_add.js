@@ -43,6 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }).catch(err => console.error("Lỗi khi tải dữ liệu API:", err));
 
+    const removeAccents = (str) => {
+        if (!str) return '';
+        return str.normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+    };
+
     employeeNameInput.addEventListener('input', (event) => {
         clearInlineError('employeeName');
         const value = event.target.value.trim();
@@ -58,6 +65,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const existingContract = contracts.find(c => c.employeeId === emp.id);
             if (existingContract) {
                 setInlineError('employeeName', `Nhân viên đã có hợp đồng, vui lòng chọn nhân viên khác`);
+            }
+        }
+
+        // Real-time filtering for datalist UI (accent-insensitive)
+        const employeeDatalist = document.getElementById('employeeList');
+        if (employeeDatalist) {
+            if (value) {
+                const normValue = removeAccents(value.toLowerCase());
+                const filtered = employeeList.filter(e => removeAccents(e.name.toLowerCase()).includes(normValue));
+                employeeDatalist.innerHTML = filtered.map(e => `<option value="${e.name}" data-id="${e.id}"></option>`).join('');
+            } else {
+                employeeDatalist.innerHTML = employeeList.map(e => `<option value="${e.name}" data-id="${e.id}"></option>`).join('');
             }
         }
     });
@@ -195,10 +214,10 @@ document.addEventListener('DOMContentLoaded', () => {
             hasError = true;
         }
 
-        // Kiểm tra ngày bắt đầu không được lớn hơn ngày kết thúc
+        // Kiểm tra ngày bắt đầu không được lớn hơn hoặc bằng ngày kết thúc
         if (startDateInput.value && endDateInput.value) {
-            if (new Date(startDateInput.value) > new Date(endDateInput.value)) {
-                setInlineError('startDate', 'Ngày bắt đầu không được lớn hơn ngày kết thúc.');
+            if (new Date(startDateInput.value) >= new Date(endDateInput.value)) {
+                setInlineError('startDate', 'Ngày bắt đầu không được lớn hơn hoặc bằng ngày kết thúc.');
                 hasError = true;
             }
         }
@@ -218,11 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
             note: document.getElementById('note').value.trim(),
         };
 
-        // Kiểm tra ngày bắt đầu không được lớn hơn ngày kết thúc
-        if (new Date(startDateInput.value) > new Date(endDateInput.value)) {
-            setInlineError('startDate', 'Ngày bắt đầu không được lớn hơn ngày kết thúc.');
-            hasError = true;
-        }
 
         if (hasError) return;
 

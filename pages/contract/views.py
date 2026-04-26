@@ -10,7 +10,7 @@ def get_contract_data(request):
     # Chỉ lấy hợp đồng của những nhân viên đang ở trạng thái 'Đang làm việc'
     contracts = HopDongLaoDong.objects.select_related('MaNhanVien', 'hopdonglaodong_ct')\
         .filter(MaNhanVien__TrangThai='Đang làm việc')\
-        .order_by('MaHopDong')
+        .order_by('-MaHopDong')
     contract_list = []
     
     for c in contracts:
@@ -68,9 +68,14 @@ def sync_contract_action(request):
                         'error': f'Nhân viên đã có hợp đồng, vui lòng chọn nhân viên khác'
                     }, status=400)
 
-                nhan_vien = NhanVien.objects.get(MaNhanVien=emp_id)
                 start_date = datetime.strptime(data.get('startDate'), "%d/%m/%Y").date()
                 end_date = datetime.strptime(data.get('endDate'), "%d/%m/%Y").date()
+                
+                if start_date >= end_date:
+                    return JsonResponse({
+                        'success': False, 
+                        'error': 'Ngày bắt đầu không được lớn hơn hoặc bằng ngày kết thúc'
+                    }, status=400)
                 
                 hd = HopDongLaoDong(
                     MaHopDong=data.get('id'),
@@ -109,6 +114,12 @@ def sync_contract_action(request):
                 
                 start_date = datetime.strptime(data.get('startDate'), "%d/%m/%Y").date()
                 end_date = datetime.strptime(data.get('endDate'), "%d/%m/%Y").date()
+
+                if start_date >= end_date:
+                    return JsonResponse({
+                        'success': False, 
+                        'error': 'Ngày bắt đầu không được lớn hơn hoặc bằng ngày kết thúc'
+                    }, status=400)
                 
                 hd.NgayBatDau = start_date
                 hd.NgayKetThuc = end_date
