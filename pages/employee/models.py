@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 def validate_min_age(value):
     age = relativedelta(date.today(), value).years
     if age < 18:
-        raise ValidationError("Ngày sinh không hợp lệ")
+        raise ValidationError("Ngày sinh không hợp lệ.")
 
 class NhanVien(models.Model):
     GENDER_CHOICES = [
