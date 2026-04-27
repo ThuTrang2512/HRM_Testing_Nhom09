@@ -153,12 +153,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Khi chọn loại hợp đồng
     contractTypeInput.addEventListener('change', function() {
         if (contractTypeInput.value === 'Full-time') {
+            salaryInp.value = '3,480,000';
+            baseSalaryInp.value = '3,480,000';
             baseSalaryInp.disabled = false;
+            minHourInp.value = '174';
+            hourSalaryInp.value = '';
+            bonusInp.value = '';
             updateHourSalary();
         } else if (contractTypeInput.value === 'Part-time') {
             baseSalaryInp.value = '';
             baseSalaryInp.disabled = true;
-            updatePartTimeSalary();
+            minHourInp.value = '80';
+            hourSalaryInp.value = '';
+            salaryInp.value = '';
+            bonusInp.value = '';
         }
     });
 
