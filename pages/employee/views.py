@@ -126,6 +126,25 @@ def employee_edit(request, pk):
         new_trang_thai = request.POST.get('trang_thai', employee.TrangThai)
         new_hinh_anh_file = request.FILES.get('hinh_anh_file')
         
+        # Kiểm tra xem có sự thay đổi nào không trước khi lưu
+        current_ngay_sinh = employee.Ngaysinh.strftime('%Y-%m-%d') if employee.Ngaysinh else ''
+        is_changed = (
+            employee.HoTen != (new_ho_ten.title() if new_ho_ten else employee.HoTen) or
+            employee.ChucVu != new_chuc_vu or
+            employee.GioiTinh != new_gioi_tinh or
+            current_ngay_sinh != (new_ngay_sinh or '') or
+            employee.CCCD != new_cccd or
+            employee.SoDienThoai != new_sdt or
+            employee.TaiKhoanNH != new_tai_khoan_nh or
+            employee.DiaChi != new_dia_chi or
+            employee.DiaChiLV != new_dia_chi_lv or
+            employee.TrangThai != new_trang_thai or
+            new_hinh_anh_file is not None
+        )
+
+        if not is_changed:
+            return redirect('employee_detail', pk=pk)
+
         employee.HoTen = new_ho_ten
         employee.ChucVu = new_chuc_vu
         employee.GioiTinh = new_gioi_tinh
@@ -161,7 +180,7 @@ def employee_delete(request, pk):
     employee = get_object_or_404(NhanVien, pk=pk)
     employee.TrangThai = 'Ngừng hoạt động'
     employee.save()
-    messages.success(request, "Đã xóa nhân viên thành công.")
+    messages.success(request, "Đã xoá nhân viên thành công")
     return redirect('employee_list')
 
 def get_employee_data(request):

@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Setup Success info and redirect
             sessionStorage.setItem('showSuccessToast', 'true');
-            sessionStorage.setItem('toastMessage', 'Cập nhật thông tin nhân viên thành công.');
+            sessionStorage.setItem('toastMessage', 'Cập nhật thông tin nhân viên thành công');
             window.location.href = 'employee_list.html';
 
         } catch (err) {

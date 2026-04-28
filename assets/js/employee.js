@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const editSuccessToast = document.getElementById('editSuccessToast');
                     const editToastTitle = document.getElementById('editToastTitle');
                     if (editSuccessToast && editToastTitle) {
-                        editToastTitle.innerHTML = 'Đã xóa nhân viên thành công<br><span class="text-[14px] font-normal">Danh sách đã được cập nhật.</span>';
+                        editToastTitle.innerHTML = 'Đã xoá nhân viên thành công<br><span class="text-[14px] font-normal">Danh sách đã được cập nhật.</span>';
                         editSuccessToast.classList.remove('hidden');
 
                         setTimeout(() => {
