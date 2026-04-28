@@ -4,11 +4,15 @@ let attendanceData = [];
 async function fetchSalaryData() {
     try {
         console.log("Đang tải dữ liệu từ /salary/api/data/...");
-        const response = await fetch('/salary/api/data/');
+        const response = await fetch(`/salary/api/data/?t=${new Date().getTime()}`);
         const data = await response.json();
         console.log("Dữ liệu nhận được từ DB:", data);
         payrolls = data.payrolls || [];
-        attendanceData = data.attendanceData || [];
+        // Áp dụng quy tắc: Nhân viên lương cơ bản (Full-time) thì giờ làm = 0
+        attendanceData = (data.attendanceData || []).map(item => ({
+            ...item,
+            workedHours: Number(item.baseSalary) > 0 ? 0 : item.workedHours
+        }));
         renderTable();
     } catch (error) {
         console.error("Lỗi khi tải dữ liệu từ máy chủ:", error);
@@ -298,19 +302,6 @@ function renderActionButtons(item) {
     `;
 }
 
-function renderEmptyPendingState() {
-    tableBody.innerHTML = `
-        <tr>
-            <td colspan="12" class="empty-pending-cell">
-                <div class="empty-pending-box">
-                    <div class="empty-pending-icon">✕</div>
-                    <div class="empty-pending-title">Chưa có bảng lương để duyệt</div>
-                    <div class="empty-pending-subtitle">Hiện tại không có bảng lương nào đang chờ duyệt.</div>
-                </div>
-            </td>
-        </tr>
-    `;
-}
 
 function renderEmptyNormalState(showAction) {
     tableBody.innerHTML = `
@@ -327,11 +318,7 @@ function renderTable() {
     renderTableHeader();
 
     if (data.length === 0) {
-        if (currentFilter === "pending") {
-            renderEmptyPendingState();
-        } else {
-            renderEmptyNormalState(showAction);
-        }
+        renderEmptyNormalState(showAction);
         return;
     }
 
@@ -688,7 +675,16 @@ function updateSalaryTotalPreview() {
     currentSalaryDraft.penalty = Number(detailPenalty.value) || 0;
     currentSalaryDraft.baseSalary = Number(detailBaseSalary.value) || 0;
     currentSalaryDraft.hourlyRate = Number(detailHourlyRate.value) || 0;
-    currentSalaryDraft.workedHours = Number(detailWorkedHours.value) || 0;
+    
+    // Nếu có lương cơ bản thì ép giờ làm về 0
+    if (currentSalaryDraft.baseSalary > 0) {
+        currentSalaryDraft.workedHours = 0;
+        detailWorkedHours.value = 0;
+        detailWorkedHours.readOnly = true;
+    } else {
+        currentSalaryDraft.workedHours = Number(detailWorkedHours.value) || 0;
+        detailWorkedHours.readOnly = false;
+    }
 
     const total = calculateNetSalaryFromDraft(currentSalaryDraft);
     currentSalaryDraft.netSalary = total;
@@ -1350,7 +1346,7 @@ function initCustomMonthPicker() {
     if (!picker || !display || !dropdown) return;
 
     let currentYear = 2026;
-    let selectedMonth = "04";
+    let selectedMonth = "01";
 
     function updateLabel() {
         label.textContent = `Tháng ${selectedMonth} ${currentYear}`;
@@ -1425,6 +1421,13 @@ function initCustomMonthPicker() {
     document.addEventListener("click", () => {
         dropdown.classList.remove("show");
         display.classList.remove("active");
+    });
+
+    // Initialize display on load
+    updateLabel();
+    monthItems.forEach(m => {
+        if (m.dataset.month === selectedMonth) m.classList.add("active");
+        else m.classList.remove("active");
     });
 }
 
