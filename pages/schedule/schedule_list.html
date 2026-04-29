@@ -263,14 +263,14 @@
 
     <!-- Modal: Design Synchronized (Montserrat + Project Standard) -->
     <div id="modal-schedule" class="fixed inset-0 bg-black/40 z-[100] hidden items-center justify-center p-4 backdrop-blur-[1px] font-['Montserrat']">
-        <div class="bg-white rounded-[6px] shadow-2xl w-full max-w-[700px] overflow-hidden border border-gray-100 transform transition-all">
+        <div class="bg-white rounded-[20px] shadow-2xl w-full max-w-[700px] overflow-hidden border border-gray-100 transform transition-all">
             <!-- Brown Header matching Request Detail -->
-            <div class="bg-[#70452F] text-white flex justify-between items-center px-4 py-3">
-                <h3 class="text-[18px] font-bold m-0" id="modal-title">Lịch làm việc</h3>
-                <button onclick="window.closeModal()" class="text-white text-[24px] font-bold leading-none hover:opacity-80 transition-opacity">&times;</button>
+            <div class="bg-[#70452F] text-white flex justify-between items-center px-6 py-4">
+                <h3 class="text-[20px] font-bold m-0" id="modal-title">Lịch làm việc</h3>
+                <button onclick="window.closeModal()" class="text-white text-[28px] font-bold leading-none hover:opacity-80 transition-opacity">&times;</button>
             </div>
             
-            <form id="schedule-form" class="p-6 bg-white" onsubmit="window.saveSchedule(event)">
+            <form id="schedule-form" class="p-8 bg-white" onsubmit="window.saveSchedule(event)">
                 <input type="hidden" id="edit-id">
                 
                 <div id="schedule-form-content" class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -283,12 +283,12 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[13px] font-bold text-[#3d342f] mb-1.5">Ngày làm <span class="text-red-500">*</span></label>
-                                <input type="date" id="edit-date" required class="w-full border border-[#d1d5db] rounded-[4px] px-3 py-2 text-[14px] outline-none focus:border-[#7b543b] focus:ring-1 focus:ring-[#7b543b]/10 bg-white transition-all">
+                                <input type="date" id="edit-date" required class="w-full border border-[#d1d5db] rounded-[8px] px-3 py-2 text-[14px] outline-none focus:border-[#7b543b] focus:ring-1 focus:ring-[#7b543b]/10 bg-white transition-all">
                                 <div id="err-date" class="hidden text-red-500 text-[11px] mt-1 font-medium"></div>
                             </div>
                             <div>
                                 <label class="block text-[13px] font-bold text-[#3d342f] mb-1.5">Ca làm <span class="text-red-500">*</span></label>
-                                <select id="schedule-shift" onchange="window.updateShiftTimes(this)" class="w-full border border-[#d1d5db] rounded-[4px] px-3 py-2 text-[14px] outline-none focus:border-[#7b543b] bg-white transition-all">
+                                <select id="schedule-shift" onchange="window.updateShiftTimes(this)" class="w-full border border-[#d1d5db] rounded-[8px] px-3 py-2 text-[14px] outline-none focus:border-[#7b543b] bg-white transition-all">
                                     <option value="">Chọn ca...</option>
                                     <option value="Ca sáng">Ca sáng</option>
                                     <option value="Ca chiều">Ca chiều</option>
@@ -301,19 +301,19 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[13px] font-bold text-[#3d342f] mb-1.5">Giờ mở đầu <span class="text-red-500">*</span></label>
-                                <input type="time" id="schedule-start" required class="w-full border border-[#d1d5db] rounded-[4px] px-3 py-2 text-[14px] outline-none focus:border-[#7b543b] bg-white transition-all">
+                                <input type="time" id="schedule-start" required class="w-full border border-[#d1d5db] rounded-[8px] px-3 py-2 text-[14px] outline-none focus:border-[#7b543b] bg-white transition-all">
                                 <div id="err-start" class="hidden text-red-500 text-[11px] mt-1 font-medium"></div>
                             </div>
                             <div>
                                 <label class="block text-[13px] font-bold text-[#3d342f] mb-1.5">Giờ kết thúc <span class="text-red-500">*</span></label>
-                                <input type="time" id="schedule-end" required class="w-full border border-[#d1d5db] rounded-[4px] px-3 py-2 text-[14px] outline-none focus:border-[#7b543b] bg-white transition-all">
+                                <input type="time" id="schedule-end" required class="w-full border border-[#d1d5db] rounded-[8px] px-3 py-2 text-[14px] outline-none focus:border-[#7b543b] bg-white transition-all">
                                 <div id="err-end" class="hidden text-red-500 text-[11px] mt-1 font-medium"></div>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-[13px] font-bold text-[#3d342f] mb-1.5">Ghi chú</label>
-                            <textarea id="schedule-note" rows="3" placeholder="Nhập ghi chú chi tiết..." class="w-full border border-[#d1d5db] rounded-[4px] px-3 py-2 text-[14px] outline-none focus:border-[#7b543b] bg-white transition-all placeholder-gray-300 resize-none"></textarea>
+                            <textarea id="schedule-note" rows="3" placeholder="Nhập ghi chú chi tiết..." class="w-full border border-[#d1d5db] rounded-[8px] px-3 py-2 text-[14px] outline-none focus:border-[#7b543b] bg-white transition-all placeholder-gray-300 resize-none"></textarea>
                         </div>
                     </div>
 
@@ -326,14 +326,14 @@
                         <div class="grid grid-cols-1 gap-4">
                             <div id="role-select-box">
                                 <label class="block text-[13px] font-bold text-[#3d342f] mb-1.5">Chức vụ</label>
-                                <select id="schedule-role" onchange="window.filterEmployeesByRole(this.value)" class="w-full border border-[#d1d5db] rounded-[4px] px-3 py-2 text-[14px] outline-none focus:border-[#7b543b] bg-white transition-all">
+                                <select id="schedule-role" onchange="window.filterEmployeesByRole(this.value)" class="w-full border border-[#d1d5db] rounded-[8px] px-3 py-2 text-[14px] outline-none focus:border-[#7b543b] bg-white transition-all">
                                     <option value="">Tất cả chức vụ</option>
                                 </select>
                             </div>
                             
                             <div class="flex flex-col">
                                 <label class="block text-[13px] font-bold text-[#3d342f] mb-1.5">Nhân viên <span class="text-red-500 text-[11px] ml-0.5">*</span> <span class="text-[11px] text-[#999] font-normal italic lowercase">(Chọn một hoặc nhiều)</span></label>
-                                <div id="employee-selection-list" class="border border-[#e6e1dd] rounded-[4px] p-2 h-[200px] overflow-y-auto bg-[#f9f7f5] space-y-1 custom-scrollbar">
+                                <div id="employee-selection-list" class="border border-[#e6e1dd] rounded-[8px] p-2 h-[200px] overflow-y-auto bg-[#f9f7f5] space-y-1 custom-scrollbar">
                                     <!-- Dynamic employee checkboxes will appear here -->
                                 </div>
                                 <div id="err-emp" class="hidden text-red-500 text-[11px] mt-1 font-medium"></div>
@@ -343,9 +343,9 @@
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-6 mt-4 border-t border-[#f3f4f6]">
-                    <button type="button" onclick="window.closeModal()" class="bg-[#d6d6d6] text-[#4b4b4b] px-10 py-2 rounded-[5px] font-bold text-[14px] hover:bg-gray-300 transition-all min-w-[120px]">Hủy</button>
-                    <button type="button" id="btn-delete" onclick="window.deleteSchedule()" class="hidden bg-red-500 text-white px-10 py-2 rounded-[5px] font-bold text-[14px] hover:bg-red-600 transition-all min-w-[120px]">Xóa</button>
-                    <button type="submit" id="btn-save" class="bg-[#70452F] text-white px-10 py-2 rounded-[5px] font-bold text-[14px] hover:bg-[#5c4133] transition-all min-w-[120px]">Lưu</button>
+                    <button type="button" onclick="window.closeModal()" class="bg-[#d6d6d6] text-[#4b4b4b] px-10 py-2 rounded-[8px] font-bold text-[14px] hover:bg-gray-300 transition-all min-w-[120px]">Hủy</button>
+                    <button type="button" id="btn-delete" onclick="window.deleteSchedule()" class="hidden bg-red-500 text-white px-10 py-2 rounded-[8px] font-bold text-[14px] hover:bg-red-600 transition-all min-w-[120px]">Xóa</button>
+                    <button type="submit" id="btn-save" class="bg-[#70452F] text-white px-10 py-2 rounded-[8px] font-bold text-[14px] hover:bg-[#5c4133] transition-all min-w-[120px]">Lưu</button>
                 </div>
             </form>
         </div>

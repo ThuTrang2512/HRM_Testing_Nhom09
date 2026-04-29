@@ -5,6 +5,7 @@ from .models import LichLamViec
 from pages.employee.models import NhanVien
 import json
 from datetime import datetime, timedelta
+from django.utils import timezone
 
 def schedule_page(request):
     employees = NhanVien.objects.filter(TrangThai='Đang làm việc')
@@ -53,48 +54,93 @@ def api_save_schedule(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            id = data.get('id')
-            emp_ids = data.get('empId') # Can be string or list
-            date = data.get('date')
-            start = data.get('start')
-            end = data.get('end')
+            schedule_id_to_edit = data.get('id')
+            emp_ids = data.get('empId')
+            date_str = data.get('date')
+            start_str = data.get('start')
+            end_str = data.get('end')
             note = data.get('note')
             
-            # Convert single ID to list for unified processing
             if not isinstance(emp_ids, list):
                 emp_ids = [emp_ids] if emp_ids else []
             
-            if not emp_ids and not id:
+            if not emp_ids and not schedule_id_to_edit:
                 return JsonResponse({'success': False, 'message': 'Vui lòng chọn nhân viên'})
 
-            # Unified Save Logic: Clear existing for this slot and re-insert 
-            if id:
-                 LichLamViec.objects.filter(NgayLam=date, GioBatDau=start, GioKetThuc=end).delete()
-            
+            # Convert date and time strings
+            date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
+            start_time_obj = datetime.strptime(start_str, '%H:%M').time()
+            end_time_obj = datetime.strptime(end_str, '%H:%M').time()
+
+            # --- PAST TIME CHECK ---
+            shift_start_dt = datetime.combine(date_obj, start_time_obj)
+            # Compare with current local time
+            if shift_start_dt < datetime.now():
+                return JsonResponse({'success': False, 'message': 'Không thể tạo hoặc chỉnh sửa lịch làm việc cho thời gian ở quá khứ.'})
+
             # Fetch base ID for batch generation
             last_schedule = LichLamViec.objects.all().order_by('MaLich').last()
             start_num = 1
             if last_schedule:
                 try:
                     start_num = int(last_schedule.MaLich[4:]) + 1
-                except:
+                except ValueError:
                     start_num = 1
 
-            # Create new records for everyone in the selection
-            for i, eid in enumerate(emp_ids):
-                employee = get_object_or_404(NhanVien, MaNhanVien=eid)
-                new_id = f"MLLV{start_num + i:06d}"
-                schedule = LichLamViec(
-                    MaLich=new_id,
-                    MaNhanVien=employee,
-                    NgayLam=date,
-                    GioBatDau=start,
-                    GioKetThuc=end,
-                    GhiChu=note
-                )
-                schedule.save()
+            created_count = 0
+            skipped_count = 0
+
+            if schedule_id_to_edit:
+                LichLamViec.objects.filter(
+                    NgayLam=date_obj,
+                    GioBatDau=start_time_obj,
+                    GioKetThuc=end_time_obj
+                ).delete()
+                
+                for eid in emp_ids:
+                    employee = get_object_or_404(NhanVien, MaNhanVien=eid)
+                    new_id = f"MLLV{start_num + created_count:06d}"
+                    schedule = LichLamViec(
+                        MaLich=new_id,
+                        MaNhanVien=employee,
+                        NgayLam=date_obj,
+                        GioBatDau=start_time_obj,
+                        GioKetThuc=end_time_obj,
+                        GhiChu=note
+                    )
+                    schedule.save()
+                    created_count += 1
+                
+                return JsonResponse({'success': True, 'message': 'Cập nhật thành công'})
             
-            return JsonResponse({'success': True, 'message': 'Lưu lịch làm việc thành công'})
+            else:
+                for eid in emp_ids:
+                    employee = get_object_or_404(NhanVien, MaNhanVien=eid)
+                    existing_schedule = LichLamViec.objects.filter(
+                        MaNhanVien=employee,
+                        NgayLam=date_obj,
+                        GioBatDau=start_time_obj,
+                        GioKetThuc=end_time_obj
+                    ).first()
+
+                    if existing_schedule:
+                        skipped_count += 1
+                        continue
+                    
+                    new_id = f"MLLV{start_num + created_count:06d}"
+                    schedule = LichLamViec(
+                        MaLich=new_id,
+                        MaNhanVien=employee,
+                        NgayLam=date_obj,
+                        GioBatDau=start_time_obj,
+                        GioKetThuc=end_time_obj,
+                        GhiChu=note
+                    )
+                    schedule.save()
+                    created_count += 1
+                
+                return JsonResponse({'success': True, 'message': 'Lưu thành công'})
+
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
             
@@ -117,18 +163,9 @@ def api_send_notification(request):
         try:
             data = json.loads(request.body)
             schedule_ids = data.get('ids', [])
-            
             if not schedule_ids:
                 return JsonResponse({'success': False, 'message': 'Không có lịch làm việc nào được chọn'})
-                
-            # Update status to 'Đã gửi' for all IDs
-            LichLamViec.objects.filter(MaLich__in=schedule_ids).update(TrangThai='Đang áp dụng')
-            # Wait, the mockup uses 'Đã gửi'. Let me check the model's choices. Actually, the frontend displayed 'Đã gửi'. But let's check `pages/schedule/models.py` to see choices later if needed. I'll use "Đã gửi" mapping to some string or just "Đã gửi". Let's stick to "Đã gửi" for now.
-            # I'll update it to 'Đã gửi' and handle model choices if it crashes.
-            
-            # Re-read model definition to be safe. Wait, the frontend mockup uses `Đã gửi`. Wait, in the Python code `api_get_schedules` returns `s.TrangThai`. I'll set it to 'Đã gửi'.
             LichLamViec.objects.filter(MaLich__in=schedule_ids).update(TrangThai='Đã gửi')
-            
             return JsonResponse({'success': True, 'message': 'Đã gửi thông báo thành công'})
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})

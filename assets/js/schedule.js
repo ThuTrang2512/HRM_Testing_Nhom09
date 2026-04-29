@@ -7,6 +7,9 @@ let schedules = [];
 let activeEmployeeIds = new Set(); // For filtering in sidebar
 let lastConfirmedSearchQuery = ""; // Only updates when Enter or Search button is clicked
 
+// Form state tracking
+let originalFormData = null;
+
 // --- Initialization ---
 
 let isDragging = false;
@@ -63,23 +66,6 @@ async function fetchEmployees() {
     } catch (error) {
         console.error('Error fetching employees:', error);
     }
-}
-
-// Add click listeners for mini-calendar month navigation
-document.addEventListener('DOMContentLoaded', () => {
-    const prevMonthBtn = document.getElementById('prev-month');
-    const nextMonthBtn = document.getElementById('next-month');
-    if (prevMonthBtn) prevMonthBtn.onclick = () => window.changeMonth(-1);
-    if (nextMonthBtn) nextMonthBtn.onclick = () => window.changeMonth(1);
-    
-    init();
-});
-
-window.changeMonth = async function(diff) {
-    currentWeekOffset += diff * 4; // Approximate month jump
-    await fetchSchedules();
-    renderCalendar();
-    renderMiniCalendar();
 }
 
 // Add click listeners for mini-calendar month navigation
@@ -308,7 +294,7 @@ window.showSearchPopup = function(query) {
     popup.id = 'search-empty-msg';
     popup.className = 'fixed inset-0 z-[999] flex items-center justify-center p-4 pointer-events-none';
     popup.innerHTML = `
-        <div class="bg-white border border-gray-100 rounded-xl p-6 shadow-2xl flex flex-col items-center gap-4 animate-in slide-in-from-bottom-5 fade-in duration-500 pointer-events-auto max-w-[400px] w-full text-center">
+        <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-2xl flex flex-col items-center gap-4 animate-in slide-in-from-bottom-5 fade-in duration-500 pointer-events-auto max-w-[400px] w-full text-center">
             <div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center">
                 <i class="fa-solid fa-circle-exclamation text-red-500 text-2xl"></i>
             </div>
@@ -596,6 +582,19 @@ window.performSearch = function() {
     renderShifts();
 }
 
+window.getFormData = function() {
+    const checked = document.querySelectorAll('input[name="emp-select"]:checked');
+    const empIds = Array.from(checked).map(c => c.value).sort();
+    return {
+        date: document.getElementById('edit-date').value,
+        shift: document.getElementById('schedule-shift').value,
+        start: document.getElementById('schedule-start').value,
+        end: document.getElementById('schedule-end').value,
+        note: document.getElementById('schedule-note').value,
+        empIds: empIds.join(',')
+    };
+};
+
 window.openAddModal = function(date, start, end) {
     if (!date) date = formatDateISO(new Date());
     if (!start) start = "08:00";
@@ -628,6 +627,9 @@ window.openAddModal = function(date, start, end) {
 
     document.getElementById('modal-schedule').classList.remove('hidden');
     document.getElementById('modal-schedule').classList.add('flex');
+
+    // Track original state
+    originalFormData = JSON.stringify(window.getFormData());
 }
 
 window.openEditModal = function(group) {
@@ -677,12 +679,127 @@ window.openEditModal = function(group) {
     window.clearAllErrors();
     document.getElementById('modal-schedule').classList.remove('hidden');
     document.getElementById('modal-schedule').classList.add('flex');
+
+    // Track original state
+    originalFormData = JSON.stringify(window.getFormData());
 }
 
 window.closeModal = function() {
+    const currentData = JSON.stringify(window.getFormData());
+    const isEdit = document.getElementById('edit-id').value !== "";
+
+    if (originalFormData && currentData !== originalFormData) {
+        const typeStr = isEdit ? "Chỉnh sửa" : "Thêm mới";
+        window.showCancelConfirmPopup(typeStr);
+        return;
+    }
+
+    window.forceCloseModal();
+}
+
+window.forceCloseModal = function() {
     window.clearAllErrors();
     document.getElementById('modal-schedule').classList.add('hidden');
     document.getElementById('modal-schedule').classList.remove('flex');
+    originalFormData = null;
+}
+
+window.showCancelConfirmPopup = function(type) {
+    const popup = document.createElement('div');
+    popup.id = 'cancel-confirm-popup';
+    popup.className = 'fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 p-4 font-["Montserrat"]';
+    popup.innerHTML = `
+        <div class="bg-white rounded-[30px] shadow-2xl w-full max-w-[400px] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div class="p-7 text-center">
+                <div class="w-14 h-14 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-triangle-exclamation text-orange-500 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Xác nhận Hủy</h3>
+                <p class="text-gray-600 text-sm mb-8 px-4">Bạn có thông tin "<span class="font-bold">${type}</span>" chưa lưu. Hành động này không thể hoàn tác.</p>
+                <div class="flex gap-16 justify-center">
+                    <button onclick="document.getElementById('cancel-confirm-popup').remove()" class="px-8 py-2 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors">Hủy</button>
+                    <button onclick="document.getElementById('cancel-confirm-popup').remove(); window.forceCloseModal();" class="px-8 py-2 bg-[#70452F] text-white rounded-xl font-bold hover:bg-[#5c4133] transition-colors">Đồng ý</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(popup);
+}
+
+window.showDeleteConfirmPopup = function(message, onConfirm) {
+    const popup = document.createElement('div');
+    popup.id = 'delete-confirm-popup';
+    popup.className = 'fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 p-4 font-["Montserrat"]';
+    popup.innerHTML = `
+        <div class="bg-white rounded-[30px] shadow-2xl w-full max-w-[420px] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div class="p-8 text-center">
+                <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-trash-can text-red-500 text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">Xác nhận Xóa</h3>
+                <p class="text-gray-600 text-sm mb-8">${message}</p>
+                <div class="flex gap-14 justify-center">
+                    <button onclick="document.getElementById('delete-confirm-popup').remove()" class="px-8 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors">Hủy</button>
+                    <button id="confirm-delete-btn" class="px-8 py-2.5 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors">Đồng ý</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    document.getElementById('confirm-delete-btn').onclick = () => {
+        document.getElementById('delete-confirm-popup').remove();
+        onConfirm();
+    };
+};
+
+
+window.showSuccessPopup = function(message) {
+    const popup = document.createElement('div');
+    popup.id = 'success-popup';
+    popup.className = 'fixed inset-0 z-[1000] flex items-center justify-center bg-black/20 p-4 font-["Montserrat"]';
+    popup.innerHTML = `
+        <div class="bg-white rounded-[32px] shadow-2xl w-full max-w-[380px] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div class="p-6 text-center">
+                <div class="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-circle-check text-green-500 text-3xl"></i>
+                </div>
+                <h3 class="text-sm font-bold text-gray-900 mb-0 leading-tight px-2">${message}</h3>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    // Auto-remove after 3 seconds (3000ms)
+    setTimeout(() => {
+        if (popup && popup.parentElement) {
+            popup.remove();
+        }
+    }, 3000);
+}
+
+window.showErrorPopup = function(message) {
+    const popup = document.createElement('div');
+    popup.id = 'error-popup';
+    popup.className = 'fixed inset-0 z-[1000] flex items-center justify-center bg-black/20 p-4 font-["Montserrat"]';
+    popup.innerHTML = `
+        <div class="bg-white rounded-[32px] shadow-2xl w-full max-w-[380px] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div class="p-6 text-center">
+                <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-circle-exclamation text-red-500 text-3xl"></i>
+                </div>
+                <h3 class="text-base font-bold text-gray-900 mb-0 leading-tight px-2">${message}</h3>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    // Auto-remove after 3 seconds (3000ms)
+    setTimeout(() => {
+        if (popup && popup.parentElement) {
+            popup.remove();
+        }
+    }, 3000);
 }
 
 window.showFieldError = function(fieldId, errorId, message) {
@@ -746,15 +863,24 @@ window.saveSchedule = async function(e) {
         hasError = true; 
     }
 
-    // 2. Check Past Date
-    if (dateStr) {
-        const inputDate = new Date(dateStr);
-        inputDate.setHours(0,0,0,0);
-        const todayDate = new Date();
-        todayDate.setHours(0,0,0,0);
+    // 2. Check Past Date and Time
+    if (dateStr && start) {
+        // Create shift start datetime object
+        // Use YYYY, MM (0-indexed), DD, HH, mm to avoid timezone issues
+        const dateParts = dateStr.split('-');
+        const timeParts = start.split(':');
+        const shiftStart = new Date(
+            parseInt(dateParts[0]),
+            parseInt(dateParts[1]) - 1,
+            parseInt(dateParts[2]),
+            parseInt(timeParts[0]),
+            parseInt(timeParts[1])
+        );
+
+        const now = new Date();
         
-        if (inputDate < todayDate) {
-            window.showFieldError('edit-date', 'err-date', "Không thể tạo hoặc chuyển lịch sang một ngày ở quá khứ. Vui lòng chọn lại.");
+        if (shiftStart < now) {
+            window.showFieldError('edit-date', 'err-date', "Không thể tạo hoặc chỉnh sửa lịch làm việc cho thời gian ở quá khứ. Vui lòng chọn lại.");
             hasError = true;
         }
     }
@@ -779,11 +905,17 @@ window.saveSchedule = async function(e) {
         });
         const result = await response.json();
         if (result.success) {
-            window.closeModal();
+            const isEdit = id !== "";
+            const successMessage = isEdit ? "Chỉnh sửa lịch làm việc thành công" : "Thêm lịch làm việc thành công";
+
+            window.forceCloseModal();
             await fetchSchedules();
             renderShifts();
+
+            window.showSuccessPopup(successMessage);
         } else {
-            alert('Lỗi: ' + result.message);
+            // Show server-side error message
+            window.showFieldError('edit-date', 'err-date', result.message);
         }
     } catch (error) {
         console.error('Error saving schedule:', error);
@@ -798,38 +930,54 @@ window.deleteSchedule = async function() {
     const start = document.getElementById('schedule-start').value;
     const end = document.getElementById('schedule-end').value;
 
-    const inputDate = new Date(date);
-    inputDate.setHours(0,0,0,0);
-    const todayDate = new Date();
-    todayDate.setHours(0,0,0,0);
-    if (inputDate < todayDate) {
-        alert("Không thể xóa lịch làm việc ở quá khứ.");
+    // Check if the date is in the past to disable deletion
+    const dateParts = date.split('-');
+    const timeParts = start.split(':');
+    const shiftStart = new Date(
+        parseInt(dateParts[0]),
+        parseInt(dateParts[1]) - 1,
+        parseInt(dateParts[2]),
+        parseInt(timeParts[0]),
+        parseInt(timeParts[1])
+    );
+    const now = new Date();
+
+    if (shiftStart < now) {
+        window.showErrorPopup("Không thể xóa lịch làm việc ở quá khứ.");
         return;
     }
 
-    if (!confirm(`Bạn có chắc muốn xóa TOÀN BỘ ca làm việc này (${start} - ${end}) cho tất cả nhân viên?`)) return;
-    
-    try {
-        const response = await fetch('/schedule/api/save/', { // We'll recycle save with an empty list or specific delete flag
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                id: "DELETE_GROUP",
-                date: date,
-                start: start,
-                end: end,
-                empId: [] // Empty list + DELETE_GROUP flag
-            })
-        });
-        const result = await response.json();
-        if (result.success) {
-            window.closeModal();
-            await fetchSchedules();
-            renderShifts();
+    // Show custom delete confirmation popup
+    window.showDeleteConfirmPopup(
+        `Bạn có chắc muốn xóa TOÀN BỘ ca làm việc này (${start} - ${end}) cho tất cả nhân viên? Hành động này không thể hoàn tác.`,
+        async () => {
+            try {
+                const response = await fetch('/schedule/api/save/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: "DELETE_GROUP",
+                        date: date,
+                        start: start,
+                        end: end,
+                        empId: [] // Empty list + DELETE_GROUP flag
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    window.forceCloseModal();
+                    await fetchSchedules();
+                    renderShifts();
+                    window.showSuccessPopup("Xóa lịch làm việc thành công");
+                } else {
+                    window.showErrorPopup(result.message); // Fallback for other errors
+                }
+            } catch (error) {
+                console.error('Error deleting schedule group:', error);
+                window.showErrorPopup('Đã xảy ra lỗi khi xóa lịch làm việc.'); // Fallback for network errors
+            }
         }
-    } catch (error) {
-        console.error('Error deleting schedule group:', error);
-    }
+    );
 }
 
 // App initialized on DOMContentLoaded above
