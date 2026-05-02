@@ -1197,19 +1197,20 @@ body {
 .nav-dropdown-menu a,
 .nav-dropdown-hover-menu a {
     display: block;
-    padding: 12px 20px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #4B2E1F;
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2937;
     text-decoration: none;
     background: #ffffff;
-    transition: background 0.15s ease;
+    transition: background 0.15s, color 0.15s;
     white-space: nowrap;
 }
 
 .nav-dropdown-menu a:hover,
 .nav-dropdown-hover-menu a:hover {
-    background: #f5ede8;
+    background-color: #f9f5f3;
+    color: #78594A;
 }
 
 .nav-dropdown-menu a+a,

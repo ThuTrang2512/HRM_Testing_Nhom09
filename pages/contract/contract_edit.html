@@ -66,7 +66,6 @@
         .nav-dropdown-menu {
             display: none;
             position: absolute;
-            top: 100%;
             right: 0;
             background: white;
             border: 1px solid #e5e7eb;
@@ -83,22 +82,19 @@
 
         .nav-dropdown-menu a {
             display: block;
-            padding: 12px 20px !important;
-            font-size: 15px !important;
-            font-weight: 600 !important;
-            color: #4B2E1F !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.05em !important;
-            white-space: nowrap !important;
+            padding: 14px 20px !important;
+            font-size: 16px !important;
+            font-weight: 500 !important;
+            color: #1f2937 !important;
             text-decoration: none !important;
-            transition: background 0.15s;
+            transition: background 0.15s, color 0.15s;
             border-top: 1px solid #f3f4f6;
             text-align: center;
         }
 
         .nav-dropdown-menu a:hover {
-            background: #f5ede8;
-            color: #8C5A41 !important;
+            background-color: #f9f5f3;
+            color: #78594A !important;
         }
     </style>
 </head>
@@ -150,11 +146,11 @@
         </div>
         <a href="/pages/request/request.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Yêu cầu</a>
         <a href="/pages/salary/salary.html" class="nav-item py-[16px] transition-colors hover:text-[#d6b5a3]">Bảng lương</a>
-        <div class="nav-dropdown nav-item py-[16px]" id="baoCaoDropdown">
-            <span class="cursor-pointer hover:text-[#d6b5a3] transition-colors select-none flex items-center gap-2" onclick="toggleDropdown(event)">
+        <div class="nav-dropdown" id="baoCaoDropdown">
+            <div class="nav-item py-[16px] cursor-pointer hover:text-[#d6b5a3] transition-colors select-none flex items-center gap-2" onclick="toggleDropdown(event)">
                 Báo cáo
                 <i class="fa-solid fa-chevron-down text-[16px] opacity-70"></i>
-            </span>
+            </div>
             <div class="nav-dropdown-menu" id="baoCaoMenu">
                 <a href="/report/salary/">Báo cáo lương</a>
                 <a href="/report/attendance/">Báo cáo chấm công</a>

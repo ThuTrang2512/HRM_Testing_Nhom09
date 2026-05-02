@@ -28,10 +28,20 @@
         .nav-dropdown { position: relative; }
         .nav-dropdown-menu { display:none; position:absolute; top:100%; right:0; background:white; border:1px solid #e5e7eb; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.12); min-width:210px; z-index:999; overflow:hidden; }
         .nav-dropdown.open .nav-dropdown-menu { display:block; }
-        .nav-dropdown-menu a { display:block; padding:12px 20px; font-size:15px; font-weight:600; color:#4B2E1F; text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; text-decoration:none; transition:background .15s; }
-        .nav-dropdown-menu a:hover { background:#f5ede8; }
-        .nav-dropdown-menu a.active-report { background:#f5ede8; }
-        .nav-dropdown-menu a + a { border-top:1px solid #f3f4f6; }
+        .nav-dropdown-menu a {
+            display: block;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #1f2937;
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+        }
+        .nav-dropdown-menu a:hover, .nav-dropdown-menu a.active-report {
+            background-color: #f9f5f3;
+            color: #78594A;
+        }
+        .nav-dropdown-menu a + a { border-top: 1px solid #f3f4f6; }
 
         /* Print modal */
         #printModal { display:none; }
