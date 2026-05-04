@@ -323,10 +323,9 @@ function renderTable() {
     }
 
     tableBody.innerHTML = data.map((item, index) => {
-        const attendance = getAttendanceRecord(item.employeeId, item.month);
-        const baseSalary = attendance?.baseSalary || 0;
-        const hourlyRate = attendance?.hourlyRate || 0;
-        const workedHours = parseFloat(Number(attendance?.workedHours || 0).toFixed(2));
+        const baseSalary = item.baseSalary !== undefined ? item.baseSalary : 0;
+        const hourlyRate = item.hourlyRate !== undefined ? item.hourlyRate : 0;
+        const workedHours = item.workedHours !== undefined ? parseFloat(Number(item.workedHours).toFixed(2)) : 0;
 
         if (showAction) {
             return `
@@ -550,9 +549,9 @@ function fillEditSalaryDetail(payroll) {
         employeeId: payroll.employeeId,
         employeeName: payroll.employeeName,
         month: payroll.month,
-        baseSalary: attendance?.baseSalary || 0,
-        hourlyRate: attendance?.hourlyRate || 0,
-        workedHours: parseFloat(Number(attendance?.workedHours || 0).toFixed(2)),
+        baseSalary: payroll.baseSalary !== undefined ? payroll.baseSalary : 0,
+        hourlyRate: payroll.hourlyRate !== undefined ? payroll.hourlyRate : 0,
+        workedHours: payroll.workedHours !== undefined ? parseFloat(Number(payroll.workedHours).toFixed(2)) : 0,
         bonus: payroll.bonus,
         penalty: payroll.penalty,
         isEditMode: true
@@ -905,10 +904,9 @@ function renderExportTable() {
     }
 
     exportTableBody.innerHTML = approvedList.map((item) => {
-        const attendance = getAttendanceRecord(item.employeeId, item.month);
-        const baseSalary = attendance?.baseSalary || 0;
-        const hourlyRate = attendance?.hourlyRate || 0;
-        const workedHours = parseFloat(Number(attendance?.workedHours || 0).toFixed(2));
+        const baseSalary = item.baseSalary !== undefined ? item.baseSalary : 0;
+        const hourlyRate = item.hourlyRate !== undefined ? item.hourlyRate : 0;
+        const workedHours = item.workedHours !== undefined ? parseFloat(Number(item.workedHours).toFixed(2)) : 0;
         
         return `
         <tr>
@@ -1069,15 +1067,18 @@ if (btnPrintSalary) {
         `;
 
         itemsToPrint.forEach(item => {
-            const attendance = getAttendanceRecord(item.employeeId, item.month);
+            const baseSalary = item.baseSalary !== undefined ? item.baseSalary : 0;
+            const hourlyRate = item.hourlyRate !== undefined ? item.hourlyRate : 0;
+            const workedHours = item.workedHours !== undefined ? parseFloat(Number(item.workedHours).toFixed(2)) : 0;
+
             htmlContent += `
                             <tr>
                                 <td class="center">${item.id}</td>
                                 <td class="center">${item.employeeId}</td>
                                 <td class="center">${item.month}</td>
-                                <td class="num">${formatCurrency(attendance?.baseSalary || 0)}đ</td>
-                                <td class="num">${formatCurrency(attendance?.hourlyRate || 0)}đ</td>
-                                <td class="center">${parseFloat(Number(attendance?.workedHours || 0).toFixed(2))}</td>
+                                <td class="num">${formatCurrency(baseSalary)}đ</td>
+                                <td class="num">${formatCurrency(hourlyRate)}đ</td>
+                                <td class="center">${workedHours}</td>
                                 <td class="num">${formatCurrency(item.bonus || 0)}đ</td>
                                 <td class="num">${formatCurrency(item.penalty || 0)}đ</td>
                                 <td class="num" style="font-weight: bold;">${formatCurrency(getNetSalary(item))}đ</td>
@@ -1281,14 +1282,13 @@ if (btnDoExport) {
 
         // Chuẩn bị dữ liệu để xuất
         const exportData = payrolls.filter(p => selectedIds.includes(p.id)).map(p => {
-            const attendance = getAttendanceRecord(p.employeeId, p.month);
             return {
                 "Mã lương": p.id,
                 "Mã NV": p.employeeId,
                 "Tháng": p.month,
-                "Lương cơ bản": attendance?.baseSalary || 0,
-                "Lương theo giờ": attendance?.hourlyRate || 0,
-                "Giờ làm": parseFloat(Number(attendance?.workedHours || 0).toFixed(2)),
+                "Lương cơ bản": p.baseSalary || 0,
+                "Lương theo giờ": p.hourlyRate || 0,
+                "Giờ làm": parseFloat(Number(p.workedHours || 0).toFixed(2)),
                 "Thưởng": p.bonus || 0,
                 "Phạt": p.penalty || 0,
                 "Lương thực lãnh": getNetSalary(p),

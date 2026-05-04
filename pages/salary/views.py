@@ -23,6 +23,8 @@ def get_salary_data(request):
             "id": bl.MaLuong,
             "employeeId": employee_id,
             "month": month_str,
+            "baseSalary": float(bl.LuongCoBan) if bl.LuongCoBan is not None else 0.0,
+            "hourlyRate": float(bl.LuongTheoGio) if bl.LuongTheoGio is not None else 0.0,
             "totalSalary": float(bl.TongThucLanh) if bl.TongThucLanh is not None else 0.0,
             "bonus": float(bl.TongThuong) if bl.TongThuong is not None else 0.0,
             "penalty": float(bl.TongPhat) if bl.TongPhat is not None else 0.0,

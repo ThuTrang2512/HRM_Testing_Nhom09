@@ -95,7 +95,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres.htpxqwffbxrfdvxqlrwk',
         'PASSWORD': 'HR_TEST123_n9{',
-        'HOST': 'aws-1-ap-southeast-2.pooler.supabase.com',
+        'HOST': '13.239.87.90',
         'PORT': '6543',
         'DISABLE_SERVER_SIDE_CURSORS': True,
     }
